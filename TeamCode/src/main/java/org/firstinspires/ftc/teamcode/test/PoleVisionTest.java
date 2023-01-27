@@ -28,7 +28,8 @@ public class PoleVisionTest extends LinearOpMode {
         DcMotor leftLift = hardwareMap.get(DcMotor.class, "leftArm");
         DcMotor rightLift = hardwareMap.get(DcMotor.class, "rightArm");
         Servo gripper = hardwareMap.get(Servo.class, "gripper");
-        Arm arm = new Arm(leftLift, rightLift, gripper);
+        DcMotor cam = hardwareMap.get(DcMotor.class, "cam");
+        Arm arm = new Arm(leftLift, rightLift, gripper, cam);
         arm.init();
 
         DistanceSensor distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
