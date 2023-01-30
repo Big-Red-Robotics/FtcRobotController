@@ -76,10 +76,26 @@ public class Arm {
             }
         }
     }
+    
+    public void fall() {
+        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        while(getCurrentPosition() > (lowJunction + middleJunction)/2) {
+            leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            leftLift.setPower(0.0);
+            rightLift.setPower(0.0);
+        }
+
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftLift.setPower(0.0);
+        rightLift.setPower(0.0);
+    }
 
     public void camRunToPosition(int position) {
         cam.setTargetPosition(position);
-
         cam.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         if(cam.isBusy()) {

@@ -3,13 +3,16 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.components.Arm;
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.Vision;
+import org.firstinspires.ftc.teamcode.components.teaminfo.InitialSide;
+import org.firstinspires.ftc.teamcode.components.teaminfo.TeamColor;
+import org.firstinspires.ftc.teamcode.components.teaminfo.TeamInfo;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
@@ -20,13 +23,6 @@ public class Autonomous_root extends LinearOpMode {
     int MIDDLE = 2;
     int RIGHT = 3;
 
-    //Team information
-    private enum TeamColor {red, blue}
-    private enum InitialSide {right, left}
-
-    TeamColor teamColor;
-    InitialSide initialSide;
-
     @Override
     public void runOpMode() {
         // init chassis
@@ -34,7 +30,8 @@ public class Autonomous_root extends LinearOpMode {
         DcMotor motorFR = hardwareMap.get(DcMotor.class, "motorFR");
         DcMotor motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         DcMotor motorBR = hardwareMap.get(DcMotor.class, "motorBR");
-        Chassis chassis = new Chassis(motorFL, motorFR, motorBL, motorBR);
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+        Chassis chassis = new Chassis(motorFL, motorFR, motorBL, motorBR, imu, telemetry);
         chassis.init();
 
         // init arms
@@ -46,10 +43,9 @@ public class Autonomous_root extends LinearOpMode {
         arm.init();
         arm.armTarget = 0;
 
-        DistanceSensor distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        Vision vision = new Vision(camera, telemetry, distanceSensor);
+        Vision vision = new Vision(camera, telemetry);
         vision.init();
 
         telemetry.addLine("waiting to start!");
@@ -58,13 +54,16 @@ public class Autonomous_root extends LinearOpMode {
         while (!isStarted() && !isStopRequested()) {
             vision.searchTags();
 
-            if(gamepad1.b || gamepad2.b) teamColor = TeamColor.red;
-            if(gamepad1.x || gamepad2.x) teamColor = TeamColor.blue;
-            if(gamepad1.dpad_right || gamepad2.dpad_right) initialSide = InitialSide.right;
-            if(gamepad1.dpad_left || gamepad2.dpad_left) initialSide = InitialSide.left;
+            if(gamepad1.b || gamepad2.b) TeamInfo.teamColor = TeamColor.RED;
+            if(gamepad1.x || gamepad2.x) TeamInfo.teamColor = TeamColor.BLUE;
+            if(gamepad1.dpad_right || gamepad2.dpad_right) TeamInfo.initialSide = InitialSide.RIGHT;
+            if(gamepad1.dpad_left || gamepad2.dpad_left) TeamInfo.initialSide = InitialSide.LEFT;
 
             if(vision.tagId() > 0) telemetry.addData("Detected tag ID:", vision.tagId());
             else telemetry.addLine("Don't see tag of interest :(");
+
+            telemetry.addData("Team color", TeamInfo.teamColor);
+            telemetry.addData("Initial side", TeamInfo.initialSide);
             telemetry.update();
 
             sleep(20);
@@ -75,47 +74,70 @@ public class Autonomous_root extends LinearOpMode {
         while(opModeIsActive() && !parked) {
             arm.closeGripper();
             chassis.runToPosition(-100, -100, -100, -100);
-            arm.runToPosition(arm.lowJunction);
 
             chassis.resetEncoder();
             chassis.runToPosition(-2500, -2500, -2500, -2500);
 
+            vision.setDetector("pole");
+
             chassis.runToPosition(-2100, -2100, -2100, -2100);
+            chassis.resetEncoder();
 
-            vision.setPoleDetector();
-
+            //RIGHT POSITION
             for(int i=0; i<1; i++){
-                //RIGHT BLUE
-                chassis.runToPosition(-1600, -2400, -1600, -2400);
+                chassis.runToAngle(30);
 
-                //微調整(Small Adjustment)
-                while(Math.abs(vision.differenceX()) > 5) {
-                    double power = (vision.differenceX() < 0) ? 0.1 : -0.1;
-                    chassis.turn(power);
+                adjust(chassis, vision, 0);
 
-                    telemetry.addData("difference", vision.differenceX());
-                    telemetry.addData("middle", vision.middleX());
-                    telemetry.addLine("aligned!");
-                    telemetry.update();
-                }
+                chassis.resetEncoder();
+                chassis.runToPosition(-220,-220,-220,-220);
+
+                adjust(chassis, vision,0);
 
                 arm.runToPosition(arm.highJunction);
 
-                chassis.stop();
-
-                chassis.resetEncoder();
-
-                chassis.runToPosition(-500,-500,-500,-500);
+                chassis.runToPosition(-450,-450,-450,-450);
                 chassis.stop();
 
                 arm.openGripper();
-                arm.runToPosition(0);
+
+                vision.setDetector("cone");
+
+                chassis.runToPosition(-220,-220,-220,-220);
+
+                //TODO: RUN TO CAM POSITION
+                arm.fall();
+
+                chassis.runToAngle(-90);
+
+                chassis.stop();
+
+                adjust(chassis, vision, 0);
+                chassis.stop();
+
+                chassis.resetEncoder();
+                chassis.runToPosition(-100,-100,-100,-100);
+
+                chassis.resetEncoder();
+
+                if(vision.tagId() == RIGHT) chassis.runToPosition(-1100, -1100, -1100, -1100);
+                else if(vision.tagId() == MIDDLE) chassis.runToPosition(50, 50, 50, 50);
+                else if(vision.tagId() == LEFT) chassis.runToPosition(1000, 1000, 1000, 1000);
             }
-
-            if (vision.tagId() == LEFT) chassis.runToPosition(1100, -1400, -1400, 1100);
-            else if (vision.tagId() == RIGHT) chassis.runToPosition(-1350, 1050, 1050, -1350);
-
             parked = true;
         }
+    }
+
+    void adjust(Chassis chassis, Vision vision, int mode){
+        final int turn = 0;
+        final int strafe = 1;
+        while(Math.abs(vision.getAutonPipeline().differenceX()) > 5) {
+            double power = (vision.getAutonPipeline().differenceX() < 0) ? 0.2 : -0.2;
+            if(mode == turn) chassis.turn(power);
+            if(mode == strafe) chassis.strafe(power);
+            telemetry.addData("difference", vision.getAutonPipeline().differenceX());
+            telemetry.update();
+        }
+        chassis.stop();
     }
 }

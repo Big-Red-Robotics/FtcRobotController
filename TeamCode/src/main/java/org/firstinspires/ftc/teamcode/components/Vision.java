@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.components;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.vision.PoleDetector;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.Autonomous_root;
+import org.firstinspires.ftc.teamcode.vision.AutonDetector;
 import org.firstinspires.ftc.teamcode.vision.SleeveDetector;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -18,47 +18,25 @@ public class Vision {
     private DistanceSensor distanceSensor;
 
     //"Webcam 1"
-    private OpenCvCamera camera;
-    private Telemetry telemetry;
-
-    public Vision(OpenCvCamera openCvCamera, Telemetry t, DistanceSensor d){
-        this.distanceSensor = d;
+    private final OpenCvCamera camera;
+    private final Telemetry telemetry;
+    public Vision(OpenCvCamera openCvCamera, Telemetry t){
         this.camera = openCvCamera;
         this.telemetry = t;
     }
 
-    SleeveDetector aprilTagDetectionPipeline;
-    PoleDetector poleDetector;
-
+    SleeveDetector sleeveDetector;
+    AutonDetector autonDetector;
     AprilTagDetection tagOfInterest = null;
 
-    //c&p :(
-    //Convert from the counts per revolution of the encoder to counts per inch
-    final double HD_COUNTS_PER_REV = 28;
-    final double DRIVE_GEAR_REDUCTION = 2-0.15293;
-    final double WHEEL_CIRCUMFERENCE_MM = 90 * Math.PI;
-    final double DRIVE_COUNTS_PER_MM = (HD_COUNTS_PER_REV * DRIVE_GEAR_REDUCTION) / WHEEL_CIRCUMFERENCE_MM;
-
-    // Lens intrinsics
-    // NOTE: this calibration is for the C920 webcam at 800x448.
-    final double fx = 578.272;
-    final double fy = 578.272;
-    final double cx = 402.145;
-    final double cy = 221.506;
-
-    // UNITS ARE METERS
-    double tagsize = 0.166;
-
     public void init() {
-        aprilTagDetectionPipeline = new SleeveDetector(tagsize, fx, fy, cx, cy);
-
-        camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        sleeveDetector = new SleeveDetector();
+        autonDetector = new AutonDetector(telemetry);
+        setDetector("sleeve");
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+            public void onOpened() {
+                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -66,16 +44,24 @@ public class Vision {
         });
     }
 
-    public void setPoleDetector() {
-        poleDetector = new PoleDetector(telemetry);
-        camera.setPipeline(poleDetector);
+    private String currentDetector = "";
+    public void setDetector(String d) {
+        if(d.equals("sleeve") && !currentDetector.equals("sleeve")) {
+            camera.setPipeline(sleeveDetector);
+        } else {
+            if(d.equals("pole")) autonDetector.detectMode = AutonDetector.DetectMode.POLE;
+            else if(d.equals("cone")) autonDetector.detectMode = AutonDetector.DetectMode.CONE;
+            if(!currentDetector.equals("pole") && !currentDetector.equals("cone")) camera.setPipeline(autonDetector);
+        }
+        currentDetector = d;
     }
 
-    public double differenceX() { return poleDetector.differenceX(); }
-    public double middleX() { return poleDetector.middleX(); }
+    public AutonDetector getAutonPipeline(){
+        return autonDetector;
+    }
 
     public void searchTags() {
-        ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+        ArrayList<AprilTagDetection> currentDetections = sleeveDetector.getLatestDetections();
 
         for(AprilTagDetection tag : currentDetections) {
             if(tag.id == 1 || tag.id == 2 || tag.id == 3) {
@@ -90,7 +76,7 @@ public class Vision {
         else return -1;
     }
 
-    public double distance() {
-        return distanceSensor.getDistance(DistanceUnit.MM);
-    }
+//    public double distance() {
+//        return distanceSensor.getDistance(DistanceUnit.MM);
+//    }
 }
