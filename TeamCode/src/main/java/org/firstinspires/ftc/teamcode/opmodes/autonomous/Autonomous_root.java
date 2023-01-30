@@ -2,57 +2,26 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.components.Arm;
 import org.firstinspires.ftc.teamcode.components.Chassis;
-import org.firstinspires.ftc.teamcode.vision.SleeveDetector;
-import org.openftc.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.teamcode.components.Vision;
+import org.firstinspires.ftc.teamcode.components.teaminfo.InitialSide;
+import org.firstinspires.ftc.teamcode.components.teaminfo.TeamColor;
+import org.firstinspires.ftc.teamcode.components.teaminfo.TeamInfo;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-
-import java.util.ArrayList;
 
 @Autonomous(name="Autonomous root :)")
 public class Autonomous_root extends LinearOpMode {
-
-    OpenCvCamera camera;
-    SleeveDetector aprilTagDetectionPipeline;
-
     //sleeve
     int LEFT = 1;
     int MIDDLE = 2;
     int RIGHT = 3;
-
-    AprilTagDetection tagOfInterest = null;
-
-    //c&p :(
-    //Convert from the counts per revolution of the encoder to counts per inch
-    static final double HD_COUNTS_PER_REV = 28;
-    static final double DRIVE_GEAR_REDUCTION = 2-0.15293;
-    static final double WHEEL_CIRCUMFERENCE_MM = 90 * Math.PI;
-    static final double DRIVE_COUNTS_PER_MM = (HD_COUNTS_PER_REV * DRIVE_GEAR_REDUCTION) / WHEEL_CIRCUMFERENCE_MM;
-
-    // Lens intrinsics
-    // NOTE: this calibration is for the C920 webcam at 800x448.
-    double fx = 578.272;
-    double fy = 578.272;
-    double cx = 402.145;
-    double cy = 221.506;
-
-    // UNITS ARE METERS
-    double tagsize = 0.166;
-
-    ////////
-    private enum TeamColor {red, blue}
-    private enum InitialSide {right, left}
-
-    TeamColor teamColor;
-    InitialSide initialSide;
 
     @Override
     public void runOpMode() {
@@ -61,7 +30,8 @@ public class Autonomous_root extends LinearOpMode {
         DcMotor motorFR = hardwareMap.get(DcMotor.class, "motorFR");
         DcMotor motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         DcMotor motorBR = hardwareMap.get(DcMotor.class, "motorBR");
-        Chassis chassis = new Chassis(motorFL, motorFR, motorBL, motorBR);
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+        Chassis chassis = new Chassis(motorFL, motorFR, motorBL, motorBR, imu, telemetry);
         chassis.init();
 
         // init arms
@@ -72,45 +42,27 @@ public class Autonomous_root extends LinearOpMode {
         arm.init();
         arm.armTarget = 0;
 
-        //OpenCV
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        aprilTagDetectionPipeline = new SleeveDetector(tagsize, fx, fy, cx, cy);
-
-        camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {}
-        });
+        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        Vision vision = new Vision(camera, telemetry);
+        vision.init();
 
         telemetry.addLine("waiting to start!");
         telemetry.update();
 
         while (!isStarted() && !isStopRequested()) {
-            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+            vision.searchTags();
 
-            for(AprilTagDetection tag : currentDetections) {
-                if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
-                    tagOfInterest = tag;
-                    break;
-                }
-            }
+            if(gamepad1.b || gamepad2.b) TeamInfo.teamColor = TeamColor.RED;
+            if(gamepad1.x || gamepad2.x) TeamInfo.teamColor = TeamColor.BLUE;
+            if(gamepad1.dpad_right || gamepad2.dpad_right) TeamInfo.initialSide = InitialSide.RIGHT;
+            if(gamepad1.dpad_left || gamepad2.dpad_left) TeamInfo.initialSide = InitialSide.LEFT;
 
-            if(tagOfInterest != null) telemetry.addLine(String.format("\nDetected tag ID=%d", tagOfInterest.id));
+            if(vision.tagId() > 0) telemetry.addData("Detected tag ID:", vision.tagId());
             else telemetry.addLine("Don't see tag of interest :(");
 
-            if(gamepad1.b || gamepad2.b) teamColor = TeamColor.red;
-            if(gamepad1.x || gamepad2.x) teamColor = TeamColor.blue;
-            if(gamepad1.dpad_right || gamepad2.dpad_right) initialSide = InitialSide.right;
-            if(gamepad1.dpad_left || gamepad2.dpad_left) initialSide = InitialSide.left;
-
+            telemetry.addData("Team color", TeamInfo.teamColor);
+            telemetry.addData("Initial side", TeamInfo.initialSide);
             telemetry.update();
 
             sleep(20);
@@ -120,25 +72,71 @@ public class Autonomous_root extends LinearOpMode {
 
         while(opModeIsActive() && !parked) {
             arm.closeGripper();
-
-            chassis.runToPosition(-50, -50, -50, -50);
-
-            sleep(500);
-
-            //arm.runToPosition(200);
+            chassis.runToPosition(-100, -100, -100, -100);
 
             chassis.resetEncoder();
+            chassis.runToPosition(-2500, -2500, -2500, -2500);
 
-            if (tagOfInterest.id == LEFT) chassis.runToPosition(1100, -1400, -1400, 1100);
-            else if (tagOfInterest.id == RIGHT) chassis.runToPosition(-1350, 1050, 1050, -1350);
+            vision.setDetector("pole");
 
+            chassis.runToPosition(-2100, -2100, -2100, -2100);
             chassis.resetEncoder();
 
-            chassis.runToPosition(-1500, -1500, -1500, -1500);
+            //RIGHT POSITION
+            for(int i=0; i<1; i++){
+                chassis.runToAngle(30);
 
-            telemetry.addLine("parked!");
+                adjust(chassis, vision, 0);
 
+                chassis.resetEncoder();
+                chassis.runToPosition(-220,-220,-220,-220);
+
+                adjust(chassis, vision,0);
+
+                arm.runToPosition(arm.highJunction);
+
+                chassis.runToPosition(-450,-450,-450,-450);
+                chassis.stop();
+
+                arm.openGripper();
+
+                vision.setDetector("cone");
+
+                chassis.runToPosition(-220,-220,-220,-220);
+
+                //TODO: RUN TO CAM POSITION
+                arm.fall();
+
+                chassis.runToAngle(-90);
+
+                chassis.stop();
+
+                adjust(chassis, vision, 0);
+                chassis.stop();
+
+                chassis.resetEncoder();
+                chassis.runToPosition(-100,-100,-100,-100);
+
+                chassis.resetEncoder();
+
+                if(vision.tagId() == RIGHT) chassis.runToPosition(-1100, -1100, -1100, -1100);
+                else if(vision.tagId() == MIDDLE) chassis.runToPosition(50, 50, 50, 50);
+                else if(vision.tagId() == LEFT) chassis.runToPosition(1000, 1000, 1000, 1000);
+            }
             parked = true;
         }
+    }
+
+    void adjust(Chassis chassis, Vision vision, int mode){
+        final int turn = 0;
+        final int strafe = 1;
+        while(Math.abs(vision.getAutonPipeline().differenceX()) > 5) {
+            double power = (vision.getAutonPipeline().differenceX() < 0) ? 0.2 : -0.2;
+            if(mode == turn) chassis.turn(power);
+            if(mode == strafe) chassis.strafe(power);
+            telemetry.addData("difference", vision.getAutonPipeline().differenceX());
+            telemetry.update();
+        }
+        chassis.stop();
     }
 }

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.components.Arm;
@@ -17,7 +18,8 @@ public class Main_TeleOp extends LinearOpMode {
         DcMotor motorFR = hardwareMap.get(DcMotor.class, "motorFR");
         DcMotor motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         DcMotor motorBR = hardwareMap.get(DcMotor.class, "motorBR");
-        Chassis chassis = new Chassis(motorFL, motorFR, motorBL, motorBR);
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+        Chassis chassis = new Chassis(motorFL, motorFR, motorBL, motorBR, imu, telemetry);
         chassis.init();
 
         // init arms
@@ -47,24 +49,7 @@ public class Main_TeleOp extends LinearOpMode {
 
             //TODO: SET 1.0 FOR 11166-RC!!
             if (gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) {
-                leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                if (gamepad2.left_trigger > 0) {
-                    arm.armTarget = arm.getCurrentPosition();
-
-                    leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                    rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-                    leftLift.setPower(0.0);
-                    rightLift.setPower(0.0);
-                }
-
-                if (gamepad2.right_trigger > 0) {
-                    arm.armTarget = arm.getCurrentPosition();
-
-                    leftLift.setPower(1.0);
-                    rightLift.setPower(1.0);
-                }
+                arm.armTriggers(gamepad2);
             } else {
                 arm.setArmPower(gamepad2, 1.0);
             }
