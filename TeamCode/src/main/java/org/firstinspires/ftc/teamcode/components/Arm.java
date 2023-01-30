@@ -52,7 +52,7 @@ public class Arm {
     }
 
     public void openGripper() {
-        gripper.setPosition(0.73);
+        gripper.setPosition(0.70);
     }
 
     public void closeGripper() { gripper.setPosition(0.48); }

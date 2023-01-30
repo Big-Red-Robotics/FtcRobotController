@@ -43,10 +43,10 @@ public class Main_TeleOp extends LinearOpMode {
             if (gamepad2.y) { arm.armTarget = arm.highJunction; stack = false; }
             if (gamepad2.a) { arm.armTarget = 0; camLevel = 0; stack = false; }
 
-            if (gamepad2.dpad_up) { arm.armTarget = 350; camLevel = -500; stack = true; }
-            if (gamepad2.dpad_left) { arm.armTarget = 340; camLevel = -570; stack = true; }
-            if (gamepad2.dpad_right) { arm.armTarget = 325; camLevel = -640; stack = true; }
-            if (gamepad2.dpad_down) { arm.armTarget = 310; camLevel = -715; stack = true; }
+            if (gamepad2.dpad_up) { arm.armTarget = 350; camLevel = -565; stack = true; }
+            if (gamepad2.dpad_left) { arm.armTarget = 340; camLevel = -640; stack = true; }
+            if (gamepad2.dpad_right) { arm.armTarget = 325; camLevel = -705; stack = true; }
+            if (gamepad2.dpad_down) { arm.armTarget = 310; camLevel = -785; stack = true; }
 
             if (gamepad2.left_bumper){
                 arm.armTarget = 0;
@@ -61,11 +61,14 @@ public class Main_TeleOp extends LinearOpMode {
             if (gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) {
                 arm.armTriggers(gamepad2, camLevel);
             } else if (Math.abs(gamepad2.left_stick_y) > 0) {
+                cam.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 arm.cam.setPower(gamepad2.left_stick_y);
                 camLevel = arm.cam.getCurrentPosition();
-            } else if (gamepad2.left_stick_button) {
+            } else if (gamepad2.right_stick_button) {
                 cam.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                camLevel = 0;
             } else {
+                cam.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 arm.setArmPower(gamepad2, 1.0, camLevel, stack);
             }
 
