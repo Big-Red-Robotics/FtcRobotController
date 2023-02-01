@@ -93,8 +93,6 @@ public class Autonomous_root extends LinearOpMode {
                 chassis.resetEncoder();
                 chassis.runToPosition(-220,-220,-220,-220);
 
-                adjust(chassis, vision,0);
-
                 arm.runToPosition(arm.highJunction);
 
                 chassis.runToPosition(-450,-450,-450,-450);
@@ -104,7 +102,7 @@ public class Autonomous_root extends LinearOpMode {
 
                 vision.setDetector("cone");
 
-                chassis.runToPosition(-220,-220,-220,-220);
+                chassis.runToPosition(-210,-210,-210,-210);
 
                 //TODO: RUN TO CAM POSITION
                 arm.fall();
@@ -123,7 +121,7 @@ public class Autonomous_root extends LinearOpMode {
 
                 if(vision.tagId() == RIGHT) chassis.runToPosition(-1100, -1100, -1100, -1100);
                 else if(vision.tagId() == MIDDLE) chassis.runToPosition(50, 50, 50, 50);
-                else if(vision.tagId() == LEFT) chassis.runToPosition(1000, 1000, 1000, 1000);
+                else if(vision.tagId() == LEFT) chassis.runToPosition(1200, 1200, 1200, 1200);
             }
             parked = true;
         }
