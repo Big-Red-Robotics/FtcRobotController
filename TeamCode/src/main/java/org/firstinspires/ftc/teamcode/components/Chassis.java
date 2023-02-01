@@ -144,15 +144,15 @@ public class Chassis {
 
         while(motorFL.isBusy() || motorFR.isBusy() || motorBL.isBusy() || motorBR.isBusy()){
             if (Math.abs(motorFL.getCurrentPosition() - FL) < 300 || Math.abs(motorFR.getCurrentPosition() - FR) < 300 || Math.abs(motorBL.getCurrentPosition() - BL) < 300 || Math.abs(motorBR.getCurrentPosition() - BR) < 300) {
-                motorFL.setPower(0.25);
-                motorFR.setPower(0.25);
-                motorBL.setPower(0.25);
-                motorBR.setPower(0.25);
+                motorFL.setPower(0.2);
+                motorFR.setPower(0.2);
+                motorBL.setPower(0.2);
+                motorBR.setPower(0.2);
             } else {
-                motorFL.setPower(0.6/(1+Math.pow(3, 3 * -runtime.seconds())));
-                motorFR.setPower(0.6/(1+Math.pow(3, 3 * -runtime.seconds())));
-                motorBL.setPower(0.6/(1+Math.pow(3, 3 * -runtime.seconds())));
-                motorBR.setPower(0.6/(1+Math.pow(3, 3 * -runtime.seconds())));
+                motorFL.setPower(0.5/(1+Math.pow(3, 1.5 * -runtime.seconds())));
+                motorFR.setPower(0.5/(1+Math.pow(3, 1.5 * -runtime.seconds())));
+                motorBL.setPower(0.5/(1+Math.pow(3, 1.5 * -runtime.seconds())));
+                motorBR.setPower(0.5/(1+Math.pow(3, 1.5 * -runtime.seconds())));
             }
         }
     }
@@ -160,7 +160,7 @@ public class Chassis {
     public void runToAngle(double angle) {
         double difference = angle - robotAngle();
         while(Math.abs(difference) > 3){
-            double power = (angle > robotAngle()) ? 0.3 : -0.3;
+            double power = (angle > robotAngle()) ? 0.25 : -0.25;
             turn(power);
             difference = robotAngle() - angle;
 
