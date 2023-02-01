@@ -93,8 +93,6 @@ public class Autonomous_root extends LinearOpMode {
                 chassis.resetEncoder();
                 chassis.runToPosition(-220,-220,-220,-220);
 
-                adjust(chassis, vision,0);
-
                 arm.runToPosition(arm.highJunction);
 
                 chassis.runToPosition(-450,-450,-450,-450);
@@ -120,10 +118,19 @@ public class Autonomous_root extends LinearOpMode {
                 chassis.runToPosition(-100,-100,-100,-100);
 
                 chassis.resetEncoder();
-
-                if(vision.tagId() == RIGHT) chassis.runToPosition(-1100, -1100, -1100, -1100);
-                else if(vision.tagId() == MIDDLE) chassis.runToPosition(50, 50, 50, 50);
-                else if(vision.tagId() == LEFT) chassis.runToPosition(1000, 1000, 1000, 1000);
+                if(TeamInfo.initialSide == InitialSide.RIGHT){
+                    chassis.runToPosition(150, -150, -150, 150);
+                    chassis.resetEncoder();
+                    if(vision.tagId() == RIGHT) chassis.runToPosition(-1100, -1100, -1100, -1100);
+                    else if(vision.tagId() == MIDDLE) chassis.runToPosition(50, 50, 50, 50);
+                    else if(vision.tagId() == LEFT) chassis.runToPosition(1000, 1000, 1000, 1000);
+                } else if(TeamInfo.initialSide == InitialSide.LEFT) {
+                    chassis.runToPosition(-150, 150, 150, -150);
+                    chassis.resetEncoder();
+                    if(vision.tagId() == RIGHT) chassis.runToPosition(1000, 1000, 1000, 1000);
+                    else if(vision.tagId() == MIDDLE) chassis.runToPosition(50, 50, 50, 50);
+                    else if(vision.tagId() == LEFT) chassis.runToPosition(-1100, -1100, -1100, -1100);
+                }
             }
             parked = true;
         }
@@ -132,7 +139,7 @@ public class Autonomous_root extends LinearOpMode {
     void adjust(Chassis chassis, Vision vision, int mode){
         final int turn = 0;
         final int strafe = 1;
-        while(Math.abs(vision.getAutonPipeline().differenceX()) > 5) {
+        while(Math.abs(vision.getAutonPipeline().differenceX()) > 3) {
             double power = (vision.getAutonPipeline().differenceX() < 0) ? 0.2 : -0.2;
             if(mode == turn) chassis.turn(power);
             if(mode == strafe) chassis.strafe(power);
