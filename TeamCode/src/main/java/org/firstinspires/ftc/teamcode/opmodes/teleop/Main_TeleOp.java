@@ -45,10 +45,10 @@ public class Main_TeleOp extends LinearOpMode {
             if (gamepad2.y) { arm.armTarget = arm.highJunction; stack = false; }
             if (gamepad2.a) { arm.armTarget = 0; camLevel = 0; stack = false; }
 
-            if (gamepad2.dpad_up) { arm.armTarget = 350; camLevel = -565; stack = true; }
-            if (gamepad2.dpad_left) { arm.armTarget = 340; camLevel = -640; stack = true; }
-            if (gamepad2.dpad_right) { arm.armTarget = 325; camLevel = -705; stack = true; }
-            if (gamepad2.dpad_down) { arm.armTarget = 310; camLevel = -785; stack = true; }
+            if (gamepad2.dpad_up) { arm.armTarget = 350; camLevel = -545; stack = true; }
+            if (gamepad2.dpad_left) { arm.armTarget = 340; camLevel = -620; stack = true; }
+            if (gamepad2.dpad_right) { arm.armTarget = 325; camLevel = -685; stack = true; }
+            if (gamepad2.dpad_down) { arm.armTarget = 310; camLevel = -765; stack = true; }
 
             if (gamepad2.left_bumper){
                 arm.armTarget = 0;
@@ -70,7 +70,6 @@ public class Main_TeleOp extends LinearOpMode {
                 cam.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 camLevel = 0;
             } else {
-                cam.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 arm.setArmPower(gamepad2, 1.0, camLevel, stack);
             }
 
