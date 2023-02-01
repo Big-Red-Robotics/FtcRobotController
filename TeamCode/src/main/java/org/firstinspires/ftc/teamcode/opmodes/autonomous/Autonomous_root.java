@@ -85,7 +85,8 @@ public class Autonomous_root extends LinearOpMode {
 
             //RIGHT POSITION
             for(int i=0; i<1; i++){
-                chassis.runToAngle(30);
+
+                chassis.runToAngle((TeamInfo.initialSide == InitialSide.RIGHT) ? 35 : -35);
 
                 adjust(chassis, vision, 0);
 
@@ -108,7 +109,7 @@ public class Autonomous_root extends LinearOpMode {
                 //TODO: RUN TO CAM POSITION
                 arm.fall();
 
-                chassis.runToAngle(-90);
+                chassis.runToAngle((TeamInfo.initialSide == InitialSide.RIGHT) ? -90 : 90);
 
                 chassis.stop();
 
