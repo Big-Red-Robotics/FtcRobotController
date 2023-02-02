@@ -92,12 +92,18 @@ public class Autonomous_root extends LinearOpMode {
 
                 adjust(chassis, vision, 0);
 
-                while(vision.distance() > 150) chassis.forward(0.1);
+                while(vision.distance() > 200){
+                    if(vision.distance() > 5000) adjust(chassis, vision, 0);
+                    chassis.forward(-0.1);
+                    telemetry.addData("distance", vision.distance());
+                    telemetry.update();
+                }
+                chassis.stop();
 
                 arm.runToPosition(arm.highJunction);
 
                 chassis.resetEncoder();
-                chassis.runToPosition(-200,-200,-200,-200);
+                chassis.runToPosition(-100,-100,-100,-100);
                 chassis.stop();
 
                 arm.openGripper();
