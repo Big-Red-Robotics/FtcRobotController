@@ -103,14 +103,14 @@ public class Autonomous_root extends LinearOpMode {
                 arm.runToPosition(arm.highJunction);
 
                 chassis.resetEncoder();
-                chassis.runToPosition(-100,-100,-100,-100);
+                chassis.runToPosition(-200,-200,-200,-200);
                 chassis.stop();
 
                 arm.openGripper();
 
                 vision.setDetector("cone");
 
-                chassis.runToPosition(-220,-220,-220,-220);
+                chassis.runToPosition(0, 0, 0, 0);
 
                 //TODO: RUN TO CAM POSITION
                 arm.fall();
@@ -127,16 +127,16 @@ public class Autonomous_root extends LinearOpMode {
 
                 chassis.resetEncoder();
                 if(TeamInfo.initialSide == InitialSide.RIGHT){
-                    chassis.runToPosition(150, -150, -150, 150);
-                    chassis.resetEncoder();
-                    if(vision.tagId() == RIGHT) chassis.runToPosition(-1100, -1100, -1100, -1100);
-                    else if(vision.tagId() == MIDDLE) chassis.runToPosition(50, 50, 50, 50);
-                    else if(vision.tagId() == LEFT) chassis.runToPosition(1000, 1000, 1000, 1000);
-                } else if(TeamInfo.initialSide == InitialSide.LEFT) {
                     chassis.runToPosition(-150, 150, 150, -150);
                     chassis.resetEncoder();
-                    if(vision.tagId() == RIGHT) chassis.runToPosition(1000, 1000, 1000, 1000);
-                    else if(vision.tagId() == MIDDLE) chassis.runToPosition(50, 50, 50, 50);
+                    if(vision.tagId() == RIGHT) chassis.runToPosition(-1100, -1100, -1100, -1100);
+//                    else if(vision.tagId() == MIDDLE) chassis.runToPosition(50, 50, 50, 50);
+                    else if(vision.tagId() == LEFT) chassis.runToPosition(1100, 1100, 1100, 1100);
+                } else if(TeamInfo.initialSide == InitialSide.LEFT) {
+                    chassis.runToPosition(150, -150, -150, 150);
+                    chassis.resetEncoder();
+                    if(vision.tagId() == RIGHT) chassis.runToPosition(1100, 1100, 1100, 1100);
+//                    else if(vision.tagId() == MIDDLE) chassis.runToPosition(50, 50, 50, 50);
                     else if(vision.tagId() == LEFT) chassis.runToPosition(-1100, -1100, -1100, -1100);
                 }
             }
