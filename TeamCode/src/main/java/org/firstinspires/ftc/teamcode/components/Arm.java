@@ -81,7 +81,7 @@ public class Arm {
         leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while(getCurrentPosition() > (lowJunction + middleJunction)/2) {
+        while(getCurrentPosition() > middleJunction) {
             leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             leftLift.setPower(0.0);
@@ -110,7 +110,7 @@ public class Arm {
     public void setArmPower(Gamepad gamepad, double power, int camLevel, boolean stack) {
         if (rightLift.isBusy() && leftLift.isBusy()){
             if (getCurrentPosition() > armTarget) {
-                if (getCurrentPosition() > middleJunction && getTargetPosition() != middleJunction) {
+                if (getCurrentPosition() > 650 && getTargetPosition() != 650) {
                     leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                     rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 } else {
