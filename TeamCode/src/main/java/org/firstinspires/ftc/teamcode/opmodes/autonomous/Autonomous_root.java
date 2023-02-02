@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -43,9 +44,10 @@ public class Autonomous_root extends LinearOpMode {
         arm.init();
         arm.armTarget = 0;
 
+        DistanceSensor distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        Vision vision = new Vision(camera, telemetry);
+        Vision vision = new Vision(camera, telemetry, distanceSensor);
         vision.init();
 
         telemetry.addLine("waiting to start!");
@@ -90,12 +92,12 @@ public class Autonomous_root extends LinearOpMode {
 
                 adjust(chassis, vision, 0);
 
-                chassis.resetEncoder();
-                chassis.runToPosition(-220,-220,-220,-220);
+                while(vision.distance() > 150) chassis.forward(0.1);
 
                 arm.runToPosition(arm.highJunction);
 
-                chassis.runToPosition(-450,-450,-450,-450);
+                chassis.resetEncoder();
+                chassis.runToPosition(-200,-200,-200,-200);
                 chassis.stop();
 
                 arm.openGripper();

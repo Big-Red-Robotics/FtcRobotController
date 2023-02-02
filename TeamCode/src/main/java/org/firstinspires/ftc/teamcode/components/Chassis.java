@@ -19,10 +19,6 @@ public class Chassis {
     public DcMotor motorBR;
     public IMU imu;
 
-    // State used for updating telemetry
-    Orientation angles;
-    Acceleration gravity;
-
     private ElapsedTime runtime = new ElapsedTime();
 
     Telemetry telemetry;
@@ -171,6 +167,11 @@ public class Chassis {
     }
 
     public void forward(double power) {
+        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         motorFL.setPower(power);
         motorFR.setPower(power);
         motorBL.setPower(power);

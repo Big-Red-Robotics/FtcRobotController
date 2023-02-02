@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.components;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.Autonomous_root;
 import org.firstinspires.ftc.teamcode.vision.AutonDetector;
 import org.firstinspires.ftc.teamcode.vision.SleeveDetector;
@@ -20,9 +21,10 @@ public class Vision {
     //"Webcam 1"
     private final OpenCvCamera camera;
     private final Telemetry telemetry;
-    public Vision(OpenCvCamera openCvCamera, Telemetry t){
+    public Vision(OpenCvCamera openCvCamera, Telemetry t, DistanceSensor d){
         this.camera = openCvCamera;
         this.telemetry = t;
+        this.distanceSensor = d;
     }
 
     SleeveDetector sleeveDetector;
@@ -76,7 +78,7 @@ public class Vision {
         else return -1;
     }
 
-//    public double distance() {
-//        return distanceSensor.getDistance(DistanceUnit.MM);
-//    }
+    public double distance() {
+        return distanceSensor.getDistance(DistanceUnit.MM);
+    }
 }
