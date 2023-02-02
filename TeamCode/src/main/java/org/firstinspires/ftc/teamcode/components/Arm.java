@@ -100,10 +100,12 @@ public class Arm {
 
         if(cam.isBusy()) {
             if (cam.getCurrentPosition() < cam.getTargetPosition()) {
-                cam.setPower(1.0);
+                cam.setPower(0.75);
             } else {
-                cam.setPower(-1.0);
+                cam.setPower(-0.75);
             }
+        } else {
+            cam.setPower(0.0);
         }
     }
 
