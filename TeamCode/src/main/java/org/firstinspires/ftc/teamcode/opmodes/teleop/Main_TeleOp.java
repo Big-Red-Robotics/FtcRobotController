@@ -31,7 +31,7 @@ public class Main_TeleOp extends LinearOpMode {
         arm.init();
         arm.armTarget = 0;
 
-        double camLevel = 1;
+        double camLevel = arm.ground;
 
         boolean stack = false;
 
