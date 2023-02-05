@@ -45,16 +45,16 @@ public class Main_TeleOp extends LinearOpMode {
             if (gamepad2.x) { arm.armTarget = arm.lowJunction; stack = false; }
             if (gamepad2.b) { arm.armTarget = arm.middleJunction; stack = false; }
             if (gamepad2.y) { arm.armTarget = arm.highJunction; stack = false; }
-            if (gamepad2.a) { arm.armTarget = 0; camLevel = 0; stack = false; }
+            if (gamepad2.a) { arm.armTarget = 0; camLevel = arm.ground; stack = false; }
 
-            if (gamepad2.dpad_up) { arm.armTarget = 350; camLevel = 0.38; stack = true; }
-            if (gamepad2.dpad_left) { arm.armTarget = 340; camLevel = 0.49; stack = true; }
-            if (gamepad2.dpad_right) { arm.armTarget = 325; camLevel = 0.58; stack = true; }
-            if (gamepad2.dpad_down) { arm.armTarget = 310; camLevel = 0.98; stack = true; }
+            if (gamepad2.dpad_up) { arm.armTarget = 350; camLevel = arm.fiveStack; stack = true; }
+            if (gamepad2.dpad_left) { arm.armTarget = 340; camLevel = arm.fourStack; stack = true; }
+            if (gamepad2.dpad_right) { arm.armTarget = 325; camLevel = arm.threeStack; stack = true; }
+            if (gamepad2.dpad_down) { arm.armTarget = 310; camLevel = arm.twoStack; stack = true; }
 
             if (gamepad2.left_bumper){
                 arm.armTarget = 0;
-                if (arm.getCurrentPosition() > arm.lowJunction) camLevel = 0;
+                if (arm.getCurrentPosition() > arm.lowJunction) camLevel = arm.ground;
                 stack = false;
                 arm.openGripper();
             }
