@@ -26,12 +26,12 @@ public class Main_TeleOp extends LinearOpMode {
         DcMotor leftLift = hardwareMap.get(DcMotor.class, "leftArm");
         DcMotor rightLift = hardwareMap.get(DcMotor.class, "rightArm");
         Servo gripper = hardwareMap.get(Servo.class, "gripper");
-        DcMotor cam = hardwareMap.get(DcMotor.class, "cam");
+        Servo cam = hardwareMap.get(Servo.class, "cam");
         Arm arm = new Arm(leftLift, rightLift, gripper, cam);
         arm.init();
         arm.armTarget = 0;
 
-        int camLevel = 1;
+        double camLevel = 1;
 
         boolean stack = false;
 
@@ -45,10 +45,10 @@ public class Main_TeleOp extends LinearOpMode {
             if (gamepad2.y) { arm.armTarget = arm.highJunction; stack = false; }
             if (gamepad2.a) { arm.armTarget = 0; camLevel = 0; stack = false; }
 
-            if (gamepad2.dpad_up) { arm.armTarget = 350; camLevel = -485; stack = true; }
-            if (gamepad2.dpad_left) { arm.armTarget = 340; camLevel = -545; stack = true; }
-            if (gamepad2.dpad_right) { arm.armTarget = 325; camLevel = -620; stack = true; }
-            if (gamepad2.dpad_down) { arm.armTarget = 310; camLevel = -685; stack = true; }
+            if (gamepad2.dpad_up) { arm.armTarget = 350; camLevel = 0.38; stack = true; }
+            if (gamepad2.dpad_left) { arm.armTarget = 340; camLevel = 0.49; stack = true; }
+            if (gamepad2.dpad_right) { arm.armTarget = 325; camLevel = 0.58; stack = true; }
+            if (gamepad2.dpad_down) { arm.armTarget = 310; camLevel = 0.98; stack = true; }
 
             if (gamepad2.left_bumper){
                 arm.armTarget = 0;
@@ -61,14 +61,7 @@ public class Main_TeleOp extends LinearOpMode {
 
             //TODO: SET 1.0 FOR 11166-RC!!
             if (gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) {
-                arm.armTriggers(gamepad2, camLevel);
-            } else if (Math.abs(gamepad2.left_stick_y) > 0) {
-                cam.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                arm.cam.setPower(gamepad2.left_stick_y);
-                camLevel = arm.cam.getCurrentPosition();
-            } else if (gamepad2.right_stick_button) {
-                cam.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                camLevel = 0;
+                arm.armTriggers(gamepad2);
             } else {
                 arm.setArmPower(gamepad2, 1.0, camLevel, stack);
             }
@@ -76,7 +69,7 @@ public class Main_TeleOp extends LinearOpMode {
             telemetry.addData("arm position", arm.getCurrentPosition());
             telemetry.addData("arm target", arm.armTarget);
             telemetry.addData("Servo position", arm.gripper.getPosition());
-            telemetry.addData("Cam:",arm.cam.getCurrentPosition());
+            telemetry.addData("Cam:",arm.cam.getPosition());
             telemetry.update();
         }
     }

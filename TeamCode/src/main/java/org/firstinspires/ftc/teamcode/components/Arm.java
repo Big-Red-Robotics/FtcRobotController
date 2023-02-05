@@ -8,7 +8,7 @@ public class Arm {
     public DcMotor leftLift;
     public DcMotor rightLift;
     public Servo gripper;
-    public DcMotor cam;
+    public Servo cam;
 
     //TODO: CHANGE VALUE TO 420, 630, 910 FOR 11166-RC!!!!
     //150, 300, 450 for test robot
@@ -21,7 +21,7 @@ public class Arm {
 
     public ManualArm manualArm = ManualArm.none;
 
-    public Arm(DcMotor lLift, DcMotor rLift, Servo g, DcMotor c){
+    public Arm(DcMotor lLift, DcMotor rLift, Servo g, Servo c){
         this.leftLift = lLift;
         this.rightLift = rLift;
         this.gripper = g;
@@ -42,10 +42,7 @@ public class Arm {
         leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        cam.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        cam.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+        cam.setPosition(0.12);
 
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -94,22 +91,7 @@ public class Arm {
         rightLift.setPower(0.0);
     }
 
-    public void camRunToPosition(int position) {
-        cam.setTargetPosition(position);
-        cam.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        if(cam.isBusy()) {
-            if (cam.getCurrentPosition() < cam.getTargetPosition()) {
-                cam.setPower(0.75);
-            } else {
-                cam.setPower(-0.75);
-            }
-        } else {
-            cam.setPower(0.0);
-        }
-    }
-
-    public void setArmPower(Gamepad gamepad, double power, int camLevel, boolean stack) {
+    public void setArmPower(Gamepad gamepad, double power, double camLevel, boolean stack) {
         if (rightLift.isBusy() && leftLift.isBusy()){
             if (getCurrentPosition() > armTarget) {
                 if (getCurrentPosition() > 650 && getTargetPosition() != 650) {
@@ -129,9 +111,9 @@ public class Arm {
             }
         }
 
-        camRunToPosition(camLevel);
+        cam.setPosition(camLevel);
 
-        if ((camLevel < (cam.getCurrentPosition() - 10) && camLevel > (cam.getCurrentPosition() + 10)) && (camLevel < -100) && (armTarget > (getCurrentPosition() - 15) && armTarget < (getCurrentPosition() + 15)) && stack) {
+        if ((camLevel < (cam.getPosition() - 10) && camLevel > (cam.getPosition() + 10)) && (camLevel < -100) && (armTarget > (getCurrentPosition() - 15) && armTarget < (getCurrentPosition() + 15)) && stack) {
             leftLift.setPower(0.0);
             rightLift.setPower(0.0);
             leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -144,7 +126,7 @@ public class Arm {
             rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);}
     }
 
-    public void armTriggers(Gamepad gamepad, int camLevel) {
+    public void armTriggers(Gamepad gamepad) {
         leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         if (gamepad.left_trigger > 0) {
