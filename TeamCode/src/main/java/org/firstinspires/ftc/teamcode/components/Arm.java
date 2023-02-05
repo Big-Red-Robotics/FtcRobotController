@@ -53,10 +53,10 @@ public class Arm {
     }
 
     public void openGripper() {
-        gripper.setPosition(0.71);
+        gripper.setPosition(0.96);
     }
 
-    public void closeGripper() { gripper.setPosition(0.46); }
+    public void closeGripper() { gripper.setPosition(0.73); }
 
     public void runToPosition(int position) {
         armTarget = position;
@@ -117,7 +117,7 @@ public class Arm {
 
         cam.setPosition(camLevel);
 
-        if (camLevel == cam.getPosition() && (armTarget > (getCurrentPosition() - 15) && armTarget < (getCurrentPosition() + 15)) && stack) {
+        if (camLevel == cam.getPosition() && camLevel != ground && (armTarget > (getCurrentPosition() - 15) && armTarget < (getCurrentPosition() + 15)) && stack) {
             leftLift.setPower(0.0);
             rightLift.setPower(0.0);
             leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
