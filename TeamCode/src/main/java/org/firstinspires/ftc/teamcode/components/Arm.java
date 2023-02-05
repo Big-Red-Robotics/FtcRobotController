@@ -17,6 +17,12 @@ public class Arm {
     public final int highJunction = 910;
     public int armTarget = 0;
 
+    public final double fiveStack = 0.526;
+    public final double fourStack = 0.53;
+    public final double threeStack = 0.536;
+    public final double twoStack = 0.542;
+    public final double ground = 0.508;
+
     public enum ManualArm {drop, raise, none};
 
     public ManualArm manualArm = ManualArm.none;
@@ -41,8 +47,6 @@ public class Arm {
         //setting the motors into the necessary mode for using the encoders
         leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        cam.setPosition(0.12);
 
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

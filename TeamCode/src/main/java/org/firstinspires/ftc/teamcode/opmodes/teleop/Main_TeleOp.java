@@ -35,6 +35,8 @@ public class Main_TeleOp extends LinearOpMode {
 
         boolean stack = false;
 
+        telemetry.addData("cam position", cam.getPosition());
+
         waitForStart();
 
         while (opModeIsActive()) {
