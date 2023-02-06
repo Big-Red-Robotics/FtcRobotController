@@ -115,9 +115,9 @@ public class Arm {
             }
         }
 
-        cam.setPosition(camLevel);
+        if (armTarget > (getCurrentPosition() - 50) && armTarget < (getCurrentPosition() + 50)) cam.setPosition(camLevel);
 
-        if (camLevel == cam.getPosition() && cam.getPosition() != ground && (armTarget > (getCurrentPosition() - 15) && armTarget < (getCurrentPosition() + 15)) && stack) {
+        if (camLevel == cam.getPosition() && cam.getPosition() != ground && stack) {
             leftLift.setPower(0.0);
             rightLift.setPower(0.0);
             leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
