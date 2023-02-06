@@ -45,6 +45,11 @@ public class Chassis {
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        motorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         //IMU
         IMU.Parameters parameters = new IMU.Parameters(
             new RevHubOrientationOnRobot(
