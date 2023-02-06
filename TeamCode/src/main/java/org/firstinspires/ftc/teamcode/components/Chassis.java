@@ -79,10 +79,10 @@ public class Chassis {
                 leftBackPower = left_x;
                 rightBackPower = -left_x;
             } else {
-                leftFrontPower = -left_x * 0.8 - strafe_side * 0.6;
-                rightFrontPower = left_x * 0.8 + strafe_side * 0.6;
-                leftBackPower = left_x * 0.8 - strafe_side * 0.6;
-                rightBackPower = -left_x * 0.8 + strafe_side * 0.6;
+                leftFrontPower = -left_x * 0.7 - strafe_side * 0.6;
+                rightFrontPower = left_x * 0.7 + strafe_side * 0.6;
+                leftBackPower = left_x * 0.7 - strafe_side * 0.6;
+                rightBackPower = -left_x * 0.7 + strafe_side * 0.6;
             }
         } else if (Math.abs(Math.atan2(Math.abs(left_x), Math.abs(left_y))) < Math.PI/10.0 && left_y != 0) {
              if (gamepad.right_bumper) {
