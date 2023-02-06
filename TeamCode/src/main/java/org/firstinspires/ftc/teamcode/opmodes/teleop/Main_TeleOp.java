@@ -63,6 +63,7 @@ public class Main_TeleOp extends LinearOpMode {
 
             //TODO: SET 1.0 FOR 11166-RC!!
             if (gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) {
+                stack = false;
                 arm.armTriggers(gamepad2);
             } else {
                 arm.setArmPower(gamepad2, 1.0, camLevel, stack);

@@ -17,10 +17,10 @@ public class Arm {
     public final int highJunction = 910;
     public int armTarget = 0;
 
-    public final double fiveStack = 0.526;
-    public final double fourStack = 0.53;
-    public final double threeStack = 0.536;
-    public final double twoStack = 0.542;
+    public final double fiveStack = 0.528;
+    public final double fourStack = 0.532;
+    public final double threeStack = 0.538;
+    public final double twoStack = 0.544;
     public final double ground = 0.508;
 
     public enum ManualArm {drop, raise, none};
@@ -35,7 +35,7 @@ public class Arm {
     }
 
     public void init(){
-        gripper.setPosition(0.75);
+        gripper.setPosition(0.97);
 
         //TODO: REVERSE rightLift FOR 11166-RC!!!
         rightLift.setDirection(DcMotor.Direction.REVERSE);
@@ -53,7 +53,7 @@ public class Arm {
     }
 
     public void openGripper() {
-        gripper.setPosition(0.96);
+        gripper.setPosition(0.97);
     }
 
     public void closeGripper() { gripper.setPosition(0.73); }
@@ -117,7 +117,7 @@ public class Arm {
 
         cam.setPosition(camLevel);
 
-        if (camLevel == cam.getPosition() && camLevel != ground && (armTarget > (getCurrentPosition() - 15) && armTarget < (getCurrentPosition() + 15)) && stack) {
+        if (camLevel == cam.getPosition() && cam.getPosition() != ground && (armTarget > (getCurrentPosition() - 15) && armTarget < (getCurrentPosition() + 15)) && stack) {
             leftLift.setPower(0.0);
             rightLift.setPower(0.0);
             leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
