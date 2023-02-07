@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-//import org.firstinspires.ftc.teamcode.components.teaminfo.TeamColor;
-//import org.firstinspires.ftc.teamcode.components.teaminfo.TeamInfo;
 import org.firstinspires.ftc.teamcode.components.teaminfo.TeamColor;
 import org.firstinspires.ftc.teamcode.components.teaminfo.TeamInfo;
 import org.opencv.core.Core;
@@ -42,7 +40,7 @@ public class AutonDetector extends OpenCvPipeline {
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
         Mat thresh = new Mat();
-//        thresh = yellowThresh();
+//        thresh = redThresh();
         if(detectMode == DetectMode.POLE) thresh = yellowThresh();
         else if (detectMode == DetectMode.CONE){
             if(TeamInfo.teamColor == TeamColor.RED) thresh = redThresh();
@@ -73,11 +71,11 @@ public class AutonDetector extends OpenCvPipeline {
     }
 
     private Mat redThresh() {
-        Scalar red1_lowHSV = new Scalar (0, 64, 20);
+        Scalar red1_lowHSV = new Scalar (0, 100, 100);
         Scalar red1_highHSV = new Scalar (10, 255, 255);
         Mat thresh1 = new Mat();
 
-        Scalar red2_lowHSV = new Scalar(160, 64, 20);
+        Scalar red2_lowHSV = new Scalar(160, 100, 100);
         Scalar red2_highHSV = new Scalar (180, 255, 255);
         Mat thresh2 = new Mat();
 
@@ -93,7 +91,7 @@ public class AutonDetector extends OpenCvPipeline {
     }
 
     private Mat blueThresh() {
-        Scalar blue_lowHSV = new Scalar (110,64,20);
+        Scalar blue_lowHSV = new Scalar (110,100,100);
         Scalar blue_highHSV = new Scalar (130,255,255);
         Mat thresh = new Mat();
         Core.inRange(mat, blue_lowHSV, blue_highHSV, thresh);

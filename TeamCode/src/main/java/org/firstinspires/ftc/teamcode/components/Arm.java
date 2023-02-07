@@ -115,24 +115,25 @@ public class Arm {
             }
         }
 
-        if (armTarget > (getCurrentPosition() - 50) && armTarget < (getCurrentPosition() + 50)) cam.setPosition(camLevel);
-
         if (camLevel == cam.getPosition() && cam.getPosition() != ground && stack) {
             leftLift.setPower(0.0);
             rightLift.setPower(0.0);
-            leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armTarget = getCurrentPosition();
         } else {
             leftLift.setTargetPosition(armTarget);
             rightLift.setTargetPosition(armTarget);
             leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);}
+            rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+        if (armTarget > (getCurrentPosition() - 50) && armTarget < (getCurrentPosition() + 50)) cam.setPosition(camLevel);
     }
 
     public void armTriggers(Gamepad gamepad) {
-        leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         if (gamepad.left_trigger > 0) {
             armTarget = getCurrentPosition();
 

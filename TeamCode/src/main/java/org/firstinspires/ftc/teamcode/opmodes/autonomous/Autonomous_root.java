@@ -99,11 +99,12 @@ public class Autonomous_root extends LinearOpMode {
                     telemetry.update();
                 }
                 chassis.stop();
+                adjust(chassis, vision, 0);
 
                 arm.runToPosition(arm.highJunction);
 
                 chassis.resetEncoder();
-                chassis.runToPosition(-200,-200,-200,-200);
+                chassis.runToPosition(-175,-175,-175,-175);
                 chassis.stop();
 
                 arm.openGripper();
