@@ -21,7 +21,7 @@ public class Arm {
     public final double fourStack = 0.532;
     public final double threeStack = 0.538;
     public final double twoStack = 0.544;
-    public final double ground = 0.508;
+    public final double ground = 0.51;
 
     public enum ManualArm {drop, raise, none};
 
@@ -56,7 +56,7 @@ public class Arm {
         gripper.setPosition(0.97);
     }
 
-    public void closeGripper() { gripper.setPosition(0.73); }
+    public void closeGripper() { gripper.setPosition(0.77); }
 
     public void runToPosition(int position) {
         armTarget = position;
@@ -108,8 +108,6 @@ public class Arm {
                 leftLift.setPower(0.0);
                 rightLift.setPower(0.0);
             } else {
-                leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 leftLift.setPower(power);
                 rightLift.setPower(power);
             }
