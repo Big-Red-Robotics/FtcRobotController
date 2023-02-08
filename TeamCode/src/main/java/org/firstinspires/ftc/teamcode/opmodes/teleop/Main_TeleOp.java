@@ -54,7 +54,7 @@ public class Main_TeleOp extends LinearOpMode {
 
             if (gamepad2.left_bumper){
                 arm.armTarget = 0;
-                if (arm.getCurrentPosition() > arm.lowJunction) camLevel = arm.ground;
+                camLevel = arm.ground;
                 stack = false;
                 arm.openGripper();
             }
