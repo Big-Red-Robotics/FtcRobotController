@@ -56,7 +56,7 @@ public class Arm {
         gripper.setPosition(0.97);
     }
 
-    public void closeGripper() { gripper.setPosition(0.77); }
+    public void closeGripper() { gripper.setPosition(0.75); }
 
     public void runToPosition(int position) {
         armTarget = position;
