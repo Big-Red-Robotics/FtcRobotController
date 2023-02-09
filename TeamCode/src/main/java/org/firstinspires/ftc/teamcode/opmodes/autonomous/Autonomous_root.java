@@ -94,6 +94,7 @@ public class Autonomous_root extends LinearOpMode {
 
                 while(vision.distance() > 220){
                     if(vision.distance() > 5000) adjust(chassis, vision, 0);
+                    if(vision.getAutonPipeline().differenceX() > 3) adjust(chassis, vision, 0);
                     chassis.forward(-0.1);
                     telemetry.addData("distance", vision.distance());
                     telemetry.update();
