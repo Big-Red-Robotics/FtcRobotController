@@ -96,16 +96,16 @@ public class Chassis {
                  leftBackPower = left_y;
                  rightBackPower = left_y;
              } else {
-                 leftFrontPower = left_y * 0.7 - strafe_side * 0.7;
-                 rightFrontPower = left_y * 0.7 + strafe_side * 0.7;
-                 leftBackPower = left_y * 0.7 - strafe_side * 0.7;
-                 rightBackPower = left_y * 0.7 + strafe_side * 0.7;
+                 leftFrontPower = left_y * 0.75 - strafe_side * 0.7;
+                 rightFrontPower = left_y * 0.75 + strafe_side * 0.7;
+                 leftBackPower = left_y * 0.75 - strafe_side * 0.7;
+                 rightBackPower = left_y * 0.75 + strafe_side * 0.7;
              }
         } else {
-            leftFrontPower = (left_y - left_x) * 0.55 - strafe_side * 0.55;
-            rightFrontPower = (left_y + left_x) * 0.55 + strafe_side * 0.55;
-            leftBackPower = (left_y + left_x) * 0.55 - strafe_side * 0.55;
-            rightBackPower = (left_y - left_x) * 0.55 + strafe_side * 0.55;
+            leftFrontPower = (left_y - left_x) * 0.6 - strafe_side * 0.6;
+            rightFrontPower = (left_y + left_x) * 0.6 + strafe_side * 0.6;
+            leftBackPower = (left_y + left_x) * 0.6 - strafe_side * 0.6;
+            rightBackPower = (left_y - left_x) * 0.6 + strafe_side * 0.6;
         }
 
         double max = Math.max(Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower)), Math.max(Math.abs(leftBackPower), Math.abs(rightBackPower)));

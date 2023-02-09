@@ -92,7 +92,7 @@ public class Autonomous_root extends LinearOpMode {
 
                 adjust(chassis, vision, 0);
 
-                while(vision.distance() > 200){
+                while(vision.distance() > 220){
                     if(vision.distance() > 5000) adjust(chassis, vision, 0);
                     chassis.forward(-0.1);
                     telemetry.addData("distance", vision.distance());
@@ -104,7 +104,7 @@ public class Autonomous_root extends LinearOpMode {
                 arm.runToPosition(arm.highJunction);
 
                 chassis.resetEncoder();
-                chassis.runToPosition(-175,-175,-175,-175);
+                chassis.runToPosition(-195,-195,-195,-195);
                 chassis.stop();
 
                 arm.openGripper();
@@ -128,13 +128,13 @@ public class Autonomous_root extends LinearOpMode {
 
                 chassis.resetEncoder();
                 if(TeamInfo.initialSide == InitialSide.RIGHT){
-                    chassis.runToPosition(-150, 150, 150, -150);
+                    chassis.runToPosition(-100, 100, 100, -100);
                     chassis.resetEncoder();
                     if(vision.tagId() == RIGHT) chassis.runToPosition(-1100, -1100, -1100, -1100);
 //                    else if(vision.tagId() == MIDDLE) chassis.runToPosition(50, 50, 50, 50);
                     else if(vision.tagId() == LEFT) chassis.runToPosition(1100, 1100, 1100, 1100);
                 } else if(TeamInfo.initialSide == InitialSide.LEFT) {
-                    chassis.runToPosition(150, -150, -150, 150);
+                    chassis.runToPosition(100, -100, -100, 100);
                     chassis.resetEncoder();
                     if(vision.tagId() == RIGHT) chassis.runToPosition(1100, 1100, 1100, 1100);
 //                    else if(vision.tagId() == MIDDLE) chassis.runToPosition(50, 50, 50, 50);
