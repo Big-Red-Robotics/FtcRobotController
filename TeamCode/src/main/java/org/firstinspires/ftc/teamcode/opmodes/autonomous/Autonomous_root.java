@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.components.teaminfo.TeamInfo;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
-@Autonomous(name="Autonomous root :)")
+@Autonomous(name="ADVANCED AUTONOMOUS")
 public class Autonomous_root extends LinearOpMode {
     //sleeve
     int LEFT = 1;
@@ -93,8 +93,8 @@ public class Autonomous_root extends LinearOpMode {
                 adjust(chassis, vision, 0);
 
                 while(vision.distance() > 220){
-                    if(vision.distance() > 5000) adjust(chassis, vision, 0);
-                    if(vision.getAutonPipeline().differenceX() > 3) adjust(chassis, vision, 0);
+                    if(vision.distance() > 5000 || vision.getAutonPipeline().differenceX() > 3) adjust(chassis, vision, 0);
+                    if(vision.distance() < 0) chassis.runToPosition(100, 100, 100, 100);
                     chassis.forward(-0.1);
                     telemetry.addData("distance", vision.distance());
                     telemetry.update();
@@ -105,12 +105,14 @@ public class Autonomous_root extends LinearOpMode {
                 arm.runToPosition(arm.highJunction);
 
                 chassis.resetEncoder();
-                chassis.runToPosition(-195,-195,-195,-195);
+                chassis.runToPosition(-185,-185,-185,-185);
                 chassis.stop();
 
                 arm.openGripper();
 
                 vision.setDetector("cone");
+
+                sleep(500);
 
                 chassis.runToPosition(0, 0, 0, 0);
 
