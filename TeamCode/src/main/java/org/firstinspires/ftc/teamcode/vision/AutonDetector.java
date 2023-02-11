@@ -38,12 +38,11 @@ public class AutonDetector extends OpenCvPipeline {
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
         Mat thresh = new Mat();
-        thresh = redThresh();
-//        if(detectMode == DetectMode.POLE) thresh = yellowThresh();
-//        else if (detectMode == DetectMode.CONE){
-//            if(TeamInfo.teamColor == TeamColor.RED) thresh = redThresh();
-//            else if(TeamInfo.teamColor == TeamColor.BLUE) thresh = blueThresh();
-//        }
+        if(detectMode == DetectMode.POLE) thresh = yellowThresh();
+        else if (detectMode == DetectMode.CONE){
+            if(TeamInfo.teamColor == TeamColor.RED) thresh = redThresh();
+            else if(TeamInfo.teamColor == TeamColor.BLUE) thresh = blueThresh();
+        }
 
         Imgproc.erode(thresh, thresh, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5)));
 
