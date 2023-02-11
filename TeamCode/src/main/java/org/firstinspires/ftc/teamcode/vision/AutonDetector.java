@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.vision;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.components.teaminfo.TeamColor;
+import org.firstinspires.ftc.teamcode.components.teaminfo.TeamInfo;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -39,9 +41,9 @@ public class AutonDetector extends OpenCvPipeline {
 
         Mat thresh = new Mat();
         if(detectMode == DetectMode.POLE) thresh = yellowThresh();
-        else if (detectMode == DetectMode.CONE){
-            if(TeamInfo.teamColor == TeamColor.RED) thresh = redThresh();
-            else if(TeamInfo.teamColor == TeamColor.BLUE) thresh = blueThresh();
+        else if (detectMode == DetectMode.CONE) {
+            if (TeamInfo.teamColor == TeamColor.RED) thresh = redThresh();
+            else if (TeamInfo.teamColor == TeamColor.BLUE) thresh = blueThresh();
         }
 
         Imgproc.erode(thresh, thresh, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5)));
