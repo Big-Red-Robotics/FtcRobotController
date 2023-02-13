@@ -17,11 +17,11 @@ public class Arm {
     public final int highJunction = 910;
     public int armTarget = 0;
 
-    public final double fiveStack = 0.528;
-    public final double fourStack = 0.532;
-    public final double threeStack = 0.538;
-    public final double twoStack = 0.544;
-    public final double ground = 0.51;
+    public final int fiveStack = 140;
+    public final int fourStack = 110;
+    public final int threeStack = 80;
+    public final int twoStack = 50;
+    public final int ground = 0;
 
     public enum ManualArm {drop, raise, none};
 
@@ -95,7 +95,7 @@ public class Arm {
         rightLift.setPower(0.0);
     }
 
-    public void setArmPower(Gamepad gamepad, double power, double camLevel, boolean stack) {
+    public void setArmPower(Gamepad gamepad, double power, int camLevel, boolean stack) {
         if (rightLift.isBusy() && leftLift.isBusy()){
             if (getCurrentPosition() > armTarget) {
                 if (getCurrentPosition() > 650 && getTargetPosition() != 650) {
@@ -113,20 +113,15 @@ public class Arm {
             }
         }
 
-        if (camLevel == cam.getPosition() && cam.getPosition() != ground && stack) {
-            leftLift.setPower(0.0);
-            rightLift.setPower(0.0);
-            leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armTarget = getCurrentPosition();
-        } else {
-            leftLift.setTargetPosition(armTarget);
-            rightLift.setTargetPosition(armTarget);
-            leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
+        leftLift.setTargetPosition(armTarget);
+        rightLift.setTargetPosition(armTarget);
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        if (armTarget > (getCurrentPosition() - 50) && armTarget < (getCurrentPosition() + 50)) cam.setPosition(camLevel);
+        if (armTarget > (getCurrentPosition() - 50) && armTarget < (getCurrentPosition() + 50) && stack) {
+            leftLift.setTargetPosition(camLevel);
+            rightLift.setTargetPosition(camLevel);
+        };
     }
 
     public void armTriggers(Gamepad gamepad) {
