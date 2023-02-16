@@ -47,10 +47,10 @@ public class Main_TeleOp extends LinearOpMode {
             if (gamepad2.y) { arm.armTarget = arm.highJunction; stack = false; }
             if (gamepad2.a) { arm.armTarget = 0; stackHeight = arm.ground; stack = false; }
 
-            if (gamepad2.dpad_up) { arm.armTarget = 350; stackHeight = arm.fiveStack; stack = true; }
-            if (gamepad2.dpad_left) { arm.armTarget = 340; stackHeight = arm.fourStack; stack = true; }
-            if (gamepad2.dpad_right) { arm.armTarget = 325; stackHeight = arm.threeStack; stack = true; }
-            if (gamepad2.dpad_down) { arm.armTarget = 310; stackHeight = arm.twoStack; stack = true; }
+            if (gamepad2.dpad_up) { arm.armTarget = 250; stackHeight = arm.fiveStack; stack = true; }
+            if (gamepad2.dpad_left) { arm.armTarget = 250; stackHeight = arm.fourStack; stack = true; }
+            if (gamepad2.dpad_right) { arm.armTarget = 250; stackHeight = arm.threeStack; stack = true; }
+            if (gamepad2.dpad_down) { arm.armTarget = 250; stackHeight = arm.twoStack; stack = true; }
 
             if (gamepad2.left_bumper){
                 arm.armTarget = 0;
