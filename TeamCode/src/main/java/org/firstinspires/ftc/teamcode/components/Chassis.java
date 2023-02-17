@@ -19,6 +19,8 @@ public class Chassis {
     public DcMotor motorBR;
     public IMU imu;
 
+    public IMU.Parameters parameters;
+
     private ElapsedTime runtime = new ElapsedTime();
 
     Telemetry telemetry;
