@@ -140,8 +140,8 @@ public class Arm {
         if (gamepad.right_trigger > 0) {
             armTarget = getCurrentPosition();
 
-            leftLift.setPower(gamepad.right_trigger*2);
-            rightLift.setPower(gamepad.right_trigger*2);
+            leftLift.setPower(gamepad.right_trigger*1.5);
+            rightLift.setPower(gamepad.right_trigger*1.5);
         }
     }
 
