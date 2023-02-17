@@ -78,7 +78,7 @@ public class Autonomous_root extends LinearOpMode {
             chassis.runToPosition(-100, -100, -100, -100);
 
             chassis.resetEncoder();
-            chassis.runToPosition(-2500, -2500, -2500, -2500);
+            chassis.runToPosition(-2450, -2450, -2450, -2450);
 
             vision.setDetector("pole");
 
@@ -87,60 +87,45 @@ public class Autonomous_root extends LinearOpMode {
 
             //RIGHT POSITION
             for(int i=0; i<1; i++){
+                chassis.runToAngle((TeamInfo.initialSide == InitialSide.RIGHT) ? 36 : -36);
 
-                chassis.runToAngle((TeamInfo.initialSide == InitialSide.RIGHT) ? 35 : -35);
+                chassis.resetEncoder();
+                chassis.runToPosition(-50, -50, -50, -50);
+                chassis.stop();
 
+                arm.runToPosition(arm.middleJunction);
                 adjust(chassis, vision, 0);
 
-                while(vision.distance() > 220){
-                    if(vision.distance() > 5000 || vision.getAutonPipeline().differenceX() > 3) adjust(chassis, vision, 0);
-                    if(vision.distance() < 0) chassis.runToPosition(100, 100, 100, 100);
-                    chassis.forward(-0.1);
+                while(vision.distance() > 200){
+                    adjust(chassis, vision, 0);
+                    chassis.forward(-.1);
                     telemetry.addData("distance", vision.distance());
                     telemetry.update();
                 }
-                chassis.stop();
-                adjust(chassis, vision, 0);
 
                 arm.runToPosition(arm.highJunction);
 
                 chassis.resetEncoder();
-                chassis.runToPosition(-185,-185,-185,-185);
+                chassis.runToPosition(-220,-220,-220,-220);
                 chassis.stop();
 
+                arm.fall();
                 arm.openGripper();
 
                 vision.setDetector("cone");
 
-                sleep(500);
-
-                chassis.runToPosition(0, 0, 0, 0);
-
-                //TODO: RUN TO CAM POSITION
-                arm.fall();
+                chassis.runToPosition(40, 40, 40, 40);
 
                 chassis.runToAngle((TeamInfo.initialSide == InitialSide.RIGHT) ? -90 : 90);
 
-                chassis.stop();
-
-//                adjust(chassis, vision, 0);
-                chassis.stop();
-
-                chassis.resetEncoder();
-                chassis.runToPosition(-100,-100,-100,-100);
-
                 chassis.resetEncoder();
                 if(TeamInfo.initialSide == InitialSide.RIGHT){
-                    chassis.runToPosition(-100, 100, 100, -100);
-                    chassis.resetEncoder();
                     if(vision.tagId() == RIGHT) chassis.runToPosition(-1100, -1100, -1100, -1100);
-//                    else if(vision.tagId() == MIDDLE) chassis.runToPosition(50, 50, 50, 50);
-                    else if(vision.tagId() == LEFT) chassis.runToPosition(1100, 1100, 1100, 1100);
+                    else if(vision.tagId() == MIDDLE) chassis.runToPosition(-50, -50, -50, -50);
+                    else if(vision.tagId() == LEFT) chassis.runToPosition(1000, 1000, 1000, 1000);
                 } else if(TeamInfo.initialSide == InitialSide.LEFT) {
-                    chassis.runToPosition(100, -100, -100, 100);
-                    chassis.resetEncoder();
-                    if(vision.tagId() == RIGHT) chassis.runToPosition(1100, 1100, 1100, 1100);
-//                    else if(vision.tagId() == MIDDLE) chassis.runToPosition(50, 50, 50, 50);
+                    if(vision.tagId() == RIGHT) chassis.runToPosition(1000, 1000, 1000, 1000);
+                    else if(vision.tagId() == MIDDLE) chassis.runToPosition(-50, -50, -50, -50);
                     else if(vision.tagId() == LEFT) chassis.runToPosition(-1100, -1100, -1100, -1100);
                 }
             }
@@ -151,13 +136,12 @@ public class Autonomous_root extends LinearOpMode {
     void adjust(Chassis chassis, Vision vision, int mode){
         final int turn = 0;
         final int strafe = 1;
-        while(Math.abs(vision.getAutonPipeline().differenceX()) > 3) {
-            double power = (vision.getAutonPipeline().differenceX() < 0) ? 0.2 : -0.2;
+        while(Math.abs(vision.getAutonPipeline().differenceX()) > 6) {
+            double power = (Math.abs(vision.getAutonPipeline().differenceX()) > 20) ? -0.175 * Math.abs(vision.getAutonPipeline().differenceX())/vision.getAutonPipeline().differenceX() : (vision.getAutonPipeline().differenceX())/200.0 + .075;
             if(mode == turn) chassis.turn(power);
             if(mode == strafe) chassis.strafe(power);
             telemetry.addData("difference", vision.getAutonPipeline().differenceX());
             telemetry.update();
         }
-        chassis.stop();
     }
 }
