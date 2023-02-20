@@ -27,10 +27,11 @@ import java.util.List;
  */
 @Config
 public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
-    public static double TICKS_PER_REV = 0;
-    public static double WHEEL_RADIUS = 2; // in
+    public static double TICKS_PER_REV = 8192;
+    public static double WHEEL_RADIUS = 17.5; //mm
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
+    //TODO: SET VALUES
     public static double LATERAL_DISTANCE = 10; // in; distance between the left and right wheels
     public static double FORWARD_OFFSET = 4; // in; offset of the lateral wheel
 
@@ -55,7 +56,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
     }
 
-    public static double encoderTicksToInches(double ticks) {
+    public static double encoderTicksToMillimeters(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
 
@@ -72,9 +73,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         lastEncPositions.add(frontPos);
 
         return Arrays.asList(
-                encoderTicksToInches(leftPos),
-                encoderTicksToInches(rightPos),
-                encoderTicksToInches(frontPos)
+                encoderTicksToMillimeters(leftPos),
+                encoderTicksToMillimeters(rightPos),
+                encoderTicksToMillimeters(frontPos)
         );
     }
 
@@ -91,9 +92,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         lastEncVels.add(frontVel);
 
         return Arrays.asList(
-                encoderTicksToInches(leftVel),
-                encoderTicksToInches(rightVel),
-                encoderTicksToInches(frontVel)
+                encoderTicksToMillimeters(leftVel),
+                encoderTicksToMillimeters(rightVel),
+                encoderTicksToMillimeters(frontVel)
         );
     }
 }
