@@ -66,6 +66,7 @@ public class Autonomous_root extends LinearOpMode {
 
             telemetry.addData("Team color", TeamInfo.teamColor);
             telemetry.addData("Initial side", TeamInfo.initialSide);
+            telemetry.addData("distance", vision.distance());
             telemetry.update();
 
             sleep(20);
