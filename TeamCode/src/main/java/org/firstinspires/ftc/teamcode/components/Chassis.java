@@ -77,7 +77,7 @@ public class Chassis {
         double leftBackPower;
         double rightBackPower;
 
-        if (Math.abs(Math.atan2(Math.abs(left_y), Math.abs(left_x))) < Math.PI/14.0 && left_x != 0) {
+        if (Math.abs(Math.atan2(Math.abs(left_y), Math.abs(left_x))) < Math.PI/6.0 && left_x != 0) {
             if (gamepad.right_bumper) {
                 leftFrontPower = -left_x;
                 rightFrontPower = left_x;
@@ -89,7 +89,7 @@ public class Chassis {
                 leftBackPower = left_x * 0.75 - strafe_side * 0.6;
                 rightBackPower = -left_x * 0.75 + strafe_side * 0.6;
             }
-        } else if (Math.abs(Math.atan2(Math.abs(left_x), Math.abs(left_y))) < Math.PI/10.0 && left_y != 0) {
+        } else if (Math.abs(Math.atan2(Math.abs(left_x), Math.abs(left_y))) < Math.PI/7.0 && left_y != 0) {
              if (gamepad.right_bumper) {
                  leftFrontPower = left_y;
                  rightFrontPower = left_y;

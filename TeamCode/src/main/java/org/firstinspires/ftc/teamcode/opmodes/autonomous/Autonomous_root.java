@@ -109,6 +109,8 @@ public class Autonomous_root extends LinearOpMode {
                 chassis.runToPosition(-220,-220,-220,-220);
                 chassis.stop();
 
+
+
                 arm.fall();
                 arm.openGripper();
 
@@ -136,8 +138,8 @@ public class Autonomous_root extends LinearOpMode {
     void adjust(Chassis chassis, Vision vision, int mode){
         final int turn = 0;
         final int strafe = 1;
-        while(Math.abs(vision.getAutonPipeline().differenceX()) > 6) {
-            double power = (Math.abs(vision.getAutonPipeline().differenceX()) > 20) ? -0.175 * Math.abs(vision.getAutonPipeline().differenceX())/vision.getAutonPipeline().differenceX() : (vision.getAutonPipeline().differenceX())/200.0 + .075;
+        while(Math.abs(vision.getAutonPipeline().differenceX()) > 9) {
+            double power = (Math.abs(vision.getAutonPipeline().differenceX()) > 20) ? -0.175 * Math.abs(vision.getAutonPipeline().differenceX())/vision.getAutonPipeline().differenceX() : (vision.getAutonPipeline().differenceX())/150.0;
             if(mode == turn) chassis.turn(power);
             if(mode == strafe) chassis.strafe(power);
             telemetry.addData("difference", vision.getAutonPipeline().differenceX());
