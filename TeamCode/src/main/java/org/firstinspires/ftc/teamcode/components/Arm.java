@@ -35,8 +35,6 @@ public class Arm {
     }
 
     public void init(){
-        gripper.setPosition(0.97);
-
         //TODO: REVERSE rightLift FOR 11166-RC!!!
         rightLift.setDirection(DcMotor.Direction.REVERSE);
 
@@ -82,7 +80,7 @@ public class Arm {
         leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while(getCurrentPosition() > middleJunction) {
+        if(getCurrentPosition() > middleJunction) {
             leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             leftLift.setPower(0.0);

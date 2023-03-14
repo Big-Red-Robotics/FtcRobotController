@@ -107,7 +107,7 @@ public class autonomous_nonstop extends LinearOpMode {
                 arm.runToPosition(arm.highJunction);
 
                 chassis.resetEncoder();
-                chassis.runToPosition(-220,-220,-220,-220);
+                chassis.runToPosition(-200,-200,-200,-200);
                 chassis.stop();
 
                 arm.fall();
