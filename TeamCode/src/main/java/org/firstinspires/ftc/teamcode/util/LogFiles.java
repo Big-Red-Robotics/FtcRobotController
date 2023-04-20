@@ -4,10 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerNotifier;
@@ -18,12 +14,10 @@ import org.firstinspires.ftc.ftccommon.external.WebHandlerRegistrar;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -74,24 +68,11 @@ public final class LogFiles {
         public double mecHeadingD = SampleMecanumDrive.HEADING_PID.kD;
         public double mecLateralMultiplier = SampleMecanumDrive.LATERAL_MULTIPLIER;
 
-        public double tankAxialP = SampleTankDrive.AXIAL_PID.kP;
-        public double tankAxialI = SampleTankDrive.AXIAL_PID.kI;
-        public double tankAxialD = SampleTankDrive.AXIAL_PID.kD;
-        public double tankCrossTrackP = SampleTankDrive.CROSS_TRACK_PID.kP;
-        public double tankCrossTrackI = SampleTankDrive.CROSS_TRACK_PID.kI;
-        public double tankCrossTrackD = SampleTankDrive.CROSS_TRACK_PID.kD;
-        public double tankHeadingP = SampleTankDrive.HEADING_PID.kP;
-        public double tankHeadingI = SampleTankDrive.HEADING_PID.kI;
-        public double tankHeadingD = SampleTankDrive.HEADING_PID.kD;
-
         public double trackingTicksPerRev = StandardTrackingWheelLocalizer.TICKS_PER_REV;
         public double trackingWheelRadius = StandardTrackingWheelLocalizer.WHEEL_RADIUS;
         public double trackingGearRatio = StandardTrackingWheelLocalizer.GEAR_RATIO;
         public double trackingLateralDistance = StandardTrackingWheelLocalizer.LATERAL_DISTANCE;
-        public double trackingForwardOffset = StandardTrackingWheelLocalizer.FORWARD_OFFSET;
-
-        public RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR = DriveConstants.LOGO_FACING_DIR;
-        public RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR = DriveConstants.USB_FACING_DIR;
+        public double trackingSideOffset = StandardTrackingWheelLocalizer.SIDE_OFFSET;
 
         public List<Long> nsTimes = new ArrayList<>();
 
@@ -167,8 +148,8 @@ public final class LogFiles {
         @SuppressLint("SimpleDateFormat")
         final DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd__HH_mm_ss_SSS");
 
-        final ObjectWriter jsonWriter = new ObjectMapper(new JsonFactory())
-                .writerWithDefaultPrettyPrinter();
+//        final ObjectWriter jsonWriter = new ObjectMapper(new JsonFactory())
+//                .writerWithDefaultPrettyPrinter();
 
         @Override
         public void onOpModePreInit(OpMode opMode) {
@@ -206,13 +187,13 @@ public final class LogFiles {
                 ROOT.mkdirs();
 
                 String filename = dateFormat.format(new Date(log.msInit)) + "__" + opMode.getClass().getSimpleName() + ".json";
-                File file = new File(ROOT, filename);
-                try {
-                    jsonWriter.writeValue(file, log);
-                } catch (IOException e) {
-                    RobotLog.setGlobalErrorMsg(new RuntimeException(e),
-                            "Unable to write data to " + file.getAbsolutePath());
-                }
+//                File file = new File(ROOT, filename);
+//                try {
+//                    jsonWriter.writeValue(file, log);
+//                } catch (IOException e) {
+//                    RobotLog.setGlobalErrorMsg(new RuntimeException(e),
+//                            "Unable to write data to " + file.getAbsolutePath());
+//                }
             }
         }
     };
