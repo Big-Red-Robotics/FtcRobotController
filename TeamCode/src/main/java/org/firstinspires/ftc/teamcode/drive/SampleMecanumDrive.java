@@ -57,10 +57,10 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(5, 0, 1);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0, 1);
 
-    public static double LATERAL_MULTIPLIER = 1;
+    public static double LATERAL_MULTIPLIER = 1.7;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -73,9 +73,9 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
+    DcMotorEx motorFL, motorFR, motorBL, motorBR;
     private IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
@@ -96,23 +96,14 @@ public class SampleMecanumDrive extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        // TODO: adjust the names of the following hardware devices to match your configuration
-        DcMotor motorFL = hardwareMap.get(DcMotor.class, "motorFL");
-        DcMotor motorFR = hardwareMap.get(DcMotor.class, "motorFR");
-        DcMotor motorBL = hardwareMap.get(DcMotor.class, "motorBL");
-        DcMotor motorBR = hardwareMap.get(DcMotor.class, "motorBR");
-        IMU imu = hardwareMap.get(IMU.class, "imu");
-        Chassis chassis = new Chassis(motorFL, motorFR, motorBL, motorBR, imu, null);
-        chassis.init();
+        motorFL = hardwareMap.get(DcMotorEx.class, "motorFL");
+        motorFR = hardwareMap.get(DcMotorEx.class, "motorFR");
+        motorBL = hardwareMap.get(DcMotorEx.class, "motorBL");
+        motorBR = hardwareMap.get(DcMotorEx.class, "motorBR");
+        imu = hardwareMap.get(IMU.class, "imu");
 
         //ここまで
-
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+        motors = Arrays.asList(motorFL, motorBL, motorBR, motorFR);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -131,13 +122,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
+        motorBL.setDirection(DcMotor.Direction.REVERSE);
+        motorFL.setDirection(DcMotor.Direction.REVERSE);
 
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
 
         // TODO: if desired, use setLocalizer() to change the localization method
-        // setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, null, null));
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(
                 follower, HEADING_PID, batteryVoltageSensor,
@@ -291,10 +283,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(v);
-        leftRear.setPower(v1);
-        rightRear.setPower(v2);
-        rightFront.setPower(v3);
+        motorFL.setPower(v);
+        motorBL.setPower(v1);
+        motorBR.setPower(v2);
+        motorFR.setPower(v3);
     }
 
     @Override

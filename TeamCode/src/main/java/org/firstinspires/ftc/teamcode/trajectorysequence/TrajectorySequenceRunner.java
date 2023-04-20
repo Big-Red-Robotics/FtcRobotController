@@ -217,12 +217,12 @@ public class TrajectorySequenceRunner {
             );
         }
 
-        packet.put("x", poseEstimate.getX());
-        packet.put("y", poseEstimate.getY());
+        packet.put("x", centimeterToInch(poseEstimate.getX()));
+        packet.put("y", centimeterToInch(poseEstimate.getY()));
         packet.put("heading (deg)", Math.toDegrees(poseEstimate.getHeading()));
 
-        packet.put("xError", getLastPoseError().getX());
-        packet.put("yError", getLastPoseError().getY());
+        packet.put("xError", centimeterToInch(poseEstimate.getX()));
+        packet.put("yError", centimeterToInch(poseEstimate.getY()));
         packet.put("headingError (deg)", Math.toDegrees(getLastPoseError().getHeading()));
 
         draw(fieldOverlay, currentTrajectorySequence, currentSegment, targetPose, poseEstimate);
@@ -230,6 +230,10 @@ public class TrajectorySequenceRunner {
         dashboard.sendTelemetryPacket(packet);
 
         return driveSignal;
+    }
+
+    private double centimeterToInch(double distance){
+        return distance / 2.54;
     }
 
     private void draw(
