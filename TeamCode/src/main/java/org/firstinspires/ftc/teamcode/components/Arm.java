@@ -17,11 +17,11 @@ public class Arm {
     public final int highJunction = 910;
     public int armTarget = 0;
 
-    public final double fiveStack = 0.528;
-    public final double fourStack = 0.532;
-    public final double threeStack = 0.538;
-    public final double twoStack = 0.544;
-    public final double ground = 0.51;
+    public final int fiveStack = 170;
+    public final int fourStack = 140;
+    public final int threeStack = 110;
+    public final int twoStack = 80;
+    public final int ground = 0;
 
     public enum ManualArm {drop, raise, none};
 
@@ -35,8 +35,6 @@ public class Arm {
     }
 
     public void init(){
-        gripper.setPosition(0.97);
-
         //TODO: REVERSE rightLift FOR 11166-RC!!!
         rightLift.setDirection(DcMotor.Direction.REVERSE);
 
@@ -67,7 +65,7 @@ public class Arm {
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while(rightLift.isBusy() && leftLift.isBusy()) {
+        if (rightLift.isBusy() && leftLift.isBusy()) {
             if (leftLift.getCurrentPosition() < leftLift.getTargetPosition() && rightLift.getCurrentPosition() < rightLift.getTargetPosition()) {
                 leftLift.setPower(1.0);
                 rightLift.setPower(1.0);
@@ -82,7 +80,7 @@ public class Arm {
         leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while(getCurrentPosition() > middleJunction) {
+        if(getCurrentPosition() > middleJunction) {
             leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             leftLift.setPower(0.0);
@@ -95,7 +93,7 @@ public class Arm {
         rightLift.setPower(0.0);
     }
 
-    public void setArmPower(Gamepad gamepad, double power, double camLevel, boolean stack) {
+    public void setArmPower(Gamepad gamepad, double power, int camLevel, boolean stack) {
         if (rightLift.isBusy() && leftLift.isBusy()){
             if (getCurrentPosition() > armTarget) {
                 if (getCurrentPosition() > 650 && getTargetPosition() != 650) {
@@ -113,20 +111,15 @@ public class Arm {
             }
         }
 
-        if (camLevel == cam.getPosition() && cam.getPosition() != ground && stack) {
-            leftLift.setPower(0.0);
-            rightLift.setPower(0.0);
-            leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armTarget = getCurrentPosition();
-        } else {
-            leftLift.setTargetPosition(armTarget);
-            rightLift.setTargetPosition(armTarget);
-            leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
+        leftLift.setTargetPosition(armTarget);
+        rightLift.setTargetPosition(armTarget);
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        if (armTarget > (getCurrentPosition() - 50) && armTarget < (getCurrentPosition() + 50)) cam.setPosition(camLevel);
+        if (armTarget > (getCurrentPosition() - 50) && armTarget < (getCurrentPosition() + 50) && stack) {
+            armTarget = camLevel;
+            stack = false;
+        };
     }
 
     public void armTriggers(Gamepad gamepad) {
@@ -145,8 +138,8 @@ public class Arm {
         if (gamepad.right_trigger > 0) {
             armTarget = getCurrentPosition();
 
-            leftLift.setPower(gamepad.right_trigger*2);
-            rightLift.setPower(gamepad.right_trigger*2);
+            leftLift.setPower(gamepad.right_trigger*1.5);
+            rightLift.setPower(gamepad.right_trigger*1.5);
         }
     }
 

@@ -31,7 +31,7 @@ public class Main_TeleOp extends LinearOpMode {
         arm.init();
         arm.armTarget = 0;
 
-        double camLevel = arm.ground;
+        int stackHeight = arm.ground;
 
         boolean stack = false;
 
@@ -45,16 +45,16 @@ public class Main_TeleOp extends LinearOpMode {
             if (gamepad2.x) { arm.armTarget = arm.lowJunction; stack = false; }
             if (gamepad2.b) { arm.armTarget = arm.middleJunction; stack = false; }
             if (gamepad2.y) { arm.armTarget = arm.highJunction; stack = false; }
-            if (gamepad2.a) { arm.armTarget = 0; camLevel = arm.ground; stack = false; }
+            if (gamepad2.a) { arm.armTarget = 0; stackHeight = arm.ground; stack = false; }
 
-            if (gamepad2.dpad_up) { arm.armTarget = 350; camLevel = arm.fiveStack; stack = true; }
-            if (gamepad2.dpad_left) { arm.armTarget = 340; camLevel = arm.fourStack; stack = true; }
-            if (gamepad2.dpad_right) { arm.armTarget = 325; camLevel = arm.threeStack; stack = true; }
-            if (gamepad2.dpad_down) { arm.armTarget = 310; camLevel = arm.twoStack; stack = true; }
+            if (gamepad2.dpad_up) { arm.armTarget = 250; stackHeight = arm.fiveStack; stack = true; }
+            if (gamepad2.dpad_left) { arm.armTarget = 250; stackHeight = arm.fourStack; stack = true; }
+            if (gamepad2.dpad_right) { arm.armTarget = 250; stackHeight = arm.threeStack; stack = true; }
+            if (gamepad2.dpad_down) { arm.armTarget = 250; stackHeight = arm.twoStack; stack = true; }
 
             if (gamepad2.left_bumper){
                 arm.armTarget = 0;
-                camLevel = arm.ground;
+                stackHeight = arm.ground;
                 stack = false;
                 arm.openGripper();
             }
@@ -66,7 +66,7 @@ public class Main_TeleOp extends LinearOpMode {
                 stack = false;
                 arm.armTriggers(gamepad2);
             } else {
-                arm.setArmPower(gamepad2, 1.0, camLevel, stack);
+                arm.setArmPower(gamepad2, 1.0, stackHeight, stack);
             }
 
             telemetry.addData("arm position", arm.getCurrentPosition());

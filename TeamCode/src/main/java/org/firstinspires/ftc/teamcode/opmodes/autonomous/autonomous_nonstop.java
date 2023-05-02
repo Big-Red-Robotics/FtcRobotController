@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.components.teaminfo.TeamInfo;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
-@Autonomous(name="ADVANCED_STOP_AUTONOMOUS")
-public class Autonomous_root extends LinearOpMode {
+@Autonomous(name="ADVANCED_Nonstop_AUTONOMOUS")
+public class autonomous_nonstop extends LinearOpMode {
     //sleeve
     int LEFT = 1;
     int MIDDLE = 2;
@@ -110,8 +110,6 @@ public class Autonomous_root extends LinearOpMode {
                 chassis.runToPosition(-200,-200,-200,-200);
                 chassis.stop();
 
-                sleep(5000);
-
                 arm.fall();
                 arm.openGripper();
 
@@ -148,3 +146,4 @@ public class Autonomous_root extends LinearOpMode {
         }
     }
 }
+
