@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.old.drivetuning;
+package org.firstinspires.ftc.teamcode.opmodes.drivetuning;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.components.Chassis;
 @Config
 @Disabled
 @Autonomous(group = "drive")
-public class StraightTest extends LinearOpMode {
+public class StrafeTest extends LinearOpMode {
     public static double DISTANCE = 60; // in
 
     @Override
@@ -28,7 +28,7 @@ public class StraightTest extends LinearOpMode {
         Chassis drive = new Chassis(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
-                .forward(DISTANCE)
+                .strafeRight(DISTANCE)
                 .build();
 
         waitForStart();
