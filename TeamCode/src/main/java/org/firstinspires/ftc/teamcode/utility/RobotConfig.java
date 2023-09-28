@@ -18,6 +18,6 @@ public class RobotConfig {
     public static String distanceSensor = "distanceSensor";
 
     //Webcam: Logitech HD Webcam C270
-    public static String camera = "Webcam 1";
+    public static String cameraName = "Webcam 1";
     public static int [] cameraSize = {640, 480};
 }
