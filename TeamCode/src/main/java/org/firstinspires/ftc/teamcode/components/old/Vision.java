@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.components;
+package org.firstinspires.ftc.teamcode.components.old;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -25,7 +25,7 @@ public class Vision {
     public Vision(HardwareMap hardwareMap){
         this.distanceSensor = hardwareMap.get(DistanceSensor.class, RobotConfig.distanceSensor);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        WebcamName cameraName = hardwareMap.get(WebcamName.class, RobotConfig.camera);
+        WebcamName cameraName = hardwareMap.get(WebcamName.class, RobotConfig.cameraName);
         this.camera = OpenCvCameraFactory.getInstance().createWebcam(cameraName, cameraMonitorViewId);
 
         sleeveDetector = new SleeveDetector();

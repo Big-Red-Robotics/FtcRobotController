@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.components;
+package org.firstinspires.ftc.teamcode.components.old;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -34,8 +34,8 @@ public class Arm {
     public Arm(HardwareMap hardwareMap){
         this.leftLift = hardwareMap.get(DcMotor.class, RobotConfig.lifts[0]);
         this.rightLift = hardwareMap.get(DcMotor.class, RobotConfig.lifts[1]);
-        this.gripper = hardwareMap.get(Servo.class, RobotConfig.gripper);
-        this.cam = hardwareMap.get(Servo.class, RobotConfig.cam);
+        this.gripper = hardwareMap.get(Servo.class, "gripper");
+        this.cam = hardwareMap.get(Servo.class, "cam");
 
         rightLift.setDirection(DcMotor.Direction.REVERSE);
 
