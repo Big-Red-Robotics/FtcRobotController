@@ -26,7 +26,7 @@ public class NewAutonomous extends LinearOpMode {
         NewVision vision = new NewVision(hardwareMap);
 
         //.waitSeconds
-        TrajectorySequence startToBackDrop = chassis.trajectorySequenceBuilder(startPose)
+        TrajectorySequence traj = chassis.trajectorySequenceBuilder(startPose)
                 .strafeLeft(48)
                 .lineToLinearHeading(backDrop)
                 .addDisplacementMarker(() -> {
@@ -62,6 +62,10 @@ public class NewAutonomous extends LinearOpMode {
             telemetry.update();
 
             sleep(20);
+        }
+
+        while(opModeIsActive()) {
+            chassis.followTrajectorySequenceAsync(traj);
         }
     }
 

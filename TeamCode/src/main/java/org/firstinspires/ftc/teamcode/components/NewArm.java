@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class NewArm {
+    //look at teamcode/components/old/Arm.java for last season's code.
+
     private List<DcMotor> arms;
     public DcMotor leftArm, rightArm;
     public Servo clawRotator;
@@ -52,15 +54,7 @@ public class NewArm {
     public boolean isBusy(){
         return leftArm.isBusy() || rightArm.isBusy();
     }
-    public void runToPosition(int position) {
-        armTarget = position;
-
-        leftArm.setTargetPosition(armTarget);
-        rightArm.setTargetPosition(armTarget);
-
-        leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
+    public void runToPosition(int position) {}
 
     //TODO: maybe useful getters such as...
     public int getCurrentPosition(){return 0;}
@@ -70,6 +64,5 @@ public class NewArm {
     //or maybe we don't even need to make things this complicated for Oct 29.
     //essentially if we can intake & outtake in one line, that would be good.
     //claw presets, rotator presets & arm presets?
-    //look at teamcode/components/old/Arm.java for last season's code.
     //probably use enum so that we can monitor current state easily from other classes.
 }
