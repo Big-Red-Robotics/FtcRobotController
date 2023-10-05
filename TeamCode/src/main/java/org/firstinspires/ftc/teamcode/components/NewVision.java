@@ -6,7 +6,7 @@ import android.util.Size;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.components.lib.vision.SampleProcessor;
+import org.firstinspires.ftc.teamcode.components.lib.vision.TestProcessor;
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.VisionProcessor;
@@ -22,7 +22,7 @@ public class NewVision {
 
     //List of Processors that will be used
     AprilTagProcessor aprilTag;
-    SampleProcessor sampleProcessor;
+    TestProcessor testProcessor;
 
 //    public enum Processor {
 //        APRIL_TAG,
@@ -35,7 +35,7 @@ public class NewVision {
         //Setup vision portal
         VisionPortal.Builder builder = new VisionPortal.Builder();
         builder.setCamera(hardwareMap.get(WebcamName.class, RobotConfig.cameraName));
-        builder.setCameraResolution(new Size(RobotConfig.cameraSize[0], RobotConfig.cameraSize[1]));
+        builder.setCameraResolution(new Size(RobotConfig.cameraWidth, RobotConfig.cameraHeight));
         builder.enableLiveView(true);
         builder.setAutoStopLiveView(false);
             // Set the stream format; MJPEG uses less bandwidth than default YUY2.
@@ -43,12 +43,12 @@ public class NewVision {
 
         buildAprilTagProcessor();
         builder.addProcessor(aprilTag);
-        builder.addProcessor(sampleProcessor);
+        builder.addProcessor(testProcessor);
 
         visionPortal = builder.build();
 
         // Disable or re-enable the aprilTag processor at any time.
-        visionPortal.setProcessorEnabled(sampleProcessor, true);
+        visionPortal.setProcessorEnabled(testProcessor, true);
     }
 
     void buildAprilTagProcessor() {

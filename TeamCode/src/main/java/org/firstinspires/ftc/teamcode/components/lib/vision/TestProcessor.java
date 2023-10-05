@@ -16,10 +16,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public abstract class SampleProcessor implements VisionProcessor
+public abstract class TestProcessor implements VisionProcessor
 {
     Telemetry telemetry;
-    public SampleProcessor(){}
+    public TestProcessor(){}
     Mat mat = new Mat();
     public Rect pole = new Rect();
     final int screenWidth = 640;

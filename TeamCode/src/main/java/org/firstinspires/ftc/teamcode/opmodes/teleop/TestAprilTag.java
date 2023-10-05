@@ -70,8 +70,9 @@ public class TestAprilTag extends LinearOpMode {
 
         builder.setCamera(hardwareMap.get(WebcamName.class, RobotConfig.cameraName));
 
-        int[] cameraSize = RobotConfig.cameraSize;
-        builder.setCameraResolution(new Size(cameraSize[0], cameraSize[1]));
+        int cameraWidth = RobotConfig.cameraWidth;
+        int cameraHeight = RobotConfig.cameraHeight;
+        builder.setCameraResolution(new Size(cameraWidth, cameraHeight));
 
         builder.enableLiveView(true);
 

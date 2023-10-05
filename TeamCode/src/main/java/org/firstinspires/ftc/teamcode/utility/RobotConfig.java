@@ -19,5 +19,6 @@ public class RobotConfig {
 
     //Webcam: Logitech HD Webcam C270
     public static String cameraName = "Webcam 1";
-    public static int [] cameraSize = {640, 480};
+    public static int cameraWidth = 640;
+    public static int cameraHeight = 480;
 }

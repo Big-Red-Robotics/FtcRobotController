@@ -1,15 +1,12 @@
 package org.firstinspires.ftc.teamcode.components.old;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.components.lib.vision.AutonDetector;
-import org.firstinspires.ftc.teamcode.components.lib.vision.SleeveDetector;
+import org.firstinspires.ftc.teamcode.components.lib.vision.old.AutonDetector;
+import org.firstinspires.ftc.teamcode.components.lib.vision.old.SleeveDetector;
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -34,7 +31,7 @@ public class Vision {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(RobotConfig.cameraSize[0], RobotConfig.cameraSize[1], OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(RobotConfig.cameraWidth, RobotConfig.cameraHeight, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
