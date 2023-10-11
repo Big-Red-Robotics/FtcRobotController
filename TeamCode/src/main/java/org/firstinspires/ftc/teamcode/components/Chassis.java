@@ -77,10 +77,10 @@ public class Chassis extends MecanumDrive {
 
     public Chassis(HardwareMap hardwareMap){
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
-        this.motorFL = hardwareMap.get(DcMotorEx.class, RobotConfig.motors[0]);
-        this.motorFR = hardwareMap.get(DcMotorEx.class, RobotConfig.motors[1]);
-        this.motorBL = hardwareMap.get(DcMotorEx.class, RobotConfig.motors[2]);
-        this.motorBR = hardwareMap.get(DcMotorEx.class, RobotConfig.motors[3]);
+        this.motorFL = hardwareMap.get(DcMotorEx.class, RobotConfig.motorFL);
+        this.motorFR = hardwareMap.get(DcMotorEx.class, RobotConfig.motorFR);
+        this.motorBL = hardwareMap.get(DcMotorEx.class, RobotConfig.motorBL);
+        this.motorBR = hardwareMap.get(DcMotorEx.class, RobotConfig.motorBR);
         this.imu = hardwareMap.get(IMU.class, RobotConfig.imu);
 
         //control hub & extension hub config, bulk reads

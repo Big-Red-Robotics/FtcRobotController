@@ -30,8 +30,8 @@ public class NewArm {
 
     public NewArm(HardwareMap hardwareMap){
         //TODO: Configure teamcode/utility/RobotConfig with the right name
-        this.leftArm = hardwareMap.get(DcMotor.class, RobotConfig.lifts[0]);
-        this.rightArm = hardwareMap.get(DcMotor.class, RobotConfig.lifts[1]);
+        this.leftArm = hardwareMap.get(DcMotor.class, RobotConfig.liftL);
+        this.rightArm = hardwareMap.get(DcMotor.class, RobotConfig.liftR);
         this.clawRotator = hardwareMap.get(Servo.class, RobotConfig.clawRotator);
         this.claw = hardwareMap.get(Servo.class, RobotConfig.claw);
 

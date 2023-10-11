@@ -10,10 +10,12 @@ public class RobotConfig {
     public static TeamColor teamColor = TeamColor.BLUE;
     public static InitialSide initialSide = InitialSide.RIGHT;
 
-    public static String [] motors = {"motorFL", "motorFR", "motorBL", "motorBR"};
-    public static String [] lifts = {"leftArm", "rightArm"};
-    public static String clawRotator = "gripper";
-    public static String claw = "cam";
+    public static String motorFL = "dFL", motorFR = "dFR", motorBL = "dBL", motorBR = "dBR";
+    public static String liftR = "liftR", liftL = "liftL";
+    public static String clawRotator = "wrist";
+    public static String claw = "claw";
+
+    //unused
     public static String imu = "imu";
     public static String distanceSensor = "distanceSensor";
 
