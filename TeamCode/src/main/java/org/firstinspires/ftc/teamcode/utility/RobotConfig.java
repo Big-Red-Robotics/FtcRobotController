@@ -13,7 +13,7 @@ public class RobotConfig {
     public static String motorFL = "dFL", motorFR = "dFR", motorBL = "dBL", motorBR = "dBR";
     public static String liftR = "liftR", liftL = "liftL";
     public static String clawRotator = "wrist";
-    public static String claw = "claw";
+    public static String clawR = "clawR", clawL = "clawL";
 
     //unused
     public static String imu = "imu";
