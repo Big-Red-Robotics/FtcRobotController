@@ -31,7 +31,7 @@ public class ArmTest extends LinearOpMode {
 
             telemetry.addData("arm position",arm.getLiftPosition());
 
-            telemetry.addData("wrist encoder",arm.clawRotator.getCurrentPosition());
+//            telemetry.addData("wrist encoder",arm.clawRotator.getCurrentPosition());
 
             telemetry.update();
         }

@@ -37,23 +37,25 @@ public class FirstTeleOp extends LinearOpMode {
             );
             chassis.update();
 
-            if (gamepad1.a) arm.openClaw();
-            if (gamepad1.b) arm.closeClaw();
+            if (gamepad2.a) arm.openClaw();
+            if (gamepad2.b) arm.closeClaw();
 
-            if(gamepad1.dpad_up || gamepad1.dpad_down){
+            if(gamepad2.dpad_up || gamepad2.dpad_down){
                 arm.setState(NewArm.ArmState.none);
-                if (gamepad1.dpad_up) arm.setLiftPower(0.7, telemetry);
-                if (gamepad1.dpad_down) arm.setLiftPower(-0.7, telemetry);
+                if (gamepad2.dpad_up) arm.setLiftPower(0.7, telemetry);
+                if (gamepad2.dpad_down) arm.setLiftPower(-0.7, telemetry);
                 else arm.setLiftPower(0.0, telemetry);
             }
 
-            if (gamepad1.left_bumper) arm.setState(NewArm.ArmState.intake);
-            if (gamepad1.right_bumper) arm.setState(NewArm.ArmState.outtake);
+            if (gamepad2.left_bumper) arm.setState(NewArm.ArmState.intake);
+            if (gamepad2.right_bumper) arm.setState(NewArm.ArmState.outtake);
+            if (gamepad2.x) arm.setState(NewArm.ArmState.hang);
             arm.update(telemetry);
 
-            telemetry.addData("arm position",arm.getLiftPosition());
+            telemetry.addData("arm position", arm.getLiftPosition());
+            telemetry.addData("current mode", arm.currentState);
 
-            telemetry.addData("wrist encoder",arm.clawRotator.getCurrentPosition());
+//            telemetry.addData("wrist encoder",arm.clawRotator.getCurrentPosition());
 
             telemetry.update();
         }

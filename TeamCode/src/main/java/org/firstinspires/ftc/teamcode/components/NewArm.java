@@ -15,7 +15,7 @@ public class NewArm {
     //look at teamcode/components/old/Arm.java for last season's code.
 
     public DcMotor leftLift, rightLift;
-    public DcMotor clawRotator;
+//    public DcMotor clawRotator;
     public Servo clawR, clawL;
     List<DcMotor> lifts;
 
@@ -25,14 +25,14 @@ public class NewArm {
     public int armTarget;
 
     //TODO: enum for state (probably intake, outtake, & none?)
-    public enum ArmState {intake, outtake, none};
+    public enum ArmState {intake, outtake, hang, none};
 
     public ArmState currentState = ArmState.none;
 
     public NewArm(HardwareMap hardwareMap){
         this.leftLift = hardwareMap.get(DcMotor.class, RobotConfig.liftL);
         this.rightLift = hardwareMap.get(DcMotor.class, RobotConfig.liftR);
-        this.clawRotator = hardwareMap.get(DcMotor.class, RobotConfig.clawRotator);
+//        this.clawRotator = hardwareMap.get(DcMotor.class, RobotConfig.clawRotator);
         this.clawR = hardwareMap.get(Servo.class, RobotConfig.clawR);
         this.clawL = hardwareMap.get(Servo.class, RobotConfig.clawL);
 
@@ -45,9 +45,9 @@ public class NewArm {
             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
-        clawRotator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        clawRotator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        clawRotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        clawRotator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        clawRotator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        clawRotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void setState (ArmState state){
@@ -72,42 +72,33 @@ public class NewArm {
     }
 
     public void openClaw(){
-        clawR.setPosition(0.8);
-        clawL.setPosition(0.8);
+        clawR.setPosition(0.0);
+        clawL.setPosition(0.0);
     }
 
     public void closeClaw(){
-        clawR.setPosition(0.48);
-        clawL.setPosition(0.48);
+        clawR.setPosition(0.5);
+        clawL.setPosition(0.5);
     }
 
     public void update(Telemetry t) {
         if(currentState == ArmState.none){
-            clawRotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } else {
             if(currentState == ArmState.intake) {
-                clawRotator.setTargetPosition(-10);
                 rightLift.setTargetPosition(150);
                 leftLift.setTargetPosition(150);
-            } else {
-                clawRotator.setTargetPosition(-90);
+            } else if (currentState == ArmState.outtake){
                 rightLift.setTargetPosition(1400);
                 leftLift.setTargetPosition(1400);
+            } else {
+                rightLift.setTargetPosition(1100);
+                leftLift.setTargetPosition(1100);
             }
 
-            clawRotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            if (clawRotator.isBusy()) {
-                clawRotator.setPower(0.7);
-                t.addData("wrist current position", clawRotator.getCurrentPosition());
-                t.update();
-            } else {
-                clawRotator.setPower(0.0);
-            }
 
             if(rightLift.isBusy() && leftLift.isBusy()){
                 rightLift.setPower(0.5);
@@ -117,6 +108,7 @@ public class NewArm {
             } else {
                 rightLift.setPower(0.0);
                 leftLift.setPower(0.0);
+                setState(ArmState.none);
             }
         }
     }
