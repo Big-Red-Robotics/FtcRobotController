@@ -45,28 +45,15 @@ public class NewArm {
             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
-//        clawRotator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        clawRotator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        clawRotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightLift.setDirection(DcMotor.Direction.REVERSE);
+        leftLift.setDirection(DcMotor.Direction.FORWARD);
     }
 
     public void setState (ArmState state){
         currentState = state;
-        switch(state){
-            case outtake:
-                rightLift.setDirection(DcMotor.Direction.REVERSE);
-                leftLift.setDirection(DcMotor.Direction.FORWARD);
-                break;
-            case intake:
-                rightLift.setDirection(DcMotor.Direction.FORWARD);
-                leftLift.setDirection(DcMotor.Direction.REVERSE);
-                break;
-        }
     }
 
     public void setLiftPower(double power, Telemetry t) {
-        rightLift.setDirection(DcMotor.Direction.REVERSE);
-        leftLift.setDirection(DcMotor.Direction.FORWARD);
         leftLift.setPower(power);
         rightLift.setPower(power);
     }
@@ -87,11 +74,11 @@ public class NewArm {
             leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } else {
             if(currentState == ArmState.intake) {
-                rightLift.setTargetPosition(150);
-                leftLift.setTargetPosition(150);
+                rightLift.setTargetPosition(50);
+                leftLift.setTargetPosition(50);
             } else if (currentState == ArmState.outtake){
-                rightLift.setTargetPosition(1400);
-                leftLift.setTargetPosition(1400);
+                rightLift.setTargetPosition(1350);
+                leftLift.setTargetPosition(1350);
             } else {
                 rightLift.setTargetPosition(1100);
                 leftLift.setTargetPosition(1100);
