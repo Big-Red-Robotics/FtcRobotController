@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -54,8 +53,15 @@ public class NewArm {
     }
 
     public void setLiftPower(double power, Telemetry t) {
+        setState(ArmState.none);
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLift.setDirection(DcMotor.Direction.REVERSE);
+        leftLift.setDirection(DcMotor.Direction.FORWARD);
         leftLift.setPower(power);
         rightLift.setPower(power);
+        leftLift.setTargetPosition(leftLift.getCurrentPosition());
+        rightLift.setTargetPosition(rightLift.getCurrentPosition());
     }
 
     public void openClaw(){
@@ -73,23 +79,54 @@ public class NewArm {
             rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } else {
-            if(currentState == ArmState.intake) {
-                rightLift.setTargetPosition(50);
-                leftLift.setTargetPosition(50);
-            } else if (currentState == ArmState.outtake){
+            rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (currentState == ArmState.intake) {
+                rightLift.setTargetPosition(0);
+                leftLift.setTargetPosition(0);
+            } else if (currentState == ArmState.outtake) {
                 rightLift.setTargetPosition(1350);
                 leftLift.setTargetPosition(1350);
             } else {
                 rightLift.setTargetPosition(1100);
                 leftLift.setTargetPosition(1100);
             }
+        }
 
             rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             if(rightLift.isBusy() && leftLift.isBusy()){
-                rightLift.setPower(0.5);
-                leftLift.setPower(0.5);
+                if (leftLift.getCurrentPosition() > leftLift.getTargetPosition() && rightLift.getCurrentPosition() > rightLift.getTargetPosition()) {
+                    if (rightLift.getCurrentPosition() < 900 && rightLift.getCurrentPosition() > 300 && leftLift.getCurrentPosition() < 900 && leftLift.getCurrentPosition() > 300) {
+                        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                        leftLift.setPower(0.0);
+                        rightLift.setPower(0.0);
+                    } else if (rightLift.getCurrentPosition() < 300 && leftLift.getCurrentPosition() < 300){
+                        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                        leftLift.setPower(0.0);
+                        rightLift.setPower(0.0);
+//                        leftLift.setTargetPosition(leftLift.getCurrentPosition());
+//                        rightLift.setTargetPosition(rightLift.getCurrentPosition());
+                    } else {
+                        leftLift.setPower(0.5);
+                        rightLift.setPower(0.5);
+                    }
+                if ((leftLift.getCurrentPosition() < leftLift.getTargetPosition() && rightLift.getCurrentPosition() < rightLift.getTargetPosition()))  {
+                    if (rightLift.getCurrentPosition() > 1050 && leftLift.getCurrentPosition() > 1050) {
+                        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                        leftLift.setPower(0.0);
+                        rightLift.setPower(0.0);
+                        leftLift.setTargetPosition(leftLift.getCurrentPosition());
+                        rightLift.setTargetPosition(rightLift.getCurrentPosition());
+                    } else {
+                        leftLift.setPower(0.5);
+                        rightLift.setPower(0.5);
+                   }
+                }
                 t.addData("current pos", getLiftPosition());
                 t.update();
             } else {
@@ -101,8 +138,8 @@ public class NewArm {
     }
 
     //TODO: maybe useful getters such as...
-    public double getClawPosition(){return (clawL.getPosition() + clawR.getPosition())/2;}
-    public int getLiftPosition(){return (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2;}
-    public int getTargetPosition(){return (leftLift.getTargetPosition() + rightLift.getTargetPosition())/2;}
-    public double getPower(){return (leftLift.getPower() + rightLift.getPower())/2;}
+    public double getClawPosition() {return (clawL.getPosition() + clawR.getPosition())/2;}
+    public int getLiftPosition() {return (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2;}
+    public int getTargetPosition() {return (leftLift.getTargetPosition() + rightLift.getTargetPosition())/2;}
+    public double getPower() {return (leftLift.getPower() + rightLift.getPower())/2;}
 }

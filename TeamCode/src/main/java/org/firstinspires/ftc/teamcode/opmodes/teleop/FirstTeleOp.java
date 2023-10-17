@@ -26,8 +26,15 @@ public class FirstTeleOp extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        double speed = 0.5;
+        double speed;
         while (opModeIsActive()) {
+            if (gamepad1.left_bumper) {
+                speed = 0.3;
+            } else if (gamepad1.right_bumper) {
+                speed = 1;
+            } else {
+                speed = 0.7;
+            }
             chassis.setWeightedDrivePower(
                     new Pose2d(
                             gamepad1.left_stick_y * speed,
@@ -37,19 +44,19 @@ public class FirstTeleOp extends LinearOpMode {
             );
             chassis.update();
 
-            if (gamepad2.a) arm.openClaw();
-            if (gamepad2.b) arm.closeClaw();
+            if (gamepad2.left_bumper) arm.openClaw();
+            if (gamepad2.right_bumper) arm.closeClaw();
 
-            if(gamepad2.dpad_up || gamepad2.dpad_down){
+            if(gamepad2.dpad_up || gamepad2.dpad_down || gamepad2.dpad_right){
                 arm.setState(NewArm.ArmState.none);
                 if (gamepad2.dpad_up) arm.setLiftPower(0.7, telemetry);
-                if (gamepad2.dpad_down) arm.setLiftPower(-0.7, telemetry);
-                else arm.setLiftPower(0.0, telemetry);
+                if (gamepad2.dpad_right) arm.setLiftPower(-0.7, telemetry);
+                if (gamepad2.dpad_down) arm.setLiftPower(0.0, telemetry);
             }
 
-            if (gamepad2.left_bumper) arm.setState(NewArm.ArmState.intake);
-            if (gamepad2.right_bumper) arm.setState(NewArm.ArmState.outtake);
-            if (gamepad2.x) arm.setState(NewArm.ArmState.hang);
+            if (gamepad2.a) arm.setState(NewArm.ArmState.intake);
+            if (gamepad2.x) arm.setState(NewArm.ArmState.outtake);
+            if (gamepad2.y) arm.setState(NewArm.ArmState.hang);
             arm.update(telemetry);
 
             telemetry.addData("arm position", arm.getLiftPosition());
