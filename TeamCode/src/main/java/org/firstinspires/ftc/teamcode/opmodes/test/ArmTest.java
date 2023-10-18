@@ -25,14 +25,11 @@ public class ArmTest extends LinearOpMode {
 
             if (gamepad1.left_bumper) arm.setState(NewArm.ArmState.intake);
             if (gamepad1.right_bumper) arm.setState(NewArm.ArmState.outtake);
-//            else arm.setState(NewArm.ArmState.none);
+            else arm.setState(NewArm.ArmState.none);
 
-            arm.update(telemetry);
+            arm.update();
 
             telemetry.addData("arm position",arm.getLiftPosition());
-
-//            telemetry.addData("wrist encoder",arm.clawRotator.getCurrentPosition());
-
             telemetry.update();
         }
     }

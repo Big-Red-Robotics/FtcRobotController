@@ -2,13 +2,11 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.NewArm;
-import org.firstinspires.ftc.teamcode.components.old.Arm;
 
 @TeleOp(name="Oct 29 TeleOp")
 public class FirstTeleOp extends LinearOpMode {
@@ -49,15 +47,14 @@ public class FirstTeleOp extends LinearOpMode {
 
             if(gamepad2.dpad_up || gamepad2.dpad_down || gamepad2.dpad_right){
                 arm.setState(NewArm.ArmState.none);
-                if (gamepad2.dpad_up) arm.setLiftPower(0.7, telemetry);
-                if (gamepad2.dpad_right) arm.setLiftPower(-0.7, telemetry);
-                if (gamepad2.dpad_down) arm.setLiftPower(0.0, telemetry);
+                if (gamepad2.right_trigger > 0.1) arm.setLiftPower(gamepad2.right_trigger*.75, telemetry);
+                if (gamepad2.left_trigger > 0.1) arm.setLiftPower(-gamepad2.left_trigger*.5, telemetry);
             }
 
             if (gamepad2.a) arm.setState(NewArm.ArmState.intake);
             if (gamepad2.x) arm.setState(NewArm.ArmState.outtake);
             if (gamepad2.y) arm.setState(NewArm.ArmState.hang);
-            arm.update(telemetry);
+            arm.update();
 
             telemetry.addData("arm position", arm.getLiftPosition());
             telemetry.addData("current mode", arm.currentState);
