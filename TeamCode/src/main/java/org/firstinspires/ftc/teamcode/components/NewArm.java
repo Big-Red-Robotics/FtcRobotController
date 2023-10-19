@@ -11,10 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class NewArm {
-    //look at teamcode/components/old/Arm.java for last season's code.
-
     public DcMotor leftLift, rightLift;
-//    public DcMotor clawRotator;
+    public Servo clawRotator;
     public Servo clawR, clawL;
     List<DcMotor> lifts;
 
@@ -23,7 +21,6 @@ public class NewArm {
     public final int outtakeArmPosition = 0;
     public int armTarget;
 
-    //TODO: enum for state (probably intake, outtake, & none?)
     public enum ArmState {intake, outtake, hang, none};
 
     public ArmState currentState = ArmState.none;
@@ -31,7 +28,7 @@ public class NewArm {
     public NewArm(HardwareMap hardwareMap){
         this.leftLift = hardwareMap.get(DcMotor.class, RobotConfig.liftL);
         this.rightLift = hardwareMap.get(DcMotor.class, RobotConfig.liftR);
-//        this.clawRotator = hardwareMap.get(DcMotor.class, RobotConfig.clawRotator);
+        this.clawRotator = hardwareMap.get(Servo.class, RobotConfig.clawRotator);
         this.clawR = hardwareMap.get(Servo.class, RobotConfig.clawR);
         this.clawL = hardwareMap.get(Servo.class, RobotConfig.clawL);
 
@@ -68,6 +65,9 @@ public class NewArm {
             leftLift.setPower(-power);
             rightLift.setPower(-power);
         }
+
+        rightLift.setTargetPosition(rightLift.getCurrentPosition());
+        leftLift.setTargetPosition(leftLift.getCurrentPosition());
     }
 
     public void openClaw(){
@@ -82,6 +82,8 @@ public class NewArm {
 
     public void update() {
         for (DcMotor lift : lifts) {
+            if(lift.getTargetPosition() == 0 && !lift.isBusy()) clawRotator.setPosition(0.0);
+            else clawRotator.setPosition(0.5);
             if (currentState == ArmState.none) {
                 lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             } else {
