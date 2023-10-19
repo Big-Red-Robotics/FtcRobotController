@@ -82,7 +82,7 @@ public class NewArm {
 
     public void update() {
         for (DcMotor lift : lifts) {
-            if(lift.getTargetPosition() == 0 && !lift.isBusy()) clawRotator.setPosition(0.0);
+            if(lift.getTargetPosition() == 0 && lift.getCurrentPosition() < 100) clawRotator.setPosition(0.0);
             else clawRotator.setPosition(0.5);
             if (currentState == ArmState.none) {
                 lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
