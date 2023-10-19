@@ -24,20 +24,28 @@ public class FirstTeleOp extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        double speed;
+        double forwardSpeed;
+        double strafeSpeed;
+        double rotateSpeed;
         while (opModeIsActive()) {
             if (gamepad1.left_bumper) {
-                speed = 0.3;
+                forwardSpeed = 0.35;
+                strafeSpeed = 0.25;
+                rotateSpeed = 0.35;
             } else if (gamepad1.right_bumper) {
-                speed = 1;
+                forwardSpeed = 1;
+                strafeSpeed = 0;
+                rotateSpeed = 1;
             } else {
-                speed = 0.7;
+                forwardSpeed = 0.65;
+                strafeSpeed = 0.5;
+                rotateSpeed = 0.65;
             }
             chassis.setWeightedDrivePower(
                     new Pose2d(
-                            gamepad1.left_stick_y * speed,
-                            -gamepad1.left_stick_x * speed,
-                            -gamepad1.right_stick_x * speed
+                            gamepad1.left_stick_y * forwardSpeed,
+                            -gamepad1.left_stick_x * strafeSpeed,
+                            -gamepad1.right_stick_x * rotateSpeed
                     )
             );
             chassis.update();
@@ -45,10 +53,10 @@ public class FirstTeleOp extends LinearOpMode {
             if (gamepad2.left_bumper) arm.openClaw();
             if (gamepad2.right_bumper) arm.closeClaw();
 
-            if(gamepad2.dpad_up || gamepad2.dpad_down || gamepad2.dpad_right){
+            if(gamepad2.right_trigger > .01 || gamepad2.left_trigger > .01){
                 arm.setState(NewArm.ArmState.none);
-                if (gamepad2.right_trigger > 0.1) arm.setLiftPower(gamepad2.right_trigger*.75, telemetry);
-                if (gamepad2.left_trigger > 0.1) arm.setLiftPower(-gamepad2.left_trigger*.5, telemetry);
+                if (gamepad2.right_trigger > 0.01) arm.setLiftPower(gamepad2.right_trigger*.75, telemetry);
+                if (gamepad2.left_trigger > 0.01) arm.setLiftPower(-gamepad2.left_trigger*.5, telemetry);
             }
 
             if (gamepad2.a) arm.setState(NewArm.ArmState.intake);
@@ -59,7 +67,7 @@ public class FirstTeleOp extends LinearOpMode {
             telemetry.addData("arm position", arm.getLiftPosition());
             telemetry.addData("current mode", arm.currentState);
 
-//            telemetry.addData("wrist encoder",arm.clawRotator.getCurrentPosition());
+            telemetry.addData("wrist encoder",arm.clawRotator.getPosition());
 
             telemetry.update();
         }
