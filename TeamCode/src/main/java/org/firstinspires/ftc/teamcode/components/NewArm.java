@@ -58,7 +58,7 @@ public class NewArm {
         rightLift.setDirection(DcMotor.Direction.REVERSE);
         leftLift.setDirection(DcMotor.Direction.FORWARD);
 
-        if (leftLift.getTargetPosition() < 1000 || rightLift.getTargetPosition() < 1000) {
+        if (leftLift.getCurrentPosition() < 1100 || rightLift.getCurrentPosition() < 1100) {
             leftLift.setPower(power);
             rightLift.setPower(power);
         } else {
@@ -98,17 +98,17 @@ public class NewArm {
 
                 if (lift.isBusy()) {
                     if (lift.getCurrentPosition() > lift.getTargetPosition()) {
-                        if (lift.getCurrentPosition() < 900 && lift.getCurrentPosition() > 150) {
+                        if (lift.getCurrentPosition() < 750 && lift.getCurrentPosition() > 250) {
                             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                             lift.setPower(0.0);
-                        } else if (lift.getCurrentPosition() < 150) {
+                        } else if (lift.getCurrentPosition() < 250) {
                             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                             lift.setPower(0.0);
                         } else {
                             lift.setPower(0.5);
                         }
                     } else if (lift.getCurrentPosition() < lift.getTargetPosition()) {
-                        if (lift.getCurrentPosition() > 1200) {
+                        if (lift.getCurrentPosition() > 1300) {
                             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                             lift.setPower(0.0);
                         } else {

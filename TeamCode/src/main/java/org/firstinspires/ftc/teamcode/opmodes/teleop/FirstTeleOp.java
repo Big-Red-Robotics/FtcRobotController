@@ -55,8 +55,7 @@ public class FirstTeleOp extends LinearOpMode {
 
             if(gamepad2.right_trigger > .01 || gamepad2.left_trigger > .01){
                 arm.setState(NewArm.ArmState.none);
-                if (gamepad2.right_trigger > 0.01) arm.setLiftPower(gamepad2.right_trigger*.75, telemetry);
-                if (gamepad2.left_trigger > 0.01) arm.setLiftPower(-gamepad2.left_trigger*.5, telemetry);
+                arm.setLiftPower(gamepad2.right_trigger*.75 - gamepad2.left_trigger*.5, telemetry);
             }
 
             if (gamepad2.a) arm.setState(NewArm.ArmState.intake);
