@@ -58,16 +58,8 @@ public class NewArm {
         rightLift.setDirection(DcMotor.Direction.REVERSE);
         leftLift.setDirection(DcMotor.Direction.FORWARD);
 
-        if (leftLift.getCurrentPosition() < 1100 || rightLift.getCurrentPosition() < 1100) {
-            leftLift.setPower(power);
-            rightLift.setPower(power);
-        } else {
-            leftLift.setPower(-power);
-            rightLift.setPower(-power);
-        }
-
-        rightLift.setTargetPosition(rightLift.getCurrentPosition());
-        leftLift.setTargetPosition(leftLift.getCurrentPosition());
+        leftLift.setPower(power);
+        rightLift.setPower(power);
     }
 
     public void openClaw(){
@@ -98,22 +90,17 @@ public class NewArm {
 
                 if (lift.isBusy()) {
                     if (lift.getCurrentPosition() > lift.getTargetPosition()) {
-                        if (lift.getCurrentPosition() < 750 && lift.getCurrentPosition() > 250) {
+                        if (lift.getCurrentPosition() < 750 && lift.getCurrentPosition() > 350) {
                             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                             lift.setPower(0.0);
-                        } else if (lift.getCurrentPosition() < 250) {
+                        } else if (lift.getCurrentPosition() < 350) {
                             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                             lift.setPower(0.0);
                         } else {
                             lift.setPower(0.5);
                         }
                     } else if (lift.getCurrentPosition() < lift.getTargetPosition()) {
-                        if (lift.getCurrentPosition() > 1300) {
-                            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                            lift.setPower(0.0);
-                        } else {
-                            lift.setPower(0.5);
-                        }
+                        lift.setPower(0.5);
                     }
                 } else {
                     lift.setPower(0.0);
