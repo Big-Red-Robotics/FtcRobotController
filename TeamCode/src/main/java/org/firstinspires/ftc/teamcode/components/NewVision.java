@@ -6,6 +6,7 @@ import android.util.Size;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.components.lib.vision.IndicatorProcessor;
 import org.firstinspires.ftc.teamcode.components.lib.vision.TestProcessor;
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -23,6 +24,9 @@ public class NewVision {
     //List of Processors that will be used
     AprilTagProcessor aprilTag;
     TestProcessor testProcessor;
+    IndicatorProcessor indicatorProcessor;
+
+    VisionProcessor[] processors = {aprilTag, testProcessor, indicatorProcessor};
 
 //    public enum Processor {
 //        APRIL_TAG,
@@ -42,12 +46,11 @@ public class NewVision {
             //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
 
         buildAprilTagProcessor();
-        builder.addProcessor(aprilTag);
-        builder.addProcessor(testProcessor);
+        builder.addProcessor(indicatorProcessor);
 
         visionPortal = builder.build();
 
-        // Disable or re-enable the aprilTag processor at any time.
+        // Disable or re-enable the processor
         visionPortal.setProcessorEnabled(testProcessor, true);
     }
 
