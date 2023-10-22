@@ -15,8 +15,8 @@ public class NewArm {
 
     private List<DcMotor> arms;
     public DcMotor leftArm, rightArm;
-    public Servo clawRotator;
-    public Servo claw;
+//    public Servo clawRotator;
+//    public Servo claw;
 
     //TODO: configure this, idk if we will need it for Oct 29.
     public final int intakeArmPosition = 0;
@@ -32,8 +32,8 @@ public class NewArm {
         //TODO: Configure teamcode/utility/RobotConfig with the right name
         this.leftArm = hardwareMap.get(DcMotor.class, RobotConfig.liftL);
         this.rightArm = hardwareMap.get(DcMotor.class, RobotConfig.liftR);
-        this.clawRotator = hardwareMap.get(Servo.class, RobotConfig.clawRotator);
-        this.claw = hardwareMap.get(Servo.class, RobotConfig.claw);
+//        this.clawRotator = hardwareMap.get(Servo.class, RobotConfig.clawRotator);
+//        this.claw = hardwareMap.get(Servo.class, RobotConfig.claw);
 
         rightArm.setDirection(DcMotor.Direction.REVERSE);
 
