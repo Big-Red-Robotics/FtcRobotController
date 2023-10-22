@@ -16,13 +16,7 @@ public class NewArm {
     public Servo clawR, clawL;
     List<DcMotor> lifts;
 
-    //TODO: configure this, idk if we will need it for Oct 29.
-    public final int intakeArmPosition = 0;
-    public final int outtakeArmPosition = 0;
-    public int armTarget;
-
     public enum ArmState {intake, outtake, hang, none};
-
     public ArmState currentState = ArmState.none;
 
     public NewArm(HardwareMap hardwareMap){
@@ -65,6 +59,8 @@ public class NewArm {
     public void openClaw(){
         clawR.setPosition(0.0);
         clawL.setPosition(0.0);
+        rightLift.setTargetPosition(0);
+        leftLift.setTargetPosition(0);
     }
 
     public void closeClaw(){
@@ -74,27 +70,25 @@ public class NewArm {
 
     public void update() {
         for (DcMotor lift : lifts) {
+            //claw stopper
             if(lift.getTargetPosition() == 0 && lift.getCurrentPosition() < 100) clawRotator.setPosition(0.0);
             else clawRotator.setPosition(0.5);
-            if (currentState == ArmState.none) {
-                lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            } else {
-                if (currentState == ArmState.intake) {
-                    lift.setTargetPosition(0);
-                } else if (currentState == ArmState.outtake) {
-                    lift.setTargetPosition(1350);
-                } else {
-                    lift.setTargetPosition(1100);
-                }
+
+            //the actual lift part
+            if (currentState == ArmState.none) lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            else {
+                if (currentState == ArmState.intake) lift.setTargetPosition(0);
+                else if (currentState == ArmState.outtake) lift.setTargetPosition(1350);
+                else lift.setTargetPosition(1100); //currentState = ArmState.hang
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                if (lift.isBusy()) {
+                /*if (lift.isBusy()) {
                     if (lift.getCurrentPosition() > lift.getTargetPosition()) {
-                        if (lift.getCurrentPosition() < 750 && lift.getCurrentPosition() > 350) {
-                            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                            lift.setPower(0.0);
-                        } else if (lift.getCurrentPosition() < 350) {
+                        if (lift.getCurrentPosition() < 350) {
                             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                            lift.setPower(0.0);
+                        } else if (lift.getCurrentPosition() < 500) {
+                            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                             lift.setPower(0.0);
                         } else {
                             lift.setPower(0.5);
@@ -105,12 +99,25 @@ public class NewArm {
                 } else {
                     lift.setPower(0.0);
                     setState(ArmState.none);
+                }*/
+
+                if (lift.isBusy()) {
+                    if (lift.getCurrentPosition() < 500) {
+                        //can depend on gravity
+                        if (lift.getCurrentPosition() < 350) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                        else lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                        lift.setPower(0.0);
+                    } else lift.setPower(0.8);
+                } else {
+                    //ArmState != none, but the job is done (!lift.isBusy())
+                    lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    lift.setPower(0.0);
+                    setState(ArmState.none);
                 }
             }
         }
     }
 
-    //TODO: maybe useful getters such as...
     public double getClawPosition() {return (clawL.getPosition() + clawR.getPosition())/2;}
     public int getLiftPosition() {return (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2;}
     public int getTargetPosition() {return (leftLift.getTargetPosition() + rightLift.getTargetPosition())/2;}
