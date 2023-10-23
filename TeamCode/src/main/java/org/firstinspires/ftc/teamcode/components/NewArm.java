@@ -101,7 +101,7 @@ public class NewArm {
                 }*/
 
                 if (lift.isBusy()) {
-                    if (lift.getCurrentPosition() < 600 && !hang) {
+                    if (lift.getCurrentPosition() < 600 && !hang && lift.getCurrentPosition() > lift.getTargetPosition()) {
                         //can depend on gravity
                         if (lift.getCurrentPosition() < 300) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                         else lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
