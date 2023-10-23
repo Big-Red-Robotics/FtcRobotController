@@ -50,10 +50,10 @@ public class FirstTeleOp extends LinearOpMode {
             );
             chassis.update();
 
-            if (gamepad2.left_bumper) arm.openClaw();
+            if (gamepad2.left_bumper) {arm.openClaw(); arm.setState(NewArm.ArmState.intake);}
             if (gamepad2.right_bumper) arm.closeClaw();
 
-            arm.setLiftPower(gamepad2.right_trigger*.75 - gamepad2.left_trigger*.5, telemetry);
+            if (gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) arm.setLiftPower(gamepad2.right_trigger*.75 - gamepad2.left_trigger*.5, telemetry);
 
             if (gamepad2.a) arm.setState(NewArm.ArmState.intake);
             if (gamepad2.x) arm.setState(NewArm.ArmState.outtake);
