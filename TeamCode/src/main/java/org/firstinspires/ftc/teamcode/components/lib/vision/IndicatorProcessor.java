@@ -3,14 +3,8 @@ package org.firstinspires.ftc.teamcode.components.lib.vision;
 import android.graphics.Canvas;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
-import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
-import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessorImpl;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -18,7 +12,6 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -69,7 +62,7 @@ public class IndicatorProcessor implements VisionProcessor {
         mat.release();
         edges.release();
         thresh.release();
-
+      
         return null;
     }
 
