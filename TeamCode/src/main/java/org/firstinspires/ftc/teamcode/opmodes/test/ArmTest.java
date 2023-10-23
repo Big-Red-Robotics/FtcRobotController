@@ -3,23 +3,33 @@ package org.firstinspires.ftc.teamcode.opmodes.test;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.components.old.Arm;
+import org.firstinspires.ftc.teamcode.components.NewArm;
 
 @TeleOp
 public class ArmTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Arm arm = new Arm(hardwareMap);
+        NewArm arm = new NewArm(hardwareMap);
 
         telemetry.addLine("waiting to start!");
         telemetry.update();
         waitForStart();
 
         while(opModeIsActive()) {
-            arm.runToPosition(arm.highJunction);
+            if (gamepad1.a) arm.openClaw();
+            if (gamepad1.b) arm.closeClaw();
 
-            telemetry.addData("arm height", arm.getCurrentPosition());
+            if (gamepad1.dpad_up) arm.setLiftPower(0.7, telemetry);
+            if (gamepad1.dpad_down) arm.setLiftPower(-0.7, telemetry);
+
+            if (gamepad1.left_bumper) arm.setState(NewArm.ArmState.intake);
+            if (gamepad1.right_bumper) arm.setState(NewArm.ArmState.outtake);
+            else arm.setState(NewArm.ArmState.none);
+
+            arm.update();
+
+            telemetry.addData("arm position",arm.getLiftPosition());
             telemetry.update();
         }
     }

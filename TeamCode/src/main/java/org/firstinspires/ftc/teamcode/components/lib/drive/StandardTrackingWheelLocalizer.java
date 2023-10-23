@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.components.lib.drive.util.Encoder;
+import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 
 import java.util.Arrays;
 import java.util.List;
@@ -53,9 +54,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         lastEncPositions = lastTrackingEncPositions;
         lastEncVels = lastTrackingEncVels;
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorFL"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorFR"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorBR"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, RobotConfig.motorFL));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, RobotConfig.motorFR));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, RobotConfig.motorBR));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
     }
