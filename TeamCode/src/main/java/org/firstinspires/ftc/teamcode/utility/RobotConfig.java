@@ -14,6 +14,8 @@ public class RobotConfig {
     public static String liftR = "liftR", liftL = "liftL";
     public static String clawRotator = "wrist";
     public static String clawR = "clawR", clawL = "clawL";
+    public static String launchDrone = "droneLauncher";
+    public static String positionDrone = "dronePositioner";
 
     //unused
     public static String imu = "imu";
