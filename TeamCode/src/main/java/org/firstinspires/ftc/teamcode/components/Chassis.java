@@ -26,9 +26,11 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.components.lib.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.components.lib.drive.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.components.lib.drive.trajectorysequence.TrajectorySequenceBuilder;
@@ -62,7 +64,7 @@ public class Chassis extends MecanumDrive {
     public static double OMEGA_WEIGHT = 1;
 
     private List<DcMotorEx> motors;
-    DcMotorEx motorFL, motorFR, motorBL, motorBR;
+    public DcMotorEx motorFL, motorFR, motorBL, motorBR;
     private IMU imu;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
@@ -124,6 +126,53 @@ public class Chassis extends MecanumDrive {
         );
         imu.initialize(parameters);
         imu.resetYaw();
+    }
+
+    public double robotAngle() {
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+    }
+
+    public void runToAngle(double angle) {
+        double difference = robotAngle() - angle;
+        while(Math.abs(difference) > 3){
+            double power = (angle > robotAngle()) ? 0.25 : -0.25;
+            manualTurn(power);
+            difference = robotAngle() - angle;
+        }
+    }
+
+    public void manualTurn(double power) {
+        motorFL.setPower(power);
+        motorFR.setPower(-power);
+        motorBL.setPower(power);
+        motorBR.setPower(-power);
+    }
+
+    public void resetEncoders(){
+        for(DcMotorEx motor: motors){
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+    }
+
+    public void runToPosition(int FL, int FR, int BL, int BR) {
+        ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
+
+        motorFL.setTargetPosition(FL);
+        motorFR.setTargetPosition(FR);
+        motorBL.setTargetPosition(BL);
+        motorBR.setTargetPosition(BR);
+
+        for(DcMotorEx motor: motors){
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+        while(motorFL.isBusy() || motorFR.isBusy() || motorBL.isBusy() || motorBR.isBusy()){
+            for(DcMotorEx motor: motors){
+                if(Math.abs(motor.getCurrentPosition() - motor.getTargetPosition()) < 300) motor.setPower(0.2);
+                else motor.setPower(0.5/(1+Math.pow(3, 1.5 * -runtime.seconds())));
+            }
+        }
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
