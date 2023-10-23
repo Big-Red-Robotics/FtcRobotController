@@ -32,8 +32,8 @@ public class Arm {
     public ManualArm manualArm = ManualArm.none;
 
     public Arm(HardwareMap hardwareMap){
-        this.leftLift = hardwareMap.get(DcMotor.class, RobotConfig.lifts[0]);
-        this.rightLift = hardwareMap.get(DcMotor.class, RobotConfig.lifts[1]);
+        this.leftLift = hardwareMap.get(DcMotor.class, RobotConfig.liftL);
+        this.rightLift = hardwareMap.get(DcMotor.class, RobotConfig.liftR);
         this.gripper = hardwareMap.get(Servo.class, "gripper");
         this.cam = hardwareMap.get(Servo.class, "cam");
 
