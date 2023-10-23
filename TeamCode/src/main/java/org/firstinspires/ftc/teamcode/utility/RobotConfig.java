@@ -13,6 +13,8 @@ public class RobotConfig {
     public static String [] motors = {"motorFL", "motorFR", "motorBL", "motorBR"};
     public static String [] lifts = {"leftArm", "rightArm"};
     public static String clawRotator = "gripper";
+    public static String launchDrone = "droneLauncher";
+    public static String positionDrone = "dronePositioner";
     public static String claw = "cam";
     public static String imu = "imu";
     public static String distanceSensor = "distanceSensor";
