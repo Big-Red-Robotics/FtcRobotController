@@ -55,6 +55,9 @@ public class NewArm {
 
         leftLift.setPower(power);
         rightLift.setPower(power);
+
+        leftLift.setTargetPosition(leftLift.getCurrentPosition());
+        rightLift.setTargetPosition(rightLift.getCurrentPosition());
     }
 
     public void openClaw(){
@@ -70,14 +73,14 @@ public class NewArm {
     public void update() {
         for (DcMotor lift : lifts) {
             //claw stopper
-            if(lift.getTargetPosition() == 0 && lift.getCurrentPosition() < 50) clawRotator.setPosition(0.0);
+            if(lift.getTargetPosition() == 0 && lift.getCurrentPosition() < 20) clawRotator.setPosition(0.0);
             else clawRotator.setPosition(0.5);
 
             //the actual lift part
             if (currentState == ArmState.none) lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             else {
                 if (currentState == ArmState.intake) lift.setTargetPosition(0);
-                else if (currentState == ArmState.outtake) {lift.setTargetPosition(1350); hang = false;}
+                else if (currentState == ArmState.outtake) {lift.setTargetPosition(1370); hang = false;}
                 else {lift.setTargetPosition(1100); hang = true;}//currentState = ArmState.hang
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -101,12 +104,20 @@ public class NewArm {
                 }*/
 
                 if (lift.isBusy()) {
-                    if (lift.getCurrentPosition() < 600 && !hang && lift.getCurrentPosition() > lift.getTargetPosition()) {
-                        //can depend on gravity
-                        if (lift.getCurrentPosition() < 300) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                        else lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                        lift.setPower(0.0);
+                    if (lift.getCurrentPosition() > lift.getTargetPosition()) {
+                        if (lift.getCurrentPosition() < 800 && !hang) {
+                            //can depend on gravity
+                            if (lift.getCurrentPosition() < 250) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                            else lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                            lift.setPower(0.0);
+                        } else lift.setPower (0.4);
                     } else lift.setPower(0.8);
+                } else if (!lift.isBusy() && currentState == ArmState.outtake) {
+                    if (lift.getCurrentPosition() > 1350) lift.setPower(0.0);
+                    else setState(ArmState.outtake);
+                } else if (!lift.isBusy() && currentState == ArmState.intake) {
+                    lift.setPower(0.0);
+                    setState(ArmState.none);
                 }
             }
         }
