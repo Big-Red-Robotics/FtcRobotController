@@ -60,17 +60,6 @@ public class FirstAutonomous extends LinearOpMode {
         //place indicator
         chassis.runToPosition(-1000, -1600, -1600, -1000);
         chassis.resetEncoders();
-        /*
-        chassis.runToPosition(-800, 800, -800, 800);
-        chassis.resetEncoders();
-        chassis.runToPosition(-100, -100, -100, -100);
-        arm.openClaw();
-        sleep(20);
-        chassis.runToPosition(100, 100, 100, 100);
-        chassis.resetEncoders();
-        chassis.runToPosition(800, -800, 800, -800);
-        break;
-         */
         if(indicator == 3) chassis.runToPosition(800, -800, 800, -800);
         else if(indicator == 1) chassis.runToPosition(-800, 800, -800, 800);
         chassis.resetEncoders();

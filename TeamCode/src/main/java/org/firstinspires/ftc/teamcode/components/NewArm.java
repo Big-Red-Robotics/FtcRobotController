@@ -84,25 +84,6 @@ public class NewArm {
                 else {lift.setTargetPosition(1100); hang = true;}//currentState = ArmState.hang
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                /*if (lift.isBusy()) {
-                    if (lift.getCurrentPosition() > lift.getTargetPosition()) {
-                        if (lift.getCurrentPosition() < 350) {
-                            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                            lift.setPower(0.0);
-                        } else if (lift.getCurrentPosition() < 500) {
-                            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                            lift.setPower(0.0);
-                        } else {
-                            lift.setPower(0.5);
-                        }
-                    } else if (lift.getCurrentPosition() < lift.getTargetPosition()) {
-                        lift.setPower(0.5);
-                    }
-                } else {
-                    lift.setPower(0.0);
-                    setState(ArmState.none);
-                }*/
-
                 if (lift.isBusy()) {
                     if (lift.getCurrentPosition() > lift.getTargetPosition()) {
                         if (lift.getCurrentPosition() < 800 && !hang) {
@@ -112,10 +93,10 @@ public class NewArm {
                             lift.setPower(0.0);
                         } else lift.setPower (0.4);
                     } else lift.setPower(0.8);
-                } else if (!lift.isBusy() && currentState == ArmState.outtake) {
+                } else if (currentState == ArmState.outtake) {
                     if (lift.getCurrentPosition() > 1350) lift.setPower(0.0);
                     else setState(ArmState.outtake);
-                } else if (!lift.isBusy() && currentState == ArmState.intake) {
+                } else if (currentState == ArmState.intake) {
                     lift.setPower(0.0);
                     setState(ArmState.none);
                 }
