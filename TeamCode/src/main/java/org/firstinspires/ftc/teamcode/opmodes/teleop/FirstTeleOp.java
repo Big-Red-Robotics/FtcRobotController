@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.NewArm;
+import org.firstinspires.ftc.teamcode.components.NewDrone;
 
 @TeleOp(name="Oct 29 TeleOp")
 public class FirstTeleOp extends LinearOpMode {
@@ -16,6 +17,7 @@ public class FirstTeleOp extends LinearOpMode {
         //initialize components
         Chassis chassis = new Chassis(hardwareMap);
         NewArm arm = new NewArm(hardwareMap);
+        NewDrone drone = new NewDrone(hardwareMap);
 
         MecanumDrive mecanumdrive;
 
@@ -58,6 +60,9 @@ public class FirstTeleOp extends LinearOpMode {
             if (gamepad2.a) arm.setState(NewArm.ArmState.intake);
             if (gamepad2.x) arm.setState(NewArm.ArmState.outtake);
             if (gamepad2.y) arm.setState(NewArm.ArmState.hang);
+
+            if (gamepad2.dpad_up) {arm.setState(NewArm.ArmState.hang); drone.prepareLaunch();}
+            if (gamepad1.y) drone.launch();
             arm.update();
 
             telemetry.addData("arm position", arm.getLiftPosition());
