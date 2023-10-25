@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.NewArm;
 import org.firstinspires.ftc.teamcode.components.NewVision;
+import org.firstinspires.ftc.teamcode.components.NewDrone;
+
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.InitialSide;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
@@ -27,6 +29,7 @@ public class FirstAutonomous extends LinearOpMode {
         Chassis chassis = new Chassis(hardwareMap);
         NewArm arm = new NewArm(hardwareMap);
         NewVision vision = new NewVision(hardwareMap);
+        NewDrone drone = new NewDrone(hardwareMap);
 
 
         //open claw for 18-inch restriction
