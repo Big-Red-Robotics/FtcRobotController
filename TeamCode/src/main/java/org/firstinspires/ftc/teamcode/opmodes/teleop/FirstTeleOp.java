@@ -62,11 +62,12 @@ public class FirstTeleOp extends LinearOpMode {
             if (gamepad2.y) arm.setState(NewArm.ArmState.hang);
 
             if (gamepad2.dpad_up) {arm.setState(NewArm.ArmState.hang); drone.prepareLaunch();}
-            if (gamepad1.y) drone.launch();
+            if (gamepad1.y || gamepad2.dpad_right) drone.launch();
             arm.update();
 
             telemetry.addData("arm position", arm.getLiftPosition());
             telemetry.addData("current mode", arm.currentState);
+            telemetry.addData("drone position", drone.positionDrone.getPosition());
 
             telemetry.addData("wrist encoder",arm.clawRotator.getPosition());
 

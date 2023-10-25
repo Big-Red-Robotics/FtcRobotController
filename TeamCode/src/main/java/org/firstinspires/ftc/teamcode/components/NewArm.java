@@ -19,6 +19,7 @@ public class NewArm {
     public enum ArmState {intake, outtake, hang, none};
     public ArmState currentState = ArmState.none;
     public boolean hang = false;
+    public boolean outtake = false;
 
     public NewArm(HardwareMap hardwareMap){
         this.leftLift = hardwareMap.get(DcMotor.class, RobotConfig.liftL);
@@ -45,6 +46,7 @@ public class NewArm {
     }
 
     public void setLiftPower(double power, Telemetry t) {
+        outtake = false;
         setState(ArmState.none);
 
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -73,15 +75,19 @@ public class NewArm {
     public void update() {
         for (DcMotor lift : lifts) {
             //claw stopper
-            if(lift.getTargetPosition() == 0 && lift.getCurrentPosition() < 20) clawRotator.setPosition(0.0);
+            if(lift.getTargetPosition() == 0 && lift.getCurrentPosition() < 30) clawRotator.setPosition(0.0);
             else clawRotator.setPosition(0.5);
 
             //the actual lift part
-            if (currentState == ArmState.none) lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            else {
-                if (currentState == ArmState.intake) lift.setTargetPosition(0);
-                else if (currentState == ArmState.outtake) {lift.setTargetPosition(1370); hang = false;}
-                else {lift.setTargetPosition(1100); hang = true;}//currentState = ArmState.hang
+            if (currentState == ArmState.none) {
+                lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                if (outtake && lift.getCurrentPosition() < 1200 && lift.getCurrentPosition() > 300) {
+                    setState(ArmState.outtake);
+                }
+            } else {
+                if (currentState == ArmState.intake) {lift.setTargetPosition(0); outtake = false;}
+                else if (currentState == ArmState.outtake) {lift.setTargetPosition(1370); hang = false; outtake = true;}
+                else {lift.setTargetPosition(1100); hang = true; outtake = false;}
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 if (lift.isBusy()) {
@@ -91,14 +97,11 @@ public class NewArm {
                             if (lift.getCurrentPosition() < 250) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                             else lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                             lift.setPower(0.0);
-                        } else lift.setPower (0.4);
+                        } else lift.setPower(0.4);
                     } else lift.setPower(0.8);
-                } else if (currentState == ArmState.outtake) {
-                    if (lift.getCurrentPosition() > 1350) lift.setPower(0.0);
-                    else setState(ArmState.outtake);
-                } else if (currentState == ArmState.intake) {
-                    lift.setPower(0.0);
+                } else if (!hang) {
                     setState(ArmState.none);
+                    lift.setPower(0.0);
                 }
             }
         }
