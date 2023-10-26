@@ -20,7 +20,8 @@ public class FirstAutonomous extends LinearOpMode {
      */
 
     //indicator
-    int indicator;
+    enum Indicator {RIGHT, MIDDLE, LEFT};
+    Indicator indicator;
 
     @Override
     public void runOpMode() {
@@ -43,8 +44,23 @@ public class FirstAutonomous extends LinearOpMode {
             telemetry.addData("Team color", RobotConfig.teamColor);
             telemetry.addData("Initial side", RobotConfig.initialSide);
 
-            //read indicator value
-            indicator = vision.getIndicator();
+            /*
+            read indicator value with vision.getIndicator()
+            left half of the screen: 1
+            right half of the screen: 2
+            cannot find indicator: 3
+             */
+            int rawIndicatorValue = vision.getIndicator();
+            if(RobotConfig.isRight == RobotConfig.isRed){
+                if(rawIndicatorValue == 1) indicator = Indicator.MIDDLE;
+                else if(rawIndicatorValue == 2) indicator = Indicator.RIGHT;
+                else if(rawIndicatorValue == 3) indicator = Indicator.LEFT;
+            } else {
+                if(rawIndicatorValue == 1) indicator = Indicator.LEFT;
+                else if(rawIndicatorValue == 2) indicator = Indicator.MIDDLE;
+                else if(rawIndicatorValue == 3) indicator = Indicator.RIGHT;
+            }
+
             telemetry.addData("Detected indicator", indicator);
             telemetry.addData("indicator area", vision.indicatorProcessor.pixel.area());
             telemetry.addData("indicator x", vision.indicatorProcessor.pixel.x);
@@ -59,25 +75,20 @@ public class FirstAutonomous extends LinearOpMode {
         //place indicator
         chassis.runToPosition(-1000, -1600, -1600, -1000);
         chassis.resetEncoders();
-        if(indicator == 3) chassis.runToPosition(800, -800, 800, -800);
-        else if(indicator == 1) chassis.runToPosition(-800, 800, -800, 800);
+        if(indicator == Indicator.LEFT) chassis.runToPosition(800, -800, 800, -800);
+        else if(indicator == Indicator.RIGHT) chassis.runToPosition(-800, 800, -800, 800);
         chassis.resetEncoders();
         chassis.runToPosition(-100, -100, -100, -100);
         arm.openClaw();
         sleep(20);
         chassis.runToPosition(0,0,0,0);
-        if(indicator == 1) chassis.runToPosition(800, -800, 800, -800);
-        else if(indicator == 3) chassis.runToPosition(-800, 800, -800, 800);
+        if(indicator == Indicator.RIGHT) chassis.runToPosition(800, -800, 800, -800);
+        else if(indicator == Indicator.LEFT) chassis.runToPosition(-800, 800, -800, 800);
         chassis.resetEncoders();
         chassis.runToPosition(1000,1000,1000,1000);
         chassis.resetEncoders();
         //TODO: correspond for multiple initial location
-        /*
-        Currently, the following line works for Blue Left.
-        We want the line to also work for Red Right.
-        If we are on Blue Right OR Red Left, we want to do nothing, i.e. skip the following line.
-        (probably use if statements & RobotConfig.teamColor/initialSide)
-         */
-        chassis.runToPosition(-1700, 1700, 1700, -1700);
+        if(RobotConfig.isRight && RobotConfig.isRed) chassis.runToPosition(1700, -1700, -1700, 1700);
+        else if (!RobotConfig.isRight && !RobotConfig.isRed) chassis.runToPosition(-1700, 1700, 1700, -1700);
     }
 }
