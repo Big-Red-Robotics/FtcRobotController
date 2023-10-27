@@ -23,6 +23,8 @@ public class FirstAutonomous extends LinearOpMode {
     enum Indicator {RIGHT, MIDDLE, LEFT};
     Indicator indicator;
 
+    boolean isRight, isRed;
+
     @Override
     public void runOpMode() {
         Chassis chassis = new Chassis(hardwareMap);
@@ -44,14 +46,18 @@ public class FirstAutonomous extends LinearOpMode {
             telemetry.addData("Team color", RobotConfig.teamColor);
             telemetry.addData("Initial side", RobotConfig.initialSide);
 
+            isRight = RobotConfig.initialSide == InitialSide.RIGHT;
+            isRed = RobotConfig.teamColor == TeamColor.RED;
+
             /*
             read indicator value with vision.getIndicator()
             left half of the screen: 1
             right half of the screen: 2
             cannot find indicator: 3
              */
+            telemetry.addData("isRight", isRight);
             int rawIndicatorValue = vision.getIndicator();
-            if(RobotConfig.isRight == RobotConfig.isRed){
+            if(isRight != isRed){
                 if(rawIndicatorValue == 1) indicator = Indicator.MIDDLE;
                 else if(rawIndicatorValue == 2) indicator = Indicator.RIGHT;
                 else if(rawIndicatorValue == 3) indicator = Indicator.LEFT;
@@ -88,7 +94,7 @@ public class FirstAutonomous extends LinearOpMode {
         chassis.runToPosition(1000,1000,1000,1000);
         chassis.resetEncoders();
         //TODO: correspond for multiple initial location
-        if(RobotConfig.isRight && RobotConfig.isRed) chassis.runToPosition(1700, -1700, -1700, 1700);
-        else if (!RobotConfig.isRight && !RobotConfig.isRed) chassis.runToPosition(-1700, 1700, 1700, -1700);
+        if(isRight && isRed) chassis.runToPosition(1700, -1700, -1700, 1700);
+        else if (!isRight && !isRed) chassis.runToPosition(-1700, 1700, 1700, -1700);
     }
 }
