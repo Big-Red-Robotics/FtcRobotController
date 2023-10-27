@@ -13,7 +13,7 @@ import java.util.List;
 public class NewArm {
     public DcMotor leftLift, rightLift;
     public Servo clawRotator;
-    public Servo clawR, clawL;
+    public Servo claw;
     List<DcMotor> lifts;
 
     public enum ArmState {intake, outtake, hang, none};
@@ -25,10 +25,7 @@ public class NewArm {
         this.leftLift = hardwareMap.get(DcMotor.class, RobotConfig.liftL);
         this.rightLift = hardwareMap.get(DcMotor.class, RobotConfig.liftR);
         this.clawRotator = hardwareMap.get(Servo.class, RobotConfig.clawRotator);
-        this.clawR = hardwareMap.get(Servo.class, RobotConfig.clawR);
-        this.clawL = hardwareMap.get(Servo.class, RobotConfig.clawL);
-
-        clawR.setDirection(Servo.Direction.REVERSE);
+        this.claw = hardwareMap.get(Servo.class, RobotConfig.claw);
 
         lifts = Arrays.asList(leftLift, rightLift);
         for(DcMotor lift: lifts){
@@ -63,13 +60,11 @@ public class NewArm {
     }
 
     public void openClaw(){
-        clawR.setPosition(0.0);
-        clawL.setPosition(0.0);
+        claw.setPosition(0.85);
     }
 
     public void closeClaw(){
-        clawR.setPosition(0.5);
-        clawL.setPosition(0.5);
+        claw.setPosition(0.5);
     }
 
     public void update() {
@@ -107,7 +102,6 @@ public class NewArm {
         }
     }
 
-    public double getClawPosition() {return (clawL.getPosition() + clawR.getPosition())/2;}
     public int getLiftPosition() {return (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2;}
     public int getTargetPosition() {return (leftLift.getTargetPosition() + rightLift.getTargetPosition())/2;}
     public double getPower() {return (leftLift.getPower() + rightLift.getPower())/2;}

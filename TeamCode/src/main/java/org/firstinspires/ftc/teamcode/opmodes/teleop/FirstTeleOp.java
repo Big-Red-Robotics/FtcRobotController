@@ -67,6 +67,7 @@ public class FirstTeleOp extends LinearOpMode {
 
             telemetry.addData("arm position", arm.getLiftPosition());
             telemetry.addData("current mode", arm.currentState);
+            telemetry.addData("servo position", arm.claw.getPosition());
             telemetry.addData("drone position", drone.positionDrone.getPosition());
 
             telemetry.addData("wrist encoder",arm.clawRotator.getPosition());
