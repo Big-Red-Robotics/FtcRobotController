@@ -82,7 +82,7 @@ public class NewVision {
     }
 
     public int getIndicator() {
-        //left: 1, middle: 2, right: 3
+        //left: 1, right: 2, no indicator: 3
         if(indicatorProcessor.getIndicator().empty()) return 3;
         else if(indicatorProcessor.getIndicator().x > (screenWidth/2)) return 2;
         else return 1;
