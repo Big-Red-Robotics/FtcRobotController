@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 
 import java.util.Arrays;
@@ -42,7 +41,7 @@ public class NewArm {
         currentState = state;
     }
 
-    public void setLiftPower(double power, Telemetry t) {
+    public void setLiftPower(double power) {
         outtake = false;
         setState(ArmState.none);
 

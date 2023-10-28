@@ -22,8 +22,8 @@ public class ArmTest extends LinearOpMode {
             if (gamepad1.a) arm.openClaw();
             if (gamepad1.b) arm.closeClaw();
 
-            if (gamepad1.dpad_up) arm.setLiftPower(0.7, telemetry);
-            if (gamepad1.dpad_down) arm.setLiftPower(-0.7, telemetry);
+            if (gamepad1.dpad_up) arm.setLiftPower(0.7);
+            if (gamepad1.dpad_down) arm.setLiftPower(-0.7);
 
             if (gamepad1.left_bumper) arm.setState(NewArm.ArmState.intake);
             if (gamepad1.right_bumper) arm.setState(NewArm.ArmState.outtake);
