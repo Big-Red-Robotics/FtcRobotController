@@ -85,6 +85,7 @@ public class FirstAutonomous extends LinearOpMode {
         if(isRight == isRed){
             if(isRight) chassis.runToPosition(200, -200, -200, 200);
             else chassis.runToPosition(-200, 200, 200, -200);
+            chassis.resetEncoders();
             chassis.runToPosition(700, 700, 700, 700);
             chassis.resetEncoders();
             if(isRight) chassis.runToPosition(1600, -1600, -1600, 1600);
