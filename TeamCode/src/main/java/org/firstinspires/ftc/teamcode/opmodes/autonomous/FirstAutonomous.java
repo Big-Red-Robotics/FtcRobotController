@@ -83,10 +83,12 @@ public class FirstAutonomous extends LinearOpMode {
         else if(indicator == Indicator.RIGHT) chassis.runToPosition(-700, 800, -700, 800);
         chassis.resetEncoders();
         if(isRight == isRed){
+            if(isRight) chassis.runToPosition(200, -200, -200, 200);
+            else chassis.runToPosition(-200, 200, 200, -200);
             chassis.runToPosition(700, 700, 700, 700);
             chassis.resetEncoders();
-            if(isRight && isRed) chassis.runToPosition(1800, -1800, -1800, 1800);
-            else if (!isRight && !isRed) chassis.runToPosition(-1800, 1800, 1800, -1800);
+            if(isRight) chassis.runToPosition(1600, -1600, -1600, 1600);
+            else chassis.runToPosition(-1600, 1600, 1600, -1600);
         }
     }
 }
