@@ -59,11 +59,11 @@ public class NewArm {
     }
 
     public void openClaw(){
-        claw.setPosition(0.85);
+        claw.setPosition(0.6);
     }
 
     public void closeClaw(){
-        claw.setPosition(0.5);
+        claw.setPosition(0.32);
     }
 
     public void update() {
