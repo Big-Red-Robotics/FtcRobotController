@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
 @Config
 public class RobotConfig {
     public static TeamColor teamColor = TeamColor.BLUE;
-    public static InitialSide initialSide = InitialSide.RIGHT;
+    public static InitialSide initialSide = InitialSide.LEFT;
 
     public static String motorFL = "dFL", motorFR = "dFR", motorBL = "dBL", motorBR = "dBR";
     public static String liftR = "liftR", liftL = "liftL";
