@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.components.NewArm;
 
 @Disabled
 @TeleOp
-public class ArmTest extends LinearOpMode {
+public class ClawTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -18,20 +18,14 @@ public class ArmTest extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
+        double pos = 0.0;
         while(opModeIsActive()) {
-            if (gamepad1.a) arm.openClaw();
-            if (gamepad1.b) arm.closeClaw();
+            if (gamepad1.a) pos += 0.01;
+            if (gamepad1.b) pos -= 0.01;
 
-            if (gamepad1.dpad_up) arm.setLiftPower(0.7);
-            if (gamepad1.dpad_down) arm.setLiftPower(-0.7);
+            arm.claw.setPosition(pos);
 
-            if (gamepad1.left_bumper) arm.setState(NewArm.ArmState.intake);
-            if (gamepad1.right_bumper) arm.setState(NewArm.ArmState.outtake);
-            else arm.setState(NewArm.ArmState.none);
-
-            arm.update();
-
-            telemetry.addData("arm position",arm.getLiftPosition());
+            telemetry.addData("arm position",arm.claw.getPosition());
             telemetry.update();
         }
     }

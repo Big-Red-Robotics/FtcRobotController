@@ -1,33 +1,30 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.NewArm;
 import org.firstinspires.ftc.teamcode.components.NewVision;
+
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.InitialSide;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
 
 @Autonomous(name="Oct 29 Autonomous")
 public class FirstAutonomous extends LinearOpMode {
-    /*
-    see
-    https://github.com/Big-Red-Robotics/PowerPlay/blob/main/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/opmodes/autonomous/Basic_Autonomous.java
-    for last season's autonomous using built-in encoders.
-     */
-
     //indicator
-    int indicator;
+    enum Indicator {RIGHT, MIDDLE, LEFT};
+    Indicator indicator;
+
+    //team info
+    boolean isRight, isRed;
 
     @Override
     public void runOpMode() {
         Chassis chassis = new Chassis(hardwareMap);
         NewArm arm = new NewArm(hardwareMap);
         NewVision vision = new NewVision(hardwareMap);
-
 
         //open claw for 18-inch restriction
         arm.openClaw();
@@ -41,14 +38,29 @@ public class FirstAutonomous extends LinearOpMode {
             if(gamepad1.x || gamepad2.x) RobotConfig.teamColor = TeamColor.BLUE;
             if(gamepad1.dpad_right || gamepad2.dpad_right) RobotConfig.initialSide = InitialSide.RIGHT;
             if(gamepad1.dpad_left || gamepad2.dpad_left) RobotConfig.initialSide = InitialSide.LEFT;
+            isRight = RobotConfig.initialSide == InitialSide.RIGHT;
+            isRed = RobotConfig.teamColor == TeamColor.RED;
             telemetry.addData("Team color", RobotConfig.teamColor);
             telemetry.addData("Initial side", RobotConfig.initialSide);
 
-            //read indicator value
-            indicator = vision.getIndicator();
+            /*
+            read indicator value with vision.getIndicator()
+            left half of the screen: 1
+            right half of the screen: 2
+            cannot find indicator: 3
+             */
+            int rawIndicatorValue = vision.getIndicator();
+            if(!isRight){
+                if(rawIndicatorValue == 1) indicator = Indicator.LEFT;
+                else if(rawIndicatorValue == 2) indicator = Indicator.MIDDLE;
+                else if(rawIndicatorValue == 3) indicator = Indicator.RIGHT;
+            } else {
+                if(rawIndicatorValue == 1) indicator = Indicator.MIDDLE;
+                else if(rawIndicatorValue == 2) indicator = Indicator.RIGHT;
+                else if(rawIndicatorValue == 3) indicator = Indicator.LEFT;
+            }
+
             telemetry.addData("Detected indicator", indicator);
-            telemetry.addData("indicator area", vision.indicatorProcessor.pixel.area());
-            telemetry.addData("indicator x", vision.indicatorProcessor.pixel.x);
             telemetry.update();
 
             sleep(100);
@@ -58,22 +70,26 @@ public class FirstAutonomous extends LinearOpMode {
         arm.closeClaw();
 
         //place indicator
-        chassis.runToPosition(-1000, -1600, -1600, -1000);
+        if(isRight)chassis.runToPosition(-1500, -1000, -1000, -1500);
+        else chassis.runToPosition(-1000, -1500, -1500, -1000);
         chassis.resetEncoders();
-        if(indicator == 3) chassis.runToPosition(800, -800, 800, -800);
-        else if(indicator == 1) chassis.runToPosition(-800, 800, -800, 800);
+        if(indicator == Indicator.RIGHT) chassis.runToPosition(800, -700, 800, -700);
+        else if(indicator == Indicator.LEFT) chassis.runToPosition(-700, 800, -700, 800);
+        chassis.resetEncoders();
         arm.openClaw();
-        chassis.runToPosition(0,0,0,0);
+        sleep(20);
+        chassis.runToPosition(150,150,150,150);
+        if(indicator == Indicator.LEFT) chassis.runToPosition(800, -700, 800, -700);
+        else if(indicator == Indicator.RIGHT) chassis.runToPosition(-700, 800, -700, 800);
         chassis.resetEncoders();
-        chassis.runToPosition(1000,1000,1000,1000);
-        chassis.resetEncoders();
-        //TODO: correspond for multiple initial location
-        /*
-        Currently, the following line works for Blue Left.
-        We want the line to also work for Red Right.
-        If we are on Blue Right OR Red Left, we want to do nothing, i.e. skip the following line.
-        (probably use if statements & RobotConfig.teamColor/initialSide)
-         */
-        chassis.runToPosition(-1700, 1700, 1700, -1700);
+        if(isRight == isRed){
+            if(isRight) chassis.runToPosition(200, -200, -200, 200);
+            else chassis.runToPosition(-200, 200, 200, -200);
+            chassis.resetEncoders();
+            chassis.runToPosition(700, 700, 700, 700);
+            chassis.resetEncoders();
+            if(isRight) chassis.runToPosition(1600, -1600, -1600, 1600);
+            else chassis.runToPosition(-1600, 1600, 1600, -1600);
+        }
     }
 }

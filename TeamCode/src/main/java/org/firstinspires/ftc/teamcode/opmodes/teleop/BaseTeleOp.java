@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.components.Chassis;
 
+@Disabled
 @TeleOp(name="Base TeleOp")
 public class BaseTeleOp extends LinearOpMode {
     @Override
