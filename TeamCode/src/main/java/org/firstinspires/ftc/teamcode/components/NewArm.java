@@ -76,12 +76,12 @@ public class NewArm {
             //the actual lift part
             if (currentState == ArmState.none) {
                 lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                if (outtake && lift.getCurrentPosition() < 1325 && lift.getCurrentPosition() > 300) {
+                if (outtake && lift.getCurrentPosition() < 1360 && lift.getCurrentPosition() > 300) {
                     setState(ArmState.outtake);
                 }
             } else {
                 if (currentState == ArmState.intake) {lift.setTargetPosition(0); outtake = false;}
-                else if (currentState == ArmState.outtake) {lift.setTargetPosition(1370); hang = false; outtake = true;}
+                else if (currentState == ArmState.outtake) {lift.setTargetPosition(1380); hang = false; outtake = true;}
                 else {lift.setTargetPosition(1100); hang = true; outtake = false;}
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
