@@ -169,8 +169,8 @@ public class Chassis extends MecanumDrive {
 
         while(motorFL.isBusy() || motorFR.isBusy() || motorBL.isBusy() || motorBR.isBusy()){
             for(DcMotorEx motor: motors){
-                if(Math.abs(motor.getCurrentPosition() - motor.getTargetPosition()) < 300) motor.setPower(0.2);
-                else motor.setPower(0.5/(1+Math.pow(3, 1.5 * -runtime.seconds())));
+                if(Math.abs(motor.getCurrentPosition() - motor.getTargetPosition()) < 200) motor.setPower(0.2);
+                else motor.setPower(0.7/(1+Math.pow(3, -3 * (runtime.seconds()-0.8))));
             }
         }
     }
