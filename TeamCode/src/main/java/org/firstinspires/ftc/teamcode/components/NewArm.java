@@ -69,18 +69,18 @@ public class NewArm {
     public void update() {
         for (DcMotor lift : lifts) {
             //claw stopper
-            if(lift.getTargetPosition() == 0 && lift.getCurrentPosition() < 30) clawRotator.setPosition(0.0);
+            if(lift.getTargetPosition() == 0 && lift.getCurrentPosition() < 100) clawRotator.setPosition(0.0);
             else clawRotator.setPosition(0.5);
 
             //the actual lift part
             if (currentState == ArmState.none) {
                 lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                if (outtake && lift.getCurrentPosition() < 1325 && lift.getCurrentPosition() > 300) {
+                if (outtake && lift.getCurrentPosition() < 1360 && lift.getCurrentPosition() > 300) {
                     setState(ArmState.outtake);
                 }
             } else {
                 if (currentState == ArmState.intake) {lift.setTargetPosition(0); outtake = false;}
-                else if (currentState == ArmState.outtake) {lift.setTargetPosition(1370); hang = false; outtake = true;}
+                else if (currentState == ArmState.outtake) {lift.setTargetPosition(1380); hang = false; outtake = true;}
                 else {lift.setTargetPosition(1100); hang = true; outtake = false;}
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
