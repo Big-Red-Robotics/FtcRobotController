@@ -34,7 +34,11 @@ public class FirstTeleOp extends LinearOpMode {
                 forwardSpeed = 0.35;
                 strafeSpeed = 0.25;
                 rotateSpeed = 0.35;
-            } else if (gamepad1.right_bumper) {
+            } else if (gamepad2.left_bumper) {
+                forwardSpeed = 0.0;
+                strafeSpeed = 0.0;
+                rotateSpeed = 0.0;
+            } else if (gamepad1.right_bumper || gamepad2.right_bumper) {
                 forwardSpeed = 1;
                 strafeSpeed = 0;
                 rotateSpeed = 1;
@@ -52,8 +56,8 @@ public class FirstTeleOp extends LinearOpMode {
             );
             chassis.update();
 
-            if (gamepad2.left_bumper) arm.openClaw();
-            if (gamepad2.right_bumper) arm.closeClaw();
+            if (gamepad2.dpad_down) arm.openClaw();
+            if (gamepad2.dpad_up) arm.closeClaw();
 
             if (gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) arm.setLiftPower(gamepad2.right_trigger*.75 - gamepad2.left_trigger*.5, telemetry);
 
@@ -61,6 +65,7 @@ public class FirstTeleOp extends LinearOpMode {
             if (gamepad2.x) arm.setState(NewArm.ArmState.outtake);
             if (gamepad2.y) {arm.setState(NewArm.ArmState.hang); drone.prepareLaunch();}
             if (gamepad2.b) drone.launch();
+
             arm.update();
 
             telemetry.addData("arm position", arm.getLiftPosition());
