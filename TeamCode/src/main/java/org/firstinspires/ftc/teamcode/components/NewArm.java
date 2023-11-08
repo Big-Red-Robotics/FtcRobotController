@@ -70,8 +70,8 @@ public class NewArm {
     public void update() {
         for (DcMotor lift : lifts) {
             //claw stopper
-            if(lift.getCurrentPosition() < 500) clawRotator.setPosition(0.0);
-            else clawRotator.setPosition(0.5);
+            if(lift.getCurrentPosition() < 600) clawRotator.setPosition(0.55);
+            else clawRotator.setPosition(0.0);
 
             //the actual lift part
             if (currentState == ArmState.none) {
