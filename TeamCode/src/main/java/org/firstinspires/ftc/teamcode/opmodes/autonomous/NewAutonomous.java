@@ -17,10 +17,11 @@ import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
 @Autonomous(name="2023-24 CenterStage")
 public class NewAutonomous extends LinearOpMode {
     //configuration for Blue Alliance Far Side (closer to the drone landing zone)
-    Pose2d startPose = new Pose2d(-60, -36, Math.toRadians(0));
-    Pose2d backDrop = new Pose2d(-36, 50, Math.toRadians(90));
-    Pose2d stack1 = new Pose2d(-36, -50, Math.toRadians(-90));
-    Pose2d park = new Pose2d(-36, -10, Math.toRadians(-90));
+    Pose2d startPose = new Pose2d(-60, 12, Math.toRadians(0));
+    Pose2d dropPixel = new Pose2d(-36, 24, Math.toRadians(-90));
+    Pose2d backDrop = new Pose2d(-36, 50, Math.toRadians(-90));
+//    Pose2d stack1 = new Pose2d(-36, -50, Math.toRadians(-90));
+    Pose2d park = new Pose2d(-55, -50, Math.toRadians(-90));
 
     @Override
     public void runOpMode() {
@@ -29,30 +30,21 @@ public class NewAutonomous extends LinearOpMode {
 
         //.waitSeconds
         TrajectorySequence traj = chassis.trajectorySequenceBuilder(startPose)
-                .strafeLeft(48)
+                .lineToLinearHeading(dropPixel)
+                .addDisplacementMarker(() -> {
+                    //place the Pixel
+                })
                 .lineToLinearHeading(backDrop)
                 .addDisplacementMarker(() -> {
                     //adjust location to AprilTag
                     //place pixels on backdrop
                 })
-                .lineToLinearHeading(stack1)
-                .addDisplacementMarker(() -> {
-                    //pickup pixels from stack
-                })
-                .lineToLinearHeading(backDrop)
-                .addDisplacementMarker(() -> {
-                    //place pixels on backdrop
-                })
                 .lineToLinearHeading(park)
-                .addDisplacementMarker(() -> {
-                    //park
-                })
                 .build();
 
         while (!isStarted() && !isStopRequested()) {
             if(gamepad1.b || gamepad2.b) RobotConfig.teamColor = TeamColor.RED;
             if(gamepad1.x || gamepad2.x) RobotConfig.teamColor = TeamColor.BLUE;
-            //TODO: Adjust the name of initial side
             if(gamepad1.dpad_right || gamepad2.dpad_right) RobotConfig.initialSide = InitialSide.RIGHT;
             if(gamepad1.dpad_left || gamepad2.dpad_left) RobotConfig.initialSide = InitialSide.LEFT;
 
