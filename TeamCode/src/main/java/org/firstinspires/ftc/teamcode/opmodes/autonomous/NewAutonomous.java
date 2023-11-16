@@ -2,36 +2,55 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.NewVision;
-import org.firstinspires.ftc.teamcode.components.old.Vision;
 import org.firstinspires.ftc.teamcode.components.lib.drive.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.InitialSide;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
 
-@Disabled
 @Autonomous(name="2023-24 CenterStage")
 public class NewAutonomous extends LinearOpMode {
-    //configuration for Blue Alliance Far Side (closer to the drone landing zone)
-    Pose2d startPose = new Pose2d(-60, 12, Math.toRadians(0));
-    Pose2d dropPixel = new Pose2d(-36, 24, Math.toRadians(-90));
-    Pose2d backDrop = new Pose2d(-36, 50, Math.toRadians(-90));
-//    Pose2d stack1 = new Pose2d(-36, -50, Math.toRadians(-90));
-    Pose2d park = new Pose2d(-55, -50, Math.toRadians(-90));
+    //indicator
+    enum Indicator {RIGHT, MIDDLE, LEFT}
+    Indicator indicator = Indicator.MIDDLE;
+
+    //team info
+    boolean isRight, isRed;
+
+    //odometry spots
+    Pose2d startPose, prePixel, dropPixel, park, backDrop;
 
     @Override
     public void runOpMode() {
-        Chassis chassis = new Chassis(hardwareMap);
         NewVision vision = new NewVision(hardwareMap);
+//        NewArm arm = new NewArm(hardwareMap);
+        Chassis chassis = new Chassis(hardwareMap);
+
+        while (!isStarted() && !isStopRequested()) {
+            updateSideConfiguration();
+            updateIndicator();
+            updateCoordinates();
+
+            telemetry.addData("Team color", RobotConfig.teamColor);
+            telemetry.addData("Initial side", RobotConfig.initialSide);
+            telemetry.addData("Reading indicator", null);
+            telemetry.addData("Detected indicator", indicator);
+            telemetry.update();
+
+            sleep(100);
+        }
 
         //.waitSeconds
+        //Trajectory Sequence
+        chassis.setPoseEstimate(startPose);
         TrajectorySequence traj = chassis.trajectorySequenceBuilder(startPose)
+                .lineToLinearHeading(prePixel)
                 .lineToLinearHeading(dropPixel)
                 .addDisplacementMarker(() -> {
+                    //arm.openClaw();
                     //place the Pixel
                 })
                 .lineToLinearHeading(backDrop)
@@ -42,37 +61,68 @@ public class NewAutonomous extends LinearOpMode {
                 .lineToLinearHeading(park)
                 .build();
 
-        while (!isStarted() && !isStopRequested()) {
-            if(gamepad1.b || gamepad2.b) RobotConfig.teamColor = TeamColor.RED;
-            if(gamepad1.x || gamepad2.x) RobotConfig.teamColor = TeamColor.BLUE;
-            if(gamepad1.dpad_right || gamepad2.dpad_right) RobotConfig.initialSide = InitialSide.RIGHT;
-            if(gamepad1.dpad_left || gamepad2.dpad_left) RobotConfig.initialSide = InitialSide.LEFT;
+        chassis.followTrajectorySequence(traj);
+    }
 
-            //TODO: Scan if the middle line has an indicator
+    void updateCoordinates(){
+        boolean closeToBackdrop = isRight == isRed;
+        int color = (isRed) ? 1 : -1;
+        int side = (closeToBackdrop) ? 1 : -1;
+        int initialHeading = (isRed) ? 180 : 0;
+        startPose = new Pose2d(65 * color, 10 * side, Math.toRadians(initialHeading));
+        prePixel = new Pose2d(36 * color, 24 * side, Math.toRadians((closeToBackdrop) ? -90 : initialHeading));
+        //TODO: think about closeToBackdrop == false parking
+        park = new Pose2d(62 * color, 45, Math.toRadians(-90));
 
-            telemetry.addData("Team color", RobotConfig.teamColor);
-            telemetry.addData("Initial side", RobotConfig.initialSide);
-            telemetry.addData("Reading indicator", null);
-            telemetry.update();
-
-            sleep(20);
-        }
-
-        while(opModeIsActive()) {
-            chassis.followTrajectorySequenceAsync(traj);
+        if(closeToBackdrop){
+            switch(indicator){
+                case LEFT:
+                    dropPixel = new Pose2d(36 * color, 12, Math.toRadians(-90));
+                    backDrop = new Pose2d(43 * color, 54, Math.toRadians(-90));
+                    break;
+                case MIDDLE:
+                    dropPixel = new Pose2d(26 * color, 24, Math.toRadians(-90));
+                    backDrop = new Pose2d(35 * color, 54, Math.toRadians(-90));
+                    break;
+                case RIGHT:
+                    dropPixel = new Pose2d(36 * color, 48, Math.toRadians(-90));
+                    backDrop = new Pose2d(27 * color, 54, Math.toRadians(-90));
+            }
+        } else {
+            //TODO
+            if(indicator == Indicator.LEFT) dropPixel = new Pose2d(36 * color, 12, Math.toRadians(initialHeading));
+            else if(indicator == Indicator.MIDDLE) dropPixel = new Pose2d(26 * color, 12, Math.toRadians(initialHeading));
+            else if(indicator == Indicator.RIGHT) dropPixel = new Pose2d(36 * color, 12, Math.toRadians(initialHeading));
+            backDrop = dropPixel;
         }
     }
 
-    void adjust(Chassis chassis, Vision vision, int mode){
-        final int rotate = 0;
-        final int strafe = 1;
-        while(Math.abs(vision.getAutonPipeline().differenceX()) > 20) {
-            double direction = Math.abs(vision.getAutonPipeline().differenceX())/vision.getAutonPipeline().differenceX();
-            double power = (Math.abs(vision.getAutonPipeline().differenceX()) > 50) ? 0.3 * direction : 0.1 * direction;
-            if(mode == rotate) chassis.rotate(power);
-            if(mode == strafe) chassis.strafe(power);
-            telemetry.addData("difference", vision.getAutonPipeline().differenceX());
-            telemetry.update();
+    void updateIndicator(){
+        /*
+        read indicator value with vision.getIndicator()
+        left half of the screen: 1
+        right half of the screen: 2
+        cannot find indicator: 3
+         */
+//      TODO: int rawIndicatorValue = vision.getIndicator();
+        int rawIndicatorValue = 0;
+        if(!isRight){
+            if(rawIndicatorValue == 1) indicator = Indicator.LEFT;
+            else if(rawIndicatorValue == 2) indicator = Indicator.MIDDLE;
+            else if(rawIndicatorValue == 3) indicator = Indicator.RIGHT;
+        } else {
+            if(rawIndicatorValue == 1) indicator = Indicator.MIDDLE;
+            else if(rawIndicatorValue == 2) indicator = Indicator.RIGHT;
+            else if(rawIndicatorValue == 3) indicator = Indicator.LEFT;
         }
+    }
+
+    void updateSideConfiguration(){
+        if(gamepad1.b || gamepad2.b) RobotConfig.teamColor = TeamColor.RED;
+        if(gamepad1.x || gamepad2.x) RobotConfig.teamColor = TeamColor.BLUE;
+        if(gamepad1.dpad_right || gamepad2.dpad_right) RobotConfig.initialSide = InitialSide.RIGHT;
+        if(gamepad1.dpad_left || gamepad2.dpad_left) RobotConfig.initialSide = InitialSide.LEFT;
+        isRight = RobotConfig.initialSide == InitialSide.RIGHT;
+        isRed = RobotConfig.teamColor == TeamColor.RED;
     }
 }

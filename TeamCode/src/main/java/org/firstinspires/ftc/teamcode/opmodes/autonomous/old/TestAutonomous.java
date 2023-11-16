@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.autonomous;
+package org.firstinspires.ftc.teamcode.opmodes.autonomous.old;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -98,7 +98,7 @@ public class TestAutonomous extends LinearOpMode {
 
         chassis.setPoseEstimate(startPose);
         currentState = State.START;
-        //TODO: arm.closeGripper();
+        //arm.closeGripper();
 
         while(opModeIsActive() && !parked) {
             switch (currentState){
@@ -111,7 +111,7 @@ public class TestAutonomous extends LinearOpMode {
                 case TRAJ_1:
                     if (!chassis.isBusy()) {
                         currentState = State.LIFT_ARM;
-                        //TODO: arm.runToPosition(arm.highJunction);
+                        //arm.runToPosition(arm.highJunction);
                     }
                     break;
                 case LIFT_ARM:
@@ -123,8 +123,8 @@ public class TestAutonomous extends LinearOpMode {
                 case GO_TO_POLE:
                     if (!chassis.isBusy()){
                         currentState = State.SCORE_CONE;
-                        //TODO: arm.fall();
-                        //      arm.openGripper();
+                        //arm.fall();
+                        //arm.openGripper();
                     }
                 case SCORE_CONE:
                     if (!chassis.isBusy()){
