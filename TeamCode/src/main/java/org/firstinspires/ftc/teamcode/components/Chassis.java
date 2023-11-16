@@ -28,9 +28,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.components.lib.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.components.lib.drive.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.components.lib.drive.trajectorysequence.TrajectorySequenceBuilder;
@@ -54,18 +52,18 @@ import static org.firstinspires.ftc.teamcode.components.lib.drive.DriveConstants
 
 @Config
 public class Chassis extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(5, 0, 1);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(7, 0, 1);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0, 1);
 
-    public static double LATERAL_MULTIPLIER = 1.7;
+    public static double LATERAL_MULTIPLIER = 0.525;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
 
-    private List<DcMotorEx> motors;
+    private final List<DcMotorEx> motors;
     public DcMotorEx motorFL, motorFR, motorBL, motorBR;
-    private IMU imu;
+    private final IMU imu;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
