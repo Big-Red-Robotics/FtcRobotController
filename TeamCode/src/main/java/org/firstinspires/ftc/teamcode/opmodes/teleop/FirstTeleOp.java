@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.NewArm;
 import org.firstinspires.ftc.teamcode.components.NewDrone;
 
-@TeleOp(name="Oct 29 TeleOp")
+@TeleOp(name="Dec 3 TeleOp")
 public class FirstTeleOp extends LinearOpMode {
 
     @Override
@@ -57,22 +57,30 @@ public class FirstTeleOp extends LinearOpMode {
             chassis.update();
 
             if (gamepad2.left_bumper) arm.openClaw();
+            if (gamepad2.dpad_left) arm.openLeftClaw();
+            if (gamepad2.dpad_right) arm.openRightClaw();
             if (gamepad2.right_bumper) arm.closeClaw();
 
-            if (gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) arm.setLiftPower(gamepad2.right_trigger*.75 - gamepad2.left_trigger*.5);
+            /*arm.leftClaw.setPosition(0.5*gamepad2.left_stick_x+0.5);
+            arm.rightClaw.setPosition(0.5*gamepad2.right_stick_x+0.5);*/
 
-            if (gamepad2.a) arm.setState(NewArm.ArmState.intake);
+            if (gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) arm.setLiftPower(gamepad2.right_trigger*.75 - gamepad2.left_trigger*.5, telemetry);
+            else arm.update();
+
+            if (gamepad2.a) {arm.setState(NewArm.ArmState.intake); drone.home();}
             if (gamepad2.x) arm.setState(NewArm.ArmState.outtake);
-            if (gamepad2.y) arm.setState(NewArm.ArmState.hang);
+            if (gamepad2.y) {arm.setState(NewArm.ArmState.hang); drone.prepareLaunch();}
+            if (gamepad2.b && arm.hang) drone.launch();
 
-            if (gamepad2.dpad_up) {arm.setState(NewArm.ArmState.hang); drone.prepareLaunch();}
-            if (gamepad2.dpad_left || gamepad2.dpad_right) drone.launch();
-            arm.update();
+            if (gamepad2.dpad_up) arm.flipWrist();
+            if (gamepad2.dpad_down) arm.closeWrist();
 
             telemetry.addData("arm position", arm.getLiftPosition());
             telemetry.addData("current mode", arm.currentState);
-            telemetry.addData("servo position", arm.claw.getPosition());
             telemetry.addData("drone position", drone.positionDrone.getPosition());
+            telemetry.addData("arm target", arm.getTargetPosition());
+            telemetry.addData("left claw position", arm.leftClaw.getPosition());
+            telemetry.addData("right claw position", arm.rightClaw.getPosition());
 
             telemetry.addData("wrist encoder",arm.clawRotator.getPosition());
 

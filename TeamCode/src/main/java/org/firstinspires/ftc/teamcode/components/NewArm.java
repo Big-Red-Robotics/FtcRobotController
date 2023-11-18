@@ -12,19 +12,21 @@ import java.util.List;
 public class NewArm {
     public DcMotor leftLift, rightLift;
     public Servo clawRotator;
-    public Servo claw;
+    public Servo leftClaw, rightClaw;
     List<DcMotor> lifts;
 
-    public enum ArmState {intake, outtake, hang, none};
+    public enum ArmState {intake, outtake, hang, triggers, none};
     public ArmState currentState = ArmState.none;
     public boolean hang = false;
     public boolean outtake = false;
+    public boolean intake = true;
 
     public NewArm(HardwareMap hardwareMap){
         this.leftLift = hardwareMap.get(DcMotor.class, RobotConfig.liftL);
         this.rightLift = hardwareMap.get(DcMotor.class, RobotConfig.liftR);
         this.clawRotator = hardwareMap.get(Servo.class, RobotConfig.clawRotator);
-        this.claw = hardwareMap.get(Servo.class, RobotConfig.claw);
+        this.leftClaw = hardwareMap.get(Servo.class, RobotConfig.leftClaw);
+        this.rightClaw = hardwareMap.get(Servo.class, RobotConfig.rightClaw);
 
         lifts = Arrays.asList(leftLift, rightLift);
         for(DcMotor lift: lifts){
@@ -43,7 +45,11 @@ public class NewArm {
 
     public void setLiftPower(double power) {
         outtake = false;
-        setState(ArmState.none);
+        intake = false;
+        setState(ArmState.triggers);
+
+        leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -58,19 +64,37 @@ public class NewArm {
         rightLift.setTargetPosition(rightLift.getCurrentPosition());
     }
 
-    public void openClaw(){
-        claw.setPosition(0.6);
+    public void flipWrist() {
+        intake = false;
     }
 
-    public void closeClaw(){
-        claw.setPosition(0.32);
+    public void closeWrist() {
+        intake = true;
+    }
+
+    public void openClaw() {
+        leftClaw.setPosition(.33);
+        rightClaw.setPosition(0.95);
+    }
+
+    public void openLeftClaw() {
+        leftClaw.setPosition(.33);
+    }
+
+    public void openRightClaw() {
+        rightClaw.setPosition(0.95);
+    }
+
+    public void closeClaw() {
+        leftClaw.setPosition(0.7);
+        rightClaw.setPosition(0.5);
     }
 
     public void update() {
         for (DcMotor lift : lifts) {
             //claw stopper
-            if(lift.getTargetPosition() == 0 && lift.getCurrentPosition() < 100) clawRotator.setPosition(0.0);
-            else clawRotator.setPosition(0.5);
+            if(intake) clawRotator.setPosition(0.44);
+            else clawRotator.setPosition(1);
 
             //the actual lift part
             if (currentState == ArmState.none) {
@@ -79,21 +103,21 @@ public class NewArm {
                     setState(ArmState.outtake);
                 }
             } else {
-                if (currentState == ArmState.intake) {lift.setTargetPosition(0); outtake = false;}
-                else if (currentState == ArmState.outtake) {lift.setTargetPosition(1380); hang = false; outtake = true;}
-                else {lift.setTargetPosition(1100); hang = true; outtake = false;}
+                if (currentState == ArmState.intake) {lift.setTargetPosition(0); outtake = false; intake = true;}
+                else if (currentState == ArmState.outtake) {lift.setTargetPosition(1380); hang = false; outtake = true; intake = false;}
+                else if (currentState == ArmState.hang) {lift.setTargetPosition(1100); hang = true; outtake = false; intake = false; }
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 if (lift.isBusy()) {
                     if (lift.getCurrentPosition() > lift.getTargetPosition()) {
-                        if (lift.getCurrentPosition() < 800 && !hang) {
+                        if (lift.getCurrentPosition() < 900 && !hang) {
                             //can depend on gravity
-                            if (lift.getCurrentPosition() < 250) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                            if (lift.getCurrentPosition() < 400) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                             else lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                             lift.setPower(0.0);
                         } else lift.setPower(0.4);
                     } else lift.setPower(0.8);
-                } else if (!hang) {
+                } else if (!hang && currentState != ArmState.triggers) {
                     setState(ArmState.none);
                     lift.setPower(0.0);
                 }
