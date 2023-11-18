@@ -33,11 +33,12 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
     //TODO: SET VALUES
-    public static double LATERAL_DISTANCE = CentimetersToInches(32.8); //distance between the left and right wheels
-    public static double SIDE_OFFSET = CentimetersToInches(3); // cm; offset of the lateral wheel
+    public static double LATERAL_DISTANCE = 13.17; //inches; lateral distance of the vertical wheel
+    public static double FORWARD_OFFSET = -4; //inches; offset of the horizontal wheel
 
-    public static double X_MULTIPLIER = 1; // Multiplier in the X direction
-    public static double Y_MULTIPLIER = 1.02; // Multiplier in the Y direction
+    //TODO: SET VALUES
+    public static double X_MULTIPLIER = 1.004; // Multiplier in the X direction
+    public static double Y_MULTIPLIER = 1.015; // Multiplier in the Y direction
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
@@ -46,9 +47,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap, List<Integer> lastTrackingEncPositions, List<Integer> lastTrackingEncVels) {
         super(Arrays.asList(
-                new Pose2d(20, LATERAL_DISTANCE / 2, 0), // left
-                new Pose2d(20, -LATERAL_DISTANCE / 2, 0), // right
-                new Pose2d(0, SIDE_OFFSET, Math.toRadians(90)) // front
+                new Pose2d(0, LATERAL_DISTANCE / 2, 0), // left
+                new Pose2d(0, -LATERAL_DISTANCE / 2, 0), // right
+                new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
 
         lastEncPositions = lastTrackingEncPositions;
@@ -59,6 +60,8 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, RobotConfig.motorBR));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
+        rightEncoder.setDirection(Encoder.Direction.REVERSE);
+        leftEncoder.setDirection(Encoder.Direction.REVERSE);
     }
 
     public static double CentimetersToInches(double value) {

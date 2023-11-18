@@ -49,7 +49,7 @@ public class FirstTeleOp extends LinearOpMode {
             }
             chassis.setWeightedDrivePower(
                     new Pose2d(
-                            gamepad1.left_stick_y * forwardSpeed,
+                            -gamepad1.left_stick_y * forwardSpeed,
                             -gamepad1.left_stick_x * strafeSpeed,
                             -gamepad1.right_stick_x * rotateSpeed
                     )

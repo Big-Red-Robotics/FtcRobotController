@@ -72,7 +72,7 @@ public final class LogFiles {
         public double trackingWheelRadius = StandardTrackingWheelLocalizer.WHEEL_RADIUS;
         public double trackingGearRatio = StandardTrackingWheelLocalizer.GEAR_RATIO;
         public double trackingLateralDistance = StandardTrackingWheelLocalizer.LATERAL_DISTANCE;
-        public double trackingSideOffset = StandardTrackingWheelLocalizer.SIDE_OFFSET;
+        public double trackingSideOffset = StandardTrackingWheelLocalizer.FORWARD_OFFSET;
 
         public List<Long> nsTimes = new ArrayList<>();
 
