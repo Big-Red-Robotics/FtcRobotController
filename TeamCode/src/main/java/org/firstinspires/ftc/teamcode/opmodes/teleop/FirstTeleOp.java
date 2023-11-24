@@ -27,17 +27,13 @@ public class FirstTeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
             if (gamepad1.left_bumper) {
-                forwardSpeed = 0.35;
-                strafeSpeed = 0.25;
-                rotateSpeed = 0.35;
-            } else if (gamepad1.right_bumper) {
-                forwardSpeed = 1;
-                strafeSpeed = 0;
-                rotateSpeed = 1;
+                forwardSpeed = 0.4;
+                strafeSpeed = 0.4;
+                rotateSpeed = 0.4;
             } else {
-                forwardSpeed = 0.65;
-                strafeSpeed = 0.5;
-                rotateSpeed = 0.65;
+                forwardSpeed = 1;
+                strafeSpeed = 0.8;
+                rotateSpeed = 0.9;
             }
 
             double left_y = gamepad1.left_stick_y;
@@ -56,24 +52,21 @@ public class FirstTeleOp extends LinearOpMode {
             );
             chassis.update();
 
-            if (gamepad2.left_bumper) arm.openClaw();
-            if (gamepad2.dpad_left) arm.openLeftClaw();
-            if (gamepad2.dpad_right) arm.openRightClaw();
-            if (gamepad2.right_bumper) arm.closeClaw();
+            if (gamepad2.left_bumper) arm.openLeftClaw();
+            if (gamepad2.right_bumper) arm.openRightClaw();
 
-            /*arm.leftClaw.setPosition(0.5*gamepad2.left_stick_x+0.5);
-            arm.rightClaw.setPosition(0.5*gamepad2.right_stick_x+0.5);*/
-
-            if (gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) arm.setLiftPower(gamepad2.right_trigger*.75 - gamepad2.left_trigger*.5, telemetry);
+            if (gamepad2.right_trigger > 0) arm.setLiftPower(gamepad2.right_trigger*.75 - gamepad2.left_trigger*.5);
             else arm.update();
 
-            if (gamepad2.a) {arm.setState(NewArm.ArmState.intake); drone.home();}
-            if (gamepad2.x) arm.setState(NewArm.ArmState.outtake);
-            if (gamepad2.y) {arm.setState(NewArm.ArmState.hang); drone.prepareLaunch();}
+            if (gamepad2.a) {arm.openClaw(); sleep(1000); arm.setState(NewArm.ArmState.intake); arm.intake = 0; drone.home();}
+            if (gamepad2.x) {arm.setState(NewArm.ArmState.outtake); arm.intake = 4;}
+            if (gamepad2.y) {arm.setState(NewArm.ArmState.hang); drone.prepareLaunch(); arm.intake = 4;}
             if (gamepad2.b && arm.hang) drone.launch();
 
-            if (gamepad2.dpad_up) arm.flipWrist();
-            if (gamepad2.dpad_down) arm.closeWrist();
+            if (gamepad2.dpad_up) {arm.closeClaw(); sleep(200); arm.intake = 4;}
+            /*if (gamepad2.dpad_down) {arm.intake = 1; arm.setState(NewArm.ArmState.level1);}
+            if (gamepad2.dpad_left) {arm.intake = 2; arm.setState(NewArm.ArmState.level2);}
+            if (gamepad2.dpad_right) {arm.intake = 3; arm.setState(NewArm.ArmState.level3);}*/
 
             telemetry.addData("arm position", arm.getLiftPosition());
             telemetry.addData("current mode", arm.currentState);
