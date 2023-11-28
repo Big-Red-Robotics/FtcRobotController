@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.NewVision;
 import org.firstinspires.ftc.teamcode.components.lib.drive.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.components.old.Vision;
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.InitialSide;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
@@ -31,7 +32,7 @@ public class NewAutonomous extends LinearOpMode {
 
         while (!isStarted() && !isStopRequested()) {
             updateSideConfiguration();
-            updateIndicator();
+            updateIndicator(vision);
             updateCoordinates();
 
             telemetry.addData("Team color", RobotConfig.teamColor);
@@ -97,15 +98,14 @@ public class NewAutonomous extends LinearOpMode {
         }
     }
 
-    void updateIndicator(){
+    void updateIndicator(NewVision vision){
         /*
         read indicator value with vision.getIndicator()
         left half of the screen: 1
         right half of the screen: 2
         cannot find indicator: 3
          */
-//      TODO: int rawIndicatorValue = vision.getIndicator();
-        int rawIndicatorValue = 0;
+        int rawIndicatorValue = vision.getIndicator();
         if(!isRight){
             if(rawIndicatorValue == 1) indicator = Indicator.LEFT;
             else if(rawIndicatorValue == 2) indicator = Indicator.MIDDLE;
