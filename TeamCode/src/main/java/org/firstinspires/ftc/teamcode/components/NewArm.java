@@ -12,19 +12,21 @@ import java.util.List;
 public class NewArm {
     public DcMotor leftLift, rightLift;
     public Servo clawRotator;
-    public Servo claw;
+    public Servo leftClaw, rightClaw;
     List<DcMotor> lifts;
 
-    public enum ArmState {intake, outtake, hang, none};
+    public enum ArmState {intake, outtake, level1, hang, triggers, none};
     public ArmState currentState = ArmState.none;
     public boolean hang = false;
     public boolean outtake = false;
+    public int intake = 0;
 
     public NewArm(HardwareMap hardwareMap){
         this.leftLift = hardwareMap.get(DcMotor.class, RobotConfig.liftL);
         this.rightLift = hardwareMap.get(DcMotor.class, RobotConfig.liftR);
         this.clawRotator = hardwareMap.get(Servo.class, RobotConfig.clawRotator);
-        this.claw = hardwareMap.get(Servo.class, RobotConfig.claw);
+        this.leftClaw = hardwareMap.get(Servo.class, RobotConfig.leftClaw);
+        this.rightClaw = hardwareMap.get(Servo.class, RobotConfig.rightClaw);
 
         lifts = Arrays.asList(leftLift, rightLift);
         for(DcMotor lift: lifts){
@@ -33,67 +35,75 @@ public class NewArm {
             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
-        rightLift.setDirection(DcMotor.Direction.REVERSE);
-        leftLift.setDirection(DcMotor.Direction.FORWARD);
+        rightLift.setDirection(DcMotor.Direction.FORWARD);
+        leftLift.setDirection(DcMotor.Direction.REVERSE);
     }
 
-    public void setState (ArmState state){
+    public void setState (ArmState state) {
         currentState = state;
     }
 
     public void setLiftPower(double power) {
         outtake = false;
-        setState(ArmState.none);
+        hang = false;
+        setState(ArmState.triggers);
 
-        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        rightLift.setDirection(DcMotor.Direction.REVERSE);
-        leftLift.setDirection(DcMotor.Direction.FORWARD);
-
-        leftLift.setPower(power);
-        rightLift.setPower(power);
-
-        leftLift.setTargetPosition(leftLift.getCurrentPosition());
-        rightLift.setTargetPosition(rightLift.getCurrentPosition());
+        for (DcMotor lift: lifts) {
+            lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lift.setPower(power);
+            lift.setTargetPosition(leftLift.getCurrentPosition());
+        }
     }
 
-    public void openClaw(){
-        claw.setPosition(0.6);
+    public void openClaw() {
+        leftClaw.setPosition(.33);
+        rightClaw.setPosition(0.95);
     }
 
-    public void closeClaw(){
-        claw.setPosition(0.32);
+    public void openLeftClaw() {
+        leftClaw.setPosition(.33);
+    }
+
+    public void openRightClaw() {
+        rightClaw.setPosition(0.95);
+    }
+
+    public void closeClaw() {
+        leftClaw.setPosition(0.7);
+        rightClaw.setPosition(0.5);
     }
 
     public void update() {
         for (DcMotor lift : lifts) {
             //claw stopper
-            if(lift.getTargetPosition() == 0 && lift.getCurrentPosition() < 100) clawRotator.setPosition(0.0);
-            else clawRotator.setPosition(0.5);
+            if(intake == 0) clawRotator.setPosition(0.45);
+            else if (intake == 1) clawRotator.setPosition(0.76);
+            else clawRotator.setPosition(1);
 
             //the actual lift part
             if (currentState == ArmState.none) {
                 lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                if (outtake && lift.getCurrentPosition() < 1360 && lift.getCurrentPosition() > 300) {
+                if (outtake && lift.getCurrentPosition() < 1360) {
                     setState(ArmState.outtake);
                 }
             } else {
                 if (currentState == ArmState.intake) {lift.setTargetPosition(0); outtake = false;}
                 else if (currentState == ArmState.outtake) {lift.setTargetPosition(1380); hang = false; outtake = true;}
-                else {lift.setTargetPosition(1100); hang = true; outtake = false;}
+                else if (currentState == ArmState.hang) {lift.setTargetPosition(1100); hang = true; outtake = false;}
+                else if (currentState == ArmState.level1) {lift.setTargetPosition(200); hang = false;}
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 if (lift.isBusy()) {
                     if (lift.getCurrentPosition() > lift.getTargetPosition()) {
-                        if (lift.getCurrentPosition() < 800 && !hang) {
+                        if (lift.getCurrentPosition() < 900 && !hang) {
                             //can depend on gravity
-                            if (lift.getCurrentPosition() < 250) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                            if (lift.getCurrentPosition() < 400) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                             else lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                             lift.setPower(0.0);
                         } else lift.setPower(0.4);
                     } else lift.setPower(0.8);
-                } else if (!hang) {
+                } else if (currentState == ArmState.outtake || currentState == ArmState.intake) {
                     setState(ArmState.none);
                     lift.setPower(0.0);
                 }

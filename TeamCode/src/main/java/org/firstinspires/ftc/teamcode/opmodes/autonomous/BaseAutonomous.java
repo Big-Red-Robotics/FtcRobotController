@@ -23,7 +23,7 @@ public class BaseAutonomous extends LinearOpMode {
             sleep(20);
         }
 
-        while(opModeIsActive()) {
+        while (opModeIsActive()) {
             //autonomous code
         }
     }

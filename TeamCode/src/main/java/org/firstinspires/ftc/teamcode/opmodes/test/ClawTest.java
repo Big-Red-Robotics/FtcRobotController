@@ -23,9 +23,9 @@ public class ClawTest extends LinearOpMode {
             if (gamepad1.a) pos += 0.01;
             if (gamepad1.b) pos -= 0.01;
 
-            arm.claw.setPosition(pos);
+            //arm.claw.setPosition(pos);
 
-            telemetry.addData("arm position",arm.claw.getPosition());
+            //telemetry.addData("arm position",arm.claw.getPosition());
             telemetry.update();
         }
     }
