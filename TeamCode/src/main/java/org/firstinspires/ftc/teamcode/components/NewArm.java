@@ -15,7 +15,7 @@ public class NewArm {
     public Servo leftClaw, rightClaw;
     List<DcMotor> lifts;
 
-    public enum ArmState {intake, outtake, level1, level2, level3, hang, triggers, none};
+    public enum ArmState {intake, outtake, level1, hang, triggers, none};
     public ArmState currentState = ArmState.none;
     public boolean hang = false;
     public boolean outtake = false;
@@ -45,6 +45,7 @@ public class NewArm {
 
     public void setLiftPower(double power) {
         outtake = false;
+        hang = false;
         setState(ArmState.triggers);
 
         for (DcMotor lift: lifts) {
@@ -76,10 +77,8 @@ public class NewArm {
     public void update() {
         for (DcMotor lift : lifts) {
             //claw stopper
-            if(intake == 0) clawRotator.setPosition(0.44);
-            else if (intake == 1) clawRotator.setPosition(0.62);
-            else if (intake == 2) clawRotator.setPosition(0.58);
-            else if (intake == 3) clawRotator.setPosition(0.54);
+            if(intake == 0) clawRotator.setPosition(0.45);
+            else if (intake == 1) clawRotator.setPosition(0.76);
             else clawRotator.setPosition(1);
 
             //the actual lift part
@@ -93,8 +92,6 @@ public class NewArm {
                 else if (currentState == ArmState.outtake) {lift.setTargetPosition(1380); hang = false; outtake = true;}
                 else if (currentState == ArmState.hang) {lift.setTargetPosition(1100); hang = true; outtake = false;}
                 else if (currentState == ArmState.level1) {lift.setTargetPosition(200); hang = false;}
-                else if (currentState == ArmState.level2) {lift.setTargetPosition(350); hang = false;}
-                else if (currentState == ArmState.level3) {lift.setTargetPosition(500); hang = false;}
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 if (lift.isBusy()) {
