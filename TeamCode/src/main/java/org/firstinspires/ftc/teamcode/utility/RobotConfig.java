@@ -12,6 +12,8 @@ public class RobotConfig {
 
     public static String intakeName = "intake";
 
+    public static String NewArm = "newArm";
+
     public static String motorFL = "dFL", motorFR = "dFR", motorBL = "dBL", motorBR = "dBR";
     //public static String liftR = "liftR", liftL = "liftL";
 /*    public static String clawRotator = "wrist";
