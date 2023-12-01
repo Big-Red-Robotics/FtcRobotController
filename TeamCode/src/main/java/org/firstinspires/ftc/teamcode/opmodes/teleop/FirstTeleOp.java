@@ -62,7 +62,7 @@ public class FirstTeleOp extends LinearOpMode {
             if (gamepad2.y) {arm.setState(NewArm.ArmState.hang); drone.prepareLaunch(); arm.intake = 2;}
             if (gamepad2.b && arm.hang) drone.launch();
 
-            if (gamepad2.dpad_up) {arm.closeClaw(); sleep(200); arm.intake = 2;}
+            if (gamepad2.dpad_up) {arm.closeClaw(); sleep(200); arm.intake = 1;}
             if (gamepad2.dpad_down) arm.openClaw();
             if (gamepad2.dpad_left) {arm.setState(NewArm.ArmState.level1); arm.intake = 1;}
 
