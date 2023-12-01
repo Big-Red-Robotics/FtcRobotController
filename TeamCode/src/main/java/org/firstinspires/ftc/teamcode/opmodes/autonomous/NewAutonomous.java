@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.components.Chassis;
+import org.firstinspires.ftc.teamcode.components.NewArm;
 import org.firstinspires.ftc.teamcode.components.NewVision;
 import org.firstinspires.ftc.teamcode.components.lib.drive.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.components.old.Vision;
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.InitialSide;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
@@ -27,7 +27,7 @@ public class NewAutonomous extends LinearOpMode {
     @Override
     public void runOpMode() {
         NewVision vision = new NewVision(hardwareMap);
-//        NewArm arm = new NewArm(hardwareMap);
+        NewArm arm = new NewArm(hardwareMap);
         Chassis chassis = new Chassis(hardwareMap);
 
         while (!isStarted() && !isStopRequested()) {
@@ -50,12 +50,12 @@ public class NewAutonomous extends LinearOpMode {
         TrajectorySequence traj = chassis.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(prePixel)
                 .lineToLinearHeading(dropPixel)
-                .addDisplacementMarker(() -> {
-                    //arm.openClaw();
-                    //place the Pixel
-                })
+                .addDisplacementMarker(arm::openRightClaw)
+                .waitSeconds(0.5)
                 .lineToLinearHeading(backDrop)
                 .addDisplacementMarker(() -> {
+                    arm.setState(NewArm.ArmState.level1);
+                    arm.openLeftClaw();
                     //adjust location to AprilTag
                     //place pixels on backdrop
                 })
@@ -79,15 +79,15 @@ public class NewAutonomous extends LinearOpMode {
             switch(indicator){
                 case LEFT:
                     dropPixel = new Pose2d(36 * color, 12, Math.toRadians(-90));
-                    backDrop = new Pose2d(43 * color, 54, Math.toRadians(-90));
+                    backDrop = new Pose2d(43 * color, 52, Math.toRadians(90));
                     break;
                 case MIDDLE:
-                    dropPixel = new Pose2d(26 * color, 24, Math.toRadians(-90));
-                    backDrop = new Pose2d(35 * color, 54, Math.toRadians(-90));
+                    dropPixel = new Pose2d(24 * color, 24, Math.toRadians(-90));
+                    backDrop = new Pose2d(35 * color, 52, Math.toRadians(90));
                     break;
                 case RIGHT:
                     dropPixel = new Pose2d(36 * color, 48, Math.toRadians(-90));
-                    backDrop = new Pose2d(27 * color, 54, Math.toRadians(-90));
+                    backDrop = new Pose2d(27 * color, 52, Math.toRadians(90));
             }
         } else {
             //TODO
@@ -99,21 +99,17 @@ public class NewAutonomous extends LinearOpMode {
     }
 
     void updateIndicator(NewVision vision){
-        /*
-        read indicator value with vision.getIndicator()
-        left half of the screen: 1
-        right half of the screen: 2
-        cannot find indicator: 3
-         */
         int rawIndicatorValue = vision.getIndicator();
-        if(!isRight){
-            if(rawIndicatorValue == 1) indicator = Indicator.LEFT;
-            else if(rawIndicatorValue == 2) indicator = Indicator.MIDDLE;
-            else if(rawIndicatorValue == 3) indicator = Indicator.RIGHT;
-        } else {
-            if(rawIndicatorValue == 1) indicator = Indicator.MIDDLE;
-            else if(rawIndicatorValue == 2) indicator = Indicator.RIGHT;
-            else if(rawIndicatorValue == 3) indicator = Indicator.LEFT;
+        switch (rawIndicatorValue){
+            case 1:
+                indicator = Indicator.LEFT;
+                break;
+            case 2:
+                indicator = Indicator.MIDDLE;
+                break;
+            case 3:
+                indicator = Indicator.RIGHT;
+                break;
         }
     }
 

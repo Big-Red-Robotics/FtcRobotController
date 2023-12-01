@@ -88,10 +88,27 @@ public class NewArm {
                     setState(ArmState.outtake);
                 }
             } else {
-                if (currentState == ArmState.intake) {lift.setTargetPosition(0); outtake = false;}
-                else if (currentState == ArmState.outtake) {lift.setTargetPosition(1380); hang = false; outtake = true;}
-                else if (currentState == ArmState.hang) {lift.setTargetPosition(1100); hang = true; outtake = false;}
-                else if (currentState == ArmState.level1) {lift.setTargetPosition(200); hang = false;}
+
+                switch (currentState){
+                    case intake:
+                        lift.setTargetPosition(0);
+                        outtake = false;
+                        break;
+                    case outtake:
+                        lift.setTargetPosition(1380);
+                        hang = false;
+                        outtake = true;
+                        break;
+                    case hang:
+                        lift.setTargetPosition(1100);
+                        hang = true;
+                        outtake = false;
+                        break;
+                    case level1:
+                        lift.setTargetPosition(200);
+                        hang = false;
+                        break;
+                }
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 if (lift.isBusy()) {
