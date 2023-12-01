@@ -69,6 +69,14 @@ public class NewArm {
         rightClaw.setPosition(0.95);
     }
 
+    public void closeRightClaw() {
+        rightClaw.setPosition(.5);
+    }
+
+    public void closeLeftClaw() {
+        leftClaw.setPosition(.7);
+    }
+
     public void closeClaw() {
         leftClaw.setPosition(0.7);
         rightClaw.setPosition(0.5);
@@ -78,7 +86,7 @@ public class NewArm {
         for (DcMotor lift : lifts) {
             //claw stopper
             if(intake == 0) clawRotator.setPosition(0.43);
-            else if (intake == 1) clawRotator.setPosition(0.69);
+            else if (intake == 1) clawRotator.setPosition(0.66);
             else clawRotator.setPosition(1);
 
             //the actual lift part
@@ -91,7 +99,7 @@ public class NewArm {
                 if (currentState == ArmState.intake) {lift.setTargetPosition(0); outtake = false;}
                 else if (currentState == ArmState.outtake) {lift.setTargetPosition(1380); hang = false; outtake = true;}
                 else if (currentState == ArmState.hang) {lift.setTargetPosition(1100); hang = true; outtake = false;}
-                else if (currentState == ArmState.level1) {lift.setTargetPosition(200); hang = false;}
+                else if (currentState == ArmState.level1) {lift.setTargetPosition(275); hang = false;}
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 if (lift.isBusy()) {
