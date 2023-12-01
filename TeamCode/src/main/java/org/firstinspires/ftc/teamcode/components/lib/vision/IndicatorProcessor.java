@@ -43,7 +43,7 @@ public class IndicatorProcessor implements VisionProcessor {
         List<MatOfPoint> contours = new ArrayList<>();
 
         Imgproc.findContours(thresh, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-        contours.removeIf(c -> Imgproc.boundingRect(c).height > 50 || Imgproc.boundingRect(c).area() < 200);
+//        contours.removeIf(c -> Imgproc.boundingRect(c).height > 50 || Imgproc.boundingRect(c).area() < 200);
         Imgproc.drawContours(frame, contours, -1, new Scalar(0, 255, 0));
 
         pixel = new Rect();
@@ -83,7 +83,7 @@ public class IndicatorProcessor implements VisionProcessor {
     }
 
     private Mat blueThresh() {
-        Scalar blue_lowHSV = new Scalar (105,50,10);
+        Scalar blue_lowHSV = new Scalar (110,30,0);
         Scalar blue_highHSV = new Scalar (130,255,255);
         Mat thresh = new Mat();
         Core.inRange(mat, blue_lowHSV, blue_highHSV, thresh);

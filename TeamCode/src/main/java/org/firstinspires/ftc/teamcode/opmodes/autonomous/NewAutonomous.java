@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -47,22 +48,32 @@ public class NewAutonomous extends LinearOpMode {
         //.waitSeconds
         //Trajectory Sequence
         chassis.setPoseEstimate(startPose);
-        TrajectorySequence traj = chassis.trajectorySequenceBuilder(startPose)
+        //adjust location to AprilTag
+        //place pixels on backdrop
+        TrajectorySequence traj1 = chassis.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(prePixel)
                 .lineToLinearHeading(dropPixel)
-                .addDisplacementMarker(arm::openRightClaw)
-                .waitSeconds(0.5)
+                .build();
+
+        Trajectory traj2 = chassis.trajectoryBuilder(dropPixel)
                 .lineToLinearHeading(backDrop)
-                .addDisplacementMarker(() -> {
-                    arm.setState(NewArm.ArmState.level1);
-                    arm.openLeftClaw();
-                    //adjust location to AprilTag
-                    //place pixels on backdrop
-                })
+                .build();
+
+        TrajectorySequence traj3 = chassis.trajectorySequenceBuilder(backDrop)
+                .back(5)
                 .lineToLinearHeading(park)
                 .build();
 
-        chassis.followTrajectorySequence(traj);
+        chassis.followTrajectorySequence(traj1);
+        arm.openRightClaw();
+        sleep(500);
+        arm.setState(NewArm.ArmState.level1);
+        arm.update();
+        chassis.followTrajectory(traj2);
+        arm.openLeftClaw();
+        sleep(500);
+        chassis.followTrajectorySequence(traj3);
+
     }
 
     void updateCoordinates(){
@@ -86,7 +97,7 @@ public class NewAutonomous extends LinearOpMode {
                     backDrop = new Pose2d(35 * color, 52, Math.toRadians(90));
                     break;
                 case RIGHT:
-                    dropPixel = new Pose2d(36 * color, 48, Math.toRadians(-90));
+                    dropPixel = new Pose2d(36 * color, 36, Math.toRadians(-90));
                     backDrop = new Pose2d(27 * color, 52, Math.toRadians(90));
             }
         } else {
