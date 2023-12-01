@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -58,13 +57,13 @@ public class FirstTeleOp extends LinearOpMode {
             if (gamepad2.left_bumper) arm.openRightClaw();
 
             if (gamepad2.a) {arm.setState(NewArm.ArmState.intake); arm.intake = 0; drone.home();}
-            if (gamepad2.x) {arm.setState(NewArm.ArmState.outtake); arm.intake = 2;}
-            if (gamepad2.y) {arm.setState(NewArm.ArmState.hang); drone.prepareLaunch(); arm.intake = 2;}
-            if (gamepad2.b && arm.hang) drone.launch();
+            else if (gamepad2.x) {arm.setState(NewArm.ArmState.outtake); arm.intake = 2;}
+            else if (gamepad2.y) {arm.setState(NewArm.ArmState.hang); drone.prepareLaunch(); arm.intake = 2;}
+            else if (gamepad2.b && arm.hang) drone.launch();
 
             if (gamepad2.dpad_up) {arm.closeClaw(); sleep(200); arm.intake = 1;}
-            if (gamepad2.dpad_down) arm.openClaw();
-            if (gamepad2.dpad_left) {arm.setState(NewArm.ArmState.level1); arm.intake = 1;}
+            else if (gamepad2.dpad_down) arm.openClaw();
+            else if (gamepad2.dpad_left) {arm.setState(NewArm.ArmState.level1); arm.intake = 1;}
 
             arm.update();
 
