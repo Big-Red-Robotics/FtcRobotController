@@ -85,7 +85,7 @@ public class NewArm {
     public void toPosition(ArmState armState){
         //claw rotator
         if(armState == ArmState.none) setClawRotatorPosition(clawRotator.getPosition());
-        if(armState == ArmState.intake) setClawRotatorPosition(0.43);
+        else if(armState == ArmState.intake) setClawRotatorPosition(0.43);
         else if (armState == ArmState.level1) setClawRotatorPosition(0.66);
         else setClawRotatorPosition(1);
 

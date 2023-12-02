@@ -103,14 +103,15 @@ public class NewAutonomous extends LinearOpMode {
         int color = (isRed) ? 1 : -1;
         int side = (closeToBackdrop) ? 1 : -1;
         int initialHeading = (isRed) ? 180 : 0;
-        startPose = new Pose2d(65 * color, 10 * side, Math.toRadians(initialHeading));
+        startPose = new Pose2d(65 * color, 10 * side,
+                Math.toRadians(initialHeading));
         prePixel = new Pose2d(36 * color, 24 * side, Math.toRadians((closeToBackdrop) ? -90 : initialHeading));
         //TODO: think about closeToBackdrop == false parking
         park = new Pose2d(62 * color, 45, Math.toRadians(-90));
 
         if(closeToBackdrop){
             if(indicator == Indicator.MIDDLE){
-                dropPixel = new Pose2d(24 * color, 24, Math.toRadians(-90));
+                dropPixel = new Pose2d(25 * color, 24, Math.toRadians(-90));
                 if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-44, 54, Math.toRadians(90));
                 else backDrop = new Pose2d(33, 54, Math.toRadians(90));
             } else if((indicator == Indicator.LEFT) == (RobotConfig.teamColor == TeamColor.BLUE)){
