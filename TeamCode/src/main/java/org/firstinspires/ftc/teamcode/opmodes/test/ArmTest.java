@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.components.NewArm;
 
-@Disabled
 @TeleOp
 public class ArmTest extends LinearOpMode {
 
@@ -19,8 +18,8 @@ public class ArmTest extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()) {
-            if (gamepad1.a) arm.openClaw();
-            if (gamepad1.b) arm.closeClaw();
+            if (gamepad1.a) arm.toPosition(NewArm.ArmState.hang);
+            if (gamepad1.b) arm.toPosition(NewArm.ArmState.level1);
 
             if (gamepad1.dpad_up) arm.setLiftPower(0.7);
             if (gamepad1.dpad_down) arm.setLiftPower(-0.7);

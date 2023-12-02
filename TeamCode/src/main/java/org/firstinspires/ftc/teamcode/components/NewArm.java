@@ -16,7 +16,7 @@ public class NewArm {
     List<DcMotor> lifts;
 
     public enum ArmState {intake, outtake, level1, hang, triggers, none};
-    public ArmState currentState = ArmState.none;
+    private ArmState currentState = ArmState.none;
     public boolean hang = false;
     public boolean outtake = false;
     public int intake = 0;
@@ -43,6 +43,32 @@ public class NewArm {
         currentState = state;
     }
 
+    public void openLeftClaw() {
+        leftClaw.setPosition(.33);
+    }
+    public void openRightClaw() {
+        rightClaw.setPosition(0.95);
+    }
+    public void closeRightClaw() {
+        rightClaw.setPosition(.5);
+    }
+    public void closeLeftClaw() {
+        leftClaw.setPosition(.7);
+    }
+    public void openClaw() {
+        leftClaw.setPosition(.33);
+        rightClaw.setPosition(0.95);
+    }
+    public void closeClaw() {
+        leftClaw.setPosition(0.7);
+        rightClaw.setPosition(0.5);
+    }
+
+    public void setClawRotatorPosition(double position){
+        //floor: 0.43, level1: 0.66, flipped: 1.00
+        clawRotator.setPosition(position);
+    }
+
     public void setLiftPower(double power) {
         outtake = false;
         hang = false;
@@ -56,35 +82,49 @@ public class NewArm {
         }
     }
 
-    public void openClaw() {
-        leftClaw.setPosition(.33);
-        rightClaw.setPosition(0.95);
-    }
+    public void toPosition(ArmState armState){
+        //claw rotator
+        if(armState == ArmState.none) setClawRotatorPosition(clawRotator.getPosition());
+        if(armState == ArmState.intake) setClawRotatorPosition(0.43);
+        else if (armState == ArmState.level1) setClawRotatorPosition(0.66);
+        else setClawRotatorPosition(1);
 
-    public void openLeftClaw() {
-        leftClaw.setPosition(.33);
-    }
+        //set lift target
+        for (DcMotor lift : lifts){
+            switch (armState){
+                case level1:
+                    lift.setTargetPosition(275);
+                    break;
+                case hang:
+                    lift.setTargetPosition(1100);
+                    break;
+                case outtake:
+                    lift.setTargetPosition(1380);
+                    break;
+                default:
+                    lift.setTargetPosition(0);
+            }
+            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
 
-    public void openRightClaw() {
-        rightClaw.setPosition(0.95);
-    }
-
-    public void closeRightClaw() {
-        rightClaw.setPosition(.5);
-    }
-
-    public void closeLeftClaw() {
-        leftClaw.setPosition(.7);
-    }
-
-    public void closeClaw() {
-        leftClaw.setPosition(0.7);
-        rightClaw.setPosition(0.5);
+        //set lift power
+        while (leftLift.isBusy() || rightLift.isBusy()) {
+            for(DcMotor lift: lifts){
+                if (lift.getCurrentPosition() > lift.getTargetPosition()) {
+                    if (lift.getCurrentPosition() < 900 && currentState != ArmState.hang) {
+                        //can depend on gravity
+                        if (lift.getCurrentPosition() < 400) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                        else lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                        lift.setPower(0.0);
+                    } else lift.setPower(0.4);
+                } else lift.setPower(0.8);
+            }
+        }
     }
 
     public void update() {
         for (DcMotor lift : lifts) {
-            //claw stopper
+            //claw rotator
             if(intake == 0) clawRotator.setPosition(0.43);
             else if (intake == 1) clawRotator.setPosition(0.66);
             else clawRotator.setPosition(1);
@@ -122,4 +162,5 @@ public class NewArm {
     public int getLiftPosition() {return (leftLift.getCurrentPosition() + rightLift.getCurrentPosition())/2;}
     public int getTargetPosition() {return (leftLift.getTargetPosition() + rightLift.getTargetPosition())/2;}
     public double getPower() {return (leftLift.getPower() + rightLift.getPower())/2;}
+    public ArmState getCurrentState() {return currentState;}
 }

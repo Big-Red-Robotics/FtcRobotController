@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.components.lib.vision;
 import android.graphics.Canvas;
 
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.teamcode.utility.RobotConfig;
+import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -34,9 +36,9 @@ public class IndicatorProcessor implements VisionProcessor {
 
         Imgproc.cvtColor(frame, mat, Imgproc.COLOR_RGB2HSV);
         Mat thresh = new Mat();
-//        if (RobotConfig.teamColor == TeamColor.RED) thresh = redThresh();
-//        else if (RobotConfig.teamColor == TeamColor.BLUE) thresh = blueThresh();
-        thresh = blueThresh();
+        if (RobotConfig.teamColor == TeamColor.RED) thresh = redThresh();
+        else if (RobotConfig.teamColor == TeamColor.BLUE) thresh = blueThresh();
+//        thresh = blueThresh();
 
         Imgproc.erode(thresh, thresh, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5)));
 

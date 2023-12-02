@@ -4,10 +4,12 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.NewArm;
 import org.firstinspires.ftc.teamcode.components.NewVision;
+import org.firstinspires.ftc.teamcode.components.lib.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.components.lib.drive.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.InitialSide;
@@ -17,7 +19,7 @@ import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
 public class NewAutonomous extends LinearOpMode {
     //indicator
     enum Indicator {RIGHT, MIDDLE, LEFT}
-    Indicator indicator = Indicator.MIDDLE;
+    Indicator indicator;
 
     //team info
     boolean isRight, isRed;
@@ -34,46 +36,66 @@ public class NewAutonomous extends LinearOpMode {
         while (!isStarted() && !isStopRequested()) {
             updateSideConfiguration();
             updateIndicator(vision);
-            updateCoordinates();
 
             telemetry.addData("Team color", RobotConfig.teamColor);
             telemetry.addData("Initial side", RobotConfig.initialSide);
-            telemetry.addData("Reading indicator", null);
             telemetry.addData("Detected indicator", indicator);
             telemetry.update();
 
             sleep(100);
         }
 
-        //.waitSeconds
-        //Trajectory Sequence
+        //put claw down (claw flipped up for initialization due to 18-inch restriction)
+        arm.setClawRotatorPosition(0.43);
+        waitSeconds(1.5);
+
+        //update indicator information
+        updateIndicator(vision);
+        updateCoordinates();
+        telemetry.addData("Detected indicator", indicator);
+        telemetry.update();
+
+        //path building
         chassis.setPoseEstimate(startPose);
-        //adjust location to AprilTag
-        //place pixels on backdrop
+
         TrajectorySequence traj1 = chassis.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(prePixel)
                 .lineToLinearHeading(dropPixel)
                 .build();
 
-        Trajectory traj2 = chassis.trajectoryBuilder(dropPixel)
+        TrajectorySequence traj2 = chassis.trajectorySequenceBuilder(dropPixel)
+                .back(5)
+                .addDisplacementMarker(() -> {
+                    arm.toPosition(NewArm.ArmState.level1);
+                })
                 .lineToLinearHeading(backDrop)
                 .build();
 
         TrajectorySequence traj3 = chassis.trajectorySequenceBuilder(backDrop)
-                .back(5)
+                .back(7,
+                        Chassis.getVelocityConstraint(3, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        Chassis.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .lineToLinearHeading(park)
                 .build();
 
+        //actual autonomous sequence
         chassis.followTrajectorySequence(traj1);
-        arm.openRightClaw();
-        sleep(500);
-        arm.setState(NewArm.ArmState.level1);
-        arm.update();
-        chassis.followTrajectory(traj2);
+        if(RobotConfig.teamColor == TeamColor.BLUE) arm.openRightClaw();
+        else arm.openLeftClaw();
+        waitSeconds(1.5);
+        chassis.followTrajectorySequence(traj2);
         arm.openLeftClaw();
-        sleep(500);
+        if(RobotConfig.teamColor == TeamColor.BLUE) arm.openLeftClaw();
+        else arm.openRightClaw();
+        waitSeconds(1.5);
         chassis.followTrajectorySequence(traj3);
 
+    }
+
+    void waitSeconds(double seconds){
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while(timer.seconds() < seconds) ;
     }
 
     void updateCoordinates(){
@@ -87,18 +109,20 @@ public class NewAutonomous extends LinearOpMode {
         park = new Pose2d(62 * color, 45, Math.toRadians(-90));
 
         if(closeToBackdrop){
-            switch(indicator){
-                case LEFT:
-                    dropPixel = new Pose2d(36 * color, 12, Math.toRadians(-90));
-                    backDrop = new Pose2d(43 * color, 52, Math.toRadians(90));
-                    break;
-                case MIDDLE:
-                    dropPixel = new Pose2d(24 * color, 24, Math.toRadians(-90));
-                    backDrop = new Pose2d(35 * color, 52, Math.toRadians(90));
-                    break;
-                case RIGHT:
-                    dropPixel = new Pose2d(36 * color, 36, Math.toRadians(-90));
-                    backDrop = new Pose2d(27 * color, 52, Math.toRadians(90));
+            if(indicator == Indicator.MIDDLE){
+                dropPixel = new Pose2d(24 * color, 24, Math.toRadians(-90));
+                if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-44, 54, Math.toRadians(90));
+                else backDrop = new Pose2d(33, 54, Math.toRadians(90));
+            } else if((indicator == Indicator.LEFT) == (RobotConfig.teamColor == TeamColor.BLUE)){
+                //left for blue, right for red (furthest from the center)
+                dropPixel = new Pose2d(32 * color, 35, Math.toRadians(-90));
+                if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-53, 54, Math.toRadians(90));
+                else backDrop = new Pose2d(43, 54, Math.toRadians(90));
+            } else {
+                //right for blue, left for red (closes to the center)
+                dropPixel = new Pose2d(32 * color, 12, Math.toRadians(-90));
+                if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-37, 54, Math.toRadians(90));
+                else backDrop = new Pose2d(29, 54, Math.toRadians(90));
             }
         } else {
             //TODO
