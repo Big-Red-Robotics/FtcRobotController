@@ -85,7 +85,7 @@ public class IndicatorProcessor implements VisionProcessor {
     }
 
     private Mat blueThresh() {
-        Scalar blue_lowHSV = new Scalar (110,30,0);
+        Scalar blue_lowHSV = new Scalar (105,10,0);
         Scalar blue_highHSV = new Scalar (130,255,255);
         Mat thresh = new Mat();
         Core.inRange(mat, blue_lowHSV, blue_highHSV, thresh);

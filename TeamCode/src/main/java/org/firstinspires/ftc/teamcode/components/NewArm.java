@@ -15,7 +15,7 @@ public class NewArm {
     public Servo leftClaw, rightClaw;
     List<DcMotor> lifts;
 
-    public enum ArmState {intake, outtake, level1, hang, triggers, none};
+    public enum ArmState {intake, outtake, level1, hang, triggers, none}
     private ArmState currentState = ArmState.none;
     public boolean hang = false;
     public boolean outtake = false;
@@ -86,14 +86,14 @@ public class NewArm {
         //claw rotator
         if(armState == ArmState.none) setClawRotatorPosition(clawRotator.getPosition());
         else if(armState == ArmState.intake) setClawRotatorPosition(0.43);
-        else if (armState == ArmState.level1) setClawRotatorPosition(0.66);
+        else if (armState == ArmState.level1) setClawRotatorPosition(0.69);
         else setClawRotatorPosition(1);
 
         //set lift target
         for (DcMotor lift : lifts){
             switch (armState){
                 case level1:
-                    lift.setTargetPosition(275);
+                    lift.setTargetPosition(225);
                     break;
                 case hang:
                     lift.setTargetPosition(1100);
