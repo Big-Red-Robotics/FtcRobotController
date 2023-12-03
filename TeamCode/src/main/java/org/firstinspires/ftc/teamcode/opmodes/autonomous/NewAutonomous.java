@@ -78,7 +78,7 @@ public class NewAutonomous extends LinearOpMode {
                 .build();
 
         TrajectorySequence traj4 = chassis.trajectorySequenceBuilder(dropPixel)
-                .back(7)
+                .back(5)
                 .lineToLinearHeading(park)
                 .build();
 
@@ -111,10 +111,10 @@ public class NewAutonomous extends LinearOpMode {
         int color = (isRed) ? 1 : -1;
         int initialHeading = (isRed) ? 180 : 0;
         startPose = new Pose2d(65 * color, (closeToBackdrop) ? 10 : -34, Math.toRadians(initialHeading));
-        prePixel = new Pose2d(36 * color, (closeToBackdrop) ? 24 : -48, Math.toRadians((closeToBackdrop) ? -90 : initialHeading));
-        park = (closeToBackdrop) ? new Pose2d(62 * color, 45, Math.toRadians(-90)) : startPose;
 
         if(closeToBackdrop){
+            park = new Pose2d(62 * color, 45, Math.toRadians(-90));
+            prePixel = new Pose2d(36 * color, 24, Math.toRadians(-90));
             if(indicator == Indicator.MIDDLE){
                 dropPixel = new Pose2d(25 * color, 24, Math.toRadians(-90));
                 if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-42, 54, Math.toRadians(90));
@@ -131,10 +131,12 @@ public class NewAutonomous extends LinearOpMode {
                 else backDrop = new Pose2d(27, 53, Math.toRadians(90));
             }
         } else {
-            if(indicator == Indicator.LEFT) dropPixel = new Pose2d(40 * color, -58, initialHeading - (45*color));
-            else if(indicator == Indicator.MIDDLE) dropPixel = new Pose2d(29 * color, -33, initialHeading);
-            else if(indicator == Indicator.RIGHT) dropPixel = new Pose2d(40 * color, -33, initialHeading - (45*color));
-            backDrop = dropPixel;
+            prePixel = new Pose2d(43 * color, -34, Math.toRadians(initialHeading));
+            park = startPose;
+            if(indicator == Indicator.MIDDLE) dropPixel = new Pose2d(38 * color, -33, Math.toRadians(initialHeading));
+            else if((indicator == Indicator.RIGHT) == (RobotConfig.teamColor == TeamColor.BLUE)) dropPixel = new Pose2d(38 * color, -56, Math.toRadians(initialHeading - (45*color)));
+            else dropPixel = new Pose2d(38 * color, -33, Math.toRadians(initialHeading - (45*color)));
+            backDrop = dropPixel; //is not used (cannot leave null for trajectory building)
         }
     }
 
