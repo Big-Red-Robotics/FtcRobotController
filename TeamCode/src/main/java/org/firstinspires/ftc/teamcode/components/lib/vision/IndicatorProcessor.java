@@ -2,8 +2,9 @@ package org.firstinspires.ftc.teamcode.components.lib.vision;
 
 import android.graphics.Canvas;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.teamcode.utility.RobotConfig;
+import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -11,6 +12,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +20,6 @@ import java.util.Comparator;
 import java.util.List;
 
 public class IndicatorProcessor implements VisionProcessor {
-    Telemetry telemetry;
     Mat mat = new Mat();
     public Rect pixel = new Rect();
 
@@ -33,20 +34,18 @@ public class IndicatorProcessor implements VisionProcessor {
     public Object processFrame(Mat frame, long captureTimeNanos) {
         if (frame.empty()) return frame;
 
-        Imgproc.cvtColor(frame, mat, Imgproc.COLOR_RGB2GRAY);
-        Scalar lowHSV = new Scalar(200);
-        Scalar highHSV = new Scalar(255);
+        Imgproc.cvtColor(frame, mat, Imgproc.COLOR_RGB2HSV);
         Mat thresh = new Mat();
-        Mat edges = new Mat();
+        if (RobotConfig.teamColor == TeamColor.RED) thresh = redThresh();
+        else if (RobotConfig.teamColor == TeamColor.BLUE) thresh = blueThresh();
+//        thresh = blueThresh();
 
-        //white
-        Core.inRange(mat, lowHSV, highHSV, thresh);
-        Imgproc.Canny(thresh, edges, 100, 200);
+        Imgproc.erode(thresh, thresh, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5)));
 
         List<MatOfPoint> contours = new ArrayList<>();
 
-        Imgproc.findContours(edges, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-        contours.removeIf(c -> Imgproc.boundingRect(c).height > 50 || Imgproc.boundingRect(c).area() < 200);
+        Imgproc.findContours(thresh, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+//        contours.removeIf(c -> Imgproc.boundingRect(c).height > 50 || Imgproc.boundingRect(c).area() < 200);
         Imgproc.drawContours(frame, contours, -1, new Scalar(0, 255, 0));
 
         pixel = new Rect();
@@ -60,10 +59,38 @@ public class IndicatorProcessor implements VisionProcessor {
 
         contours.clear();
         mat.release();
-        edges.release();
         thresh.release();
-      
+
         return null;
+    }
+
+    private Mat redThresh() {
+        Scalar red1_lowHSV = new Scalar (0, 100, 100);
+        Scalar red1_highHSV = new Scalar (10, 255, 255);
+        Mat thresh1 = new Mat();
+
+        Scalar red2_lowHSV = new Scalar(160, 100, 100);
+        Scalar red2_highHSV = new Scalar (180, 255, 255);
+        Mat thresh2 = new Mat();
+
+        Core.inRange(mat, red1_lowHSV, red1_highHSV, thresh1);
+        Core.inRange(mat, red2_lowHSV, red2_highHSV, thresh2);
+        Mat thresh = new Mat();
+        Core.bitwise_or(thresh1, thresh2, thresh);
+
+        thresh1.release();
+        thresh2.release();
+
+        return thresh;
+    }
+
+    private Mat blueThresh() {
+        Scalar blue_lowHSV = new Scalar (110,30,0);
+        Scalar blue_highHSV = new Scalar (130,255,255);
+        Mat thresh = new Mat();
+        Core.inRange(mat, blue_lowHSV, blue_highHSV, thresh);
+
+        return thresh;
     }
 
     @Override
