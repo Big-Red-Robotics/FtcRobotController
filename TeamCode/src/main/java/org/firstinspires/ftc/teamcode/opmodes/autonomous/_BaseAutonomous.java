@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.components.Chassis;
 
 @Disabled
 @Autonomous(name="Base Autonomous")
-public class BaseAutonomous extends LinearOpMode {
+public class _BaseAutonomous extends LinearOpMode {
     @Override
     public void runOpMode() {
         //initialize components

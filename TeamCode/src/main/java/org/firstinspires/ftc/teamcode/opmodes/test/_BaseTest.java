@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @Disabled
 @TeleOp
-public class BaseTest extends LinearOpMode {
+public class _BaseTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {

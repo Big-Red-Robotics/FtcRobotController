@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.components.Chassis;
-import org.firstinspires.ftc.teamcode.components.NewArm;
-import org.firstinspires.ftc.teamcode.components.NewVision;
+import org.firstinspires.ftc.teamcode.components.Arm;
+import org.firstinspires.ftc.teamcode.components.Vision;
 import org.firstinspires.ftc.teamcode.components.lib.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.components.lib.drive.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
@@ -28,8 +28,8 @@ public class NewAutonomous extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        NewVision vision = new NewVision(hardwareMap);
-        NewArm arm = new NewArm(hardwareMap);
+        Vision vision = new Vision(hardwareMap);
+        Arm arm = new Arm(hardwareMap);
         Chassis chassis = new Chassis(hardwareMap);
 
         while (!isStarted() && !isStopRequested()) {
@@ -64,9 +64,7 @@ public class NewAutonomous extends LinearOpMode {
 
         TrajectorySequence traj2 = chassis.trajectorySequenceBuilder(dropPixel)
                 .back(5)
-                .addDisplacementMarker(() -> {
-                    arm.toPosition(NewArm.ArmState.level1);
-                })
+                .addDisplacementMarker(() -> arm.toPosition(Arm.ArmState.level1))
                 .lineToLinearHeading(backDrop)
                 .build();
 

@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.components.Chassis;
 
 @Disabled
 @TeleOp(name="Base TeleOp")
-public class BaseTeleOp extends LinearOpMode {
+public class _BaseTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() {
         //initialize components
