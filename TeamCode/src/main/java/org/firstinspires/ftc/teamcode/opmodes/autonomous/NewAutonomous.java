@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
 @Autonomous(name="2023-24 CenterStage")
 public class NewAutonomous extends LinearOpMode {
     //indicator
-    enum Indicator {RIGHT, MIDDLE, LEFT}
-    Indicator indicator;
+    int indicator;
+    int LEFT = 1, MIDDLE = 2, RIGHT = 3;
 
     //team info
     boolean isRight, isRed;
@@ -33,8 +33,8 @@ public class NewAutonomous extends LinearOpMode {
         Chassis chassis = new Chassis(hardwareMap);
 
         while (!isStarted() && !isStopRequested()) {
+            indicator = vision.getIndicator();
             updateSideConfiguration();
-            updateIndicator(vision);
 
             telemetry.addData("Team color", RobotConfig.teamColor);
             telemetry.addData("Initial side", RobotConfig.initialSide);
@@ -49,7 +49,7 @@ public class NewAutonomous extends LinearOpMode {
         waitSeconds(1.5);
 
         //update indicator information
-        updateIndicator(vision);
+        indicator = vision.getIndicator();
         updateCoordinates();
         telemetry.addData("Detected indicator", indicator);
         telemetry.update();
@@ -86,7 +86,9 @@ public class NewAutonomous extends LinearOpMode {
         chassis.followTrajectorySequence(traj1);
         if(RobotConfig.teamColor == TeamColor.BLUE) arm.openRightClaw();
         else arm.openLeftClaw();
-        waitSeconds(1.5);
+        waitSeconds(1.0);
+        arm.setClawRotatorPosition(0.66);
+        waitSeconds(1.0);
         if(isRight == isRed){
             chassis.followTrajectorySequence(traj2);
             arm.openLeftClaw();
@@ -115,11 +117,11 @@ public class NewAutonomous extends LinearOpMode {
         if(closeToBackdrop){
             park = new Pose2d(62 * color, 45, Math.toRadians(-90));
             prePixel = new Pose2d(36 * color, 24, Math.toRadians(-90));
-            if(indicator == Indicator.MIDDLE){
+            if(indicator == MIDDLE){
                 dropPixel = new Pose2d(25 * color, 24, Math.toRadians(-90));
                 if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-42, 54, Math.toRadians(90));
                 else backDrop = new Pose2d(35, 53, Math.toRadians(90));
-            } else if((indicator == Indicator.LEFT) == (RobotConfig.teamColor == TeamColor.BLUE)){
+            } else if((indicator == LEFT) == (RobotConfig.teamColor == TeamColor.BLUE)){
                 //left for blue, right for red (furthest from the center)
                 dropPixel = new Pose2d(32 * color, 33, Math.toRadians(-90));
                 if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-53, 54, Math.toRadians(90));
@@ -133,25 +135,10 @@ public class NewAutonomous extends LinearOpMode {
         } else {
             prePixel = new Pose2d(43 * color, -34, Math.toRadians(initialHeading));
             park = startPose;
-            if(indicator == Indicator.MIDDLE) dropPixel = new Pose2d(38 * color, -33, Math.toRadians(initialHeading));
-            else if((indicator == Indicator.RIGHT) == (RobotConfig.teamColor == TeamColor.BLUE)) dropPixel = new Pose2d(38 * color, -56, Math.toRadians(initialHeading - (45*color)));
+            if(indicator == MIDDLE) dropPixel = new Pose2d(38 * color, -33, Math.toRadians(initialHeading));
+            else if((indicator == RIGHT) == (RobotConfig.teamColor == TeamColor.BLUE)) dropPixel = new Pose2d(38 * color, -56, Math.toRadians(initialHeading - (45*color)));
             else dropPixel = new Pose2d(38 * color, -33, Math.toRadians(initialHeading - (45*color)));
             backDrop = dropPixel; //is not used (cannot leave null for trajectory building)
-        }
-    }
-
-    void updateIndicator(NewVision vision){
-        int rawIndicatorValue = vision.getIndicator();
-        switch (rawIndicatorValue){
-            case 1:
-                indicator = Indicator.LEFT;
-                break;
-            case 2:
-                indicator = Indicator.MIDDLE;
-                break;
-            case 3:
-                indicator = Indicator.RIGHT;
-                break;
         }
     }
 
