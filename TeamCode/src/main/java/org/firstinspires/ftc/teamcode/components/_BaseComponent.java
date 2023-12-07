@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.components;
 
-public class BaseComponent {
+public class _BaseComponent {
     //initialize sensors & motors in public
 
     //constructor
-    public BaseComponent(){
+    public _BaseComponent(){
         //initialization
     }
 

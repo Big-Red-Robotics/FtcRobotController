@@ -5,19 +5,19 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.components.Chassis;
-import org.firstinspires.ftc.teamcode.components.NewArm;
-import org.firstinspires.ftc.teamcode.components.NewDrone;
+import org.firstinspires.ftc.teamcode.components.Arm;
+import org.firstinspires.ftc.teamcode.components.Drone;
 
 @TeleOp(name="Dec 3 TeleOp")
-public class FirstTeleOp extends LinearOpMode {
+public class MainTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() {
         //initialize components
         Chassis chassis = new Chassis(hardwareMap);
         double forwardSpeed, strafeSpeed, rotateSpeed;
-        NewArm arm = new NewArm(hardwareMap);
-        NewDrone drone = new NewDrone(hardwareMap);
+        Arm arm = new Arm(hardwareMap);
+        Drone drone = new Drone(hardwareMap);
 
         //log data
         telemetry.addLine("waiting to start!");
@@ -56,14 +56,14 @@ public class FirstTeleOp extends LinearOpMode {
             if (gamepad2.right_bumper) arm.openLeftClaw();
             if (gamepad2.left_bumper) arm.openRightClaw();
 
-            if (gamepad2.a) {arm.setState(NewArm.ArmState.intake); arm.intake = 0; drone.home();}
-            else if (gamepad2.x) {arm.setState(NewArm.ArmState.outtake); arm.intake = 2;}
-            else if (gamepad2.y) {arm.setState(NewArm.ArmState.hang); drone.prepareLaunch(); arm.intake = 2;}
+            if (gamepad2.a) {arm.setState(Arm.ArmState.intake); arm.intake = 0; drone.home();}
+            else if (gamepad2.x) {arm.setState(Arm.ArmState.outtake); arm.intake = 2;}
+            else if (gamepad2.y) {arm.setState(Arm.ArmState.hang); drone.prepareLaunch(); arm.intake = 2;}
             else if (gamepad2.b && arm.hang) drone.launch();
 
             if (gamepad2.dpad_up) {arm.closeClaw(); sleep(200); arm.intake = 1;}
             else if (gamepad2.dpad_down) arm.openClaw();
-            else if (gamepad2.dpad_left) {arm.setState(NewArm.ArmState.level1); arm.intake = 1;}
+            else if (gamepad2.dpad_left) {arm.setState(Arm.ArmState.level1); arm.intake = 1;}
 
             arm.update();
 

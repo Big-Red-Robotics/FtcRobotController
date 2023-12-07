@@ -7,7 +7,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.components.lib.vision.IndicatorProcessor;
-import org.firstinspires.ftc.teamcode.components.lib.vision.TestProcessor;
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.VisionProcessor;
@@ -15,20 +14,18 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.opencv.core.Rect;
 
 import java.util.List;
 
-public class NewVision {
+public class Vision {
     private VisionPortal visionPortal;
     private final int screenWidth = RobotConfig.cameraWidth;
 
     //List of Processors that will be used
     AprilTagProcessor aprilTag;
-    TestProcessor testProcessor;
     public IndicatorProcessor indicatorProcessor = new IndicatorProcessor();
 
-    VisionProcessor[] processors = {aprilTag, testProcessor, indicatorProcessor};
+    VisionProcessor[] processors = {aprilTag, indicatorProcessor};
 
 //    public enum Processor {
 //        APRIL_TAG,
@@ -37,7 +34,7 @@ public class NewVision {
 //
 //    public Processor currentProcessor;
 
-    public NewVision(HardwareMap hardwareMap){
+    public Vision(HardwareMap hardwareMap){
         //Setup vision portal
         VisionPortal.Builder builder = new VisionPortal.Builder();
         builder.setCamera(hardwareMap.get(WebcamName.class, RobotConfig.cameraName));

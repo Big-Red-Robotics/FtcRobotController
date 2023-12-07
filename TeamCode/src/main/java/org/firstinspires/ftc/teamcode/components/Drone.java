@@ -7,12 +7,12 @@ import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 
 
 //mahika
-public class NewDrone {
+public class Drone {
     public Servo launchDrone;
     public Servo positionDrone;
 
     //constructor
-    public NewDrone(HardwareMap hardwareMap){
+    public Drone(HardwareMap hardwareMap){
         this.launchDrone = hardwareMap.get(Servo.class, RobotConfig.launchDrone);
         this.positionDrone = hardwareMap.get(Servo.class, RobotConfig.positionDrone);
         launchDrone.setPosition(0.65);
