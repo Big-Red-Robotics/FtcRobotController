@@ -30,6 +30,8 @@ public class NewIntake {
         this.intake.setPower(0.7);
     }
 
+    public void reverse(){this.intake.setPower(-0.7);}
+
     public void stop(){
         this.intake.setPower(0);
     }

@@ -16,9 +16,10 @@ public class BaseTeleOp extends LinearOpMode {
         //initialize components
         Chassis drive = new Chassis(hardwareMap);
         NewIntake newIntake = new NewIntake(hardwareMap);
-        NewArm newArm = new NewArm(hardwareMap, 0.3);
+        NewArm newArm = new NewArm(hardwareMap, 0.1);
+        NewOnArmServo newOnArmServo = new NewOnArmServo(hardwareMap);
         // **COMPELX MODE MUST START AT BOTTOM**
-        NewLift newLift = new NewLift(hardwareMap, false, 0.4);
+        NewLift newLift = new NewLift(hardwareMap, false, 0.30);
         NewClaw claw = new NewClaw(hardwareMap);
 
         //log data
@@ -32,17 +33,17 @@ public class BaseTeleOp extends LinearOpMode {
 
 
 
-            if(gamepad1.right_bumper)
-                newIntake.run();
-            newIntake.stop();
+            if(gamepad1.right_bumper && !gamepad1.left_bumper) newIntake.run();
+            else if(gamepad1.left_bumper && !gamepad1.right_bumper) newIntake.reverse();
+            else newIntake.stop();
+
 
                 //better arm.
-            if(gamepad1.y)
+            if(gamepad1.x)
                 newArm.run();
-            else if(gamepad1.a)
+            else if(gamepad1.b)
                 newArm.back();
-
-            newArm.stop();
+            else newArm.stop();
 
 
             // Lift
@@ -52,25 +53,35 @@ public class BaseTeleOp extends LinearOpMode {
                     newLift.up();
                 else if(gamepad2.a)
                     newLift.down();
-            }
-            newLift.stop();
+                else newLift.stop();
+            }else newLift.stop();
 
 
-            if(gamepad1.x)
+
+
+            if(gamepad2.x)
                 claw.open();
-            if(gamepad1.y)
+            if(gamepad2.b)
                 claw.close();
+
+            if(gamepad2.right_bumper)
+                newOnArmServo.right();
+            else if(gamepad2.left_bumper)
+                newOnArmServo.left();
+
 
             drive.setWeightedDrivePower(
                     new Pose2d(
                             gamepad1.left_stick_y * speed,
-                            -gamepad1.left_stick_x * speed,
+                            gamepad1.left_stick_x * speed,
                             -gamepad1.right_stick_x * speed
                     )
             );
 
-            telemetry.addLine(String.valueOf(newLift.getCurrentPosition()));
-            telemetry.addLine(String.valueOf(claw.getPos()));
+            telemetry.addLine("Current Lift Position" + String.valueOf(newLift.getCurrentPosition()));
+            telemetry.addLine("Current Claw Position" + String.valueOf(claw.getPos()));
+            telemetry.addLine("Current on arm servo position" + String.valueOf(newOnArmServo.servo.getPosition()));
+            telemetry.update();
 
             //TODO  BEFORE RUN, add telemtry update the life and servo positions. Also string.valuesof i don't have it yet.
 

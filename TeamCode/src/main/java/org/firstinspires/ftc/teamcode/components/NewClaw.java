@@ -21,11 +21,11 @@ public class NewClaw {
     }
 
     public void close(){
-        this.claw.setPosition(RobotConfig.clawCloseAndOpenValue);
+        this.claw.setPosition(0.46);
     }
 
     public void open(){
-        this.claw.setPosition(-RobotConfig.clawCloseAndOpenValue);
+        this.claw.setPosition(0.6);
     }
 
 }

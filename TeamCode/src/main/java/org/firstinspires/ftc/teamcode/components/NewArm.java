@@ -11,7 +11,7 @@ public class NewArm {
     private final static int forwardLimit = 0;
     private final static int backwardLimit = 0;
 
-    private static double speed = 0.6;
+    private static double speed;
 
     //constructor
     public NewArm(HardwareMap hardwareMap, double speed){
