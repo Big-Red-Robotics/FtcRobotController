@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.components.lib.vision;
 
 import android.graphics.Canvas;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
@@ -39,13 +38,14 @@ public class IndicatorProcessor implements VisionProcessor {
         Mat thresh = new Mat();
         if (RobotConfig.teamColor == TeamColor.RED) thresh = redThresh();
         else if (RobotConfig.teamColor == TeamColor.BLUE) thresh = blueThresh();
+//        thresh = blueThresh();
 
         Imgproc.erode(thresh, thresh, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5)));
 
         List<MatOfPoint> contours = new ArrayList<>();
 
         Imgproc.findContours(thresh, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-        contours.removeIf(c -> Imgproc.boundingRect(c).height > 50 || Imgproc.boundingRect(c).area() < 200);
+//        contours.removeIf(c -> Imgproc.boundingRect(c).height > 50 || Imgproc.boundingRect(c).area() < 200);
         Imgproc.drawContours(frame, contours, -1, new Scalar(0, 255, 0));
 
         pixel = new Rect();
@@ -85,8 +85,8 @@ public class IndicatorProcessor implements VisionProcessor {
     }
 
     private Mat blueThresh() {
-        Scalar blue_lowHSV = new Scalar (105,15,15);
-        Scalar blue_highHSV = new Scalar (130,200,200);
+        Scalar blue_lowHSV = new Scalar (105,10,0);
+        Scalar blue_highHSV = new Scalar (130,255,255);
         Mat thresh = new Mat();
         Core.inRange(mat, blue_lowHSV, blue_highHSV, thresh);
 

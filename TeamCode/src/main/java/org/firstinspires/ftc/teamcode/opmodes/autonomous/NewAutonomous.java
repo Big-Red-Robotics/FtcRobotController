@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.components.Chassis;
+import org.firstinspires.ftc.teamcode.components.NewArm;
 import org.firstinspires.ftc.teamcode.components.NewVision;
+import org.firstinspires.ftc.teamcode.components.lib.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.components.lib.drive.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.components.old.Vision;
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.InitialSide;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
@@ -15,8 +17,8 @@ import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
 @Autonomous(name="2023-24 CenterStage")
 public class NewAutonomous extends LinearOpMode {
     //indicator
-    enum Indicator {RIGHT, MIDDLE, LEFT}
-    Indicator indicator = Indicator.MIDDLE;
+    int indicator;
+    int LEFT = 1, MIDDLE = 2, RIGHT = 3;
 
     //team info
     boolean isRight, isRed;
@@ -27,93 +29,116 @@ public class NewAutonomous extends LinearOpMode {
     @Override
     public void runOpMode() {
         NewVision vision = new NewVision(hardwareMap);
-//        NewArm arm = new NewArm(hardwareMap);
+        NewArm arm = new NewArm(hardwareMap);
         Chassis chassis = new Chassis(hardwareMap);
 
         while (!isStarted() && !isStopRequested()) {
+            indicator = vision.getIndicator();
             updateSideConfiguration();
-            updateIndicator(vision);
-            updateCoordinates();
 
             telemetry.addData("Team color", RobotConfig.teamColor);
             telemetry.addData("Initial side", RobotConfig.initialSide);
-            telemetry.addData("Reading indicator", null);
             telemetry.addData("Detected indicator", indicator);
             telemetry.update();
 
             sleep(100);
         }
 
-        //.waitSeconds
-        //Trajectory Sequence
+        //put claw down (claw flipped up for initialization due to 18-inch restriction)
+        arm.setClawRotatorPosition(0.43);
+        waitSeconds(1.5);
+
+        //update indicator information
+        indicator = vision.getIndicator();
+        updateCoordinates();
+        telemetry.addData("Detected indicator", indicator);
+        telemetry.update();
+
+        //path building
         chassis.setPoseEstimate(startPose);
-        TrajectorySequence traj = chassis.trajectorySequenceBuilder(startPose)
+
+        TrajectorySequence traj1 = chassis.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(prePixel)
                 .lineToLinearHeading(dropPixel)
+                .build();
+
+        TrajectorySequence traj2 = chassis.trajectorySequenceBuilder(dropPixel)
+                .back(5)
                 .addDisplacementMarker(() -> {
-                    //arm.openClaw();
-                    //place the Pixel
+                    arm.toPosition(NewArm.ArmState.level1);
                 })
                 .lineToLinearHeading(backDrop)
-                .addDisplacementMarker(() -> {
-                    //adjust location to AprilTag
-                    //place pixels on backdrop
-                })
+                .build();
+
+        TrajectorySequence traj3 = chassis.trajectorySequenceBuilder(backDrop)
+                .back(10,
+                        Chassis.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        Chassis.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .lineToLinearHeading(park)
                 .build();
 
-        chassis.followTrajectorySequence(traj);
+        TrajectorySequence traj4 = chassis.trajectorySequenceBuilder(dropPixel)
+                .back(5)
+                .lineToLinearHeading(park)
+                .build();
+
+        //actual autonomous sequence
+        chassis.followTrajectorySequence(traj1);
+        if(RobotConfig.teamColor == TeamColor.BLUE) arm.openRightClaw();
+        else arm.openLeftClaw();
+        waitSeconds(1.0);
+        arm.setClawRotatorPosition(0.66);
+        waitSeconds(1.0);
+        if(isRight == isRed){
+            chassis.followTrajectorySequence(traj2);
+            arm.openLeftClaw();
+            if(RobotConfig.teamColor == TeamColor.BLUE) arm.openLeftClaw();
+            else arm.openRightClaw();
+            waitSeconds(1.5);
+            chassis.followTrajectorySequence(traj3);
+        } else {
+            chassis.followTrajectorySequence(traj4);
+        }
+
+    }
+
+    void waitSeconds(double seconds){
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while(timer.seconds() < seconds) ;
     }
 
     void updateCoordinates(){
         boolean closeToBackdrop = isRight == isRed;
         int color = (isRed) ? 1 : -1;
-        int side = (closeToBackdrop) ? 1 : -1;
         int initialHeading = (isRed) ? 180 : 0;
-        startPose = new Pose2d(65 * color, 10 * side, Math.toRadians(initialHeading));
-        prePixel = new Pose2d(36 * color, 24 * side, Math.toRadians((closeToBackdrop) ? -90 : initialHeading));
-        //TODO: think about closeToBackdrop == false parking
-        park = new Pose2d(62 * color, 45, Math.toRadians(-90));
+        startPose = new Pose2d(65 * color, (closeToBackdrop) ? 10 : -34, Math.toRadians(initialHeading));
 
         if(closeToBackdrop){
-            switch(indicator){
-                case LEFT:
-                    dropPixel = new Pose2d(36 * color, 12, Math.toRadians(-90));
-                    backDrop = new Pose2d(43 * color, 54, Math.toRadians(-90));
-                    break;
-                case MIDDLE:
-                    dropPixel = new Pose2d(26 * color, 24, Math.toRadians(-90));
-                    backDrop = new Pose2d(35 * color, 54, Math.toRadians(-90));
-                    break;
-                case RIGHT:
-                    dropPixel = new Pose2d(36 * color, 48, Math.toRadians(-90));
-                    backDrop = new Pose2d(27 * color, 54, Math.toRadians(-90));
+            park = new Pose2d(62 * color, 45, Math.toRadians(-90));
+            prePixel = new Pose2d(36 * color, 24, Math.toRadians(-90));
+            if(indicator == MIDDLE){
+                dropPixel = new Pose2d(25 * color, 24, Math.toRadians(-90));
+                if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-42, 54, Math.toRadians(90));
+                else backDrop = new Pose2d(35, 53, Math.toRadians(90));
+            } else if((indicator == LEFT) == (RobotConfig.teamColor == TeamColor.BLUE)){
+                //left for blue, right for red (furthest from the center)
+                dropPixel = new Pose2d(32 * color, 33, Math.toRadians(-90));
+                if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-53, 54, Math.toRadians(90));
+                else backDrop = new Pose2d(43, 53, Math.toRadians(90));
+            } else {
+                //right for blue, left for red (closest to the center)
+                dropPixel = new Pose2d(32 * color, 11, Math.toRadians(-90));
+                if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-37, 54, Math.toRadians(90));
+                else backDrop = new Pose2d(27, 53, Math.toRadians(90));
             }
         } else {
-            //TODO
-            if(indicator == Indicator.LEFT) dropPixel = new Pose2d(36 * color, 12, Math.toRadians(initialHeading));
-            else if(indicator == Indicator.MIDDLE) dropPixel = new Pose2d(26 * color, 12, Math.toRadians(initialHeading));
-            else if(indicator == Indicator.RIGHT) dropPixel = new Pose2d(36 * color, 12, Math.toRadians(initialHeading));
-            backDrop = dropPixel;
-        }
-    }
-
-    void updateIndicator(NewVision vision){
-        /*
-        read indicator value with vision.getIndicator()
-        left half of the screen: 1
-        right half of the screen: 2
-        cannot find indicator: 3
-         */
-        int rawIndicatorValue = vision.getIndicator();
-        if(!isRight){
-            if(rawIndicatorValue == 1) indicator = Indicator.LEFT;
-            else if(rawIndicatorValue == 2) indicator = Indicator.MIDDLE;
-            else if(rawIndicatorValue == 3) indicator = Indicator.RIGHT;
-        } else {
-            if(rawIndicatorValue == 1) indicator = Indicator.MIDDLE;
-            else if(rawIndicatorValue == 2) indicator = Indicator.RIGHT;
-            else if(rawIndicatorValue == 3) indicator = Indicator.LEFT;
+            prePixel = new Pose2d(43 * color, -34, Math.toRadians(initialHeading));
+            park = startPose;
+            if(indicator == MIDDLE) dropPixel = new Pose2d(38 * color, -33, Math.toRadians(initialHeading));
+            else if((indicator == RIGHT) == (RobotConfig.teamColor == TeamColor.BLUE)) dropPixel = new Pose2d(38 * color, -56, Math.toRadians(initialHeading - (45*color)));
+            else dropPixel = new Pose2d(38 * color, -33, Math.toRadians(initialHeading - (45*color)));
+            backDrop = dropPixel; //is not used (cannot leave null for trajectory building)
         }
     }
 
