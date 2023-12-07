@@ -12,6 +12,7 @@ import java.util.List;
 public class NewArm {
     public DcMotor leftLift, rightLift;
     public Servo clawRotator;
+    public Servo clawPivot;
     public Servo leftClaw, rightClaw;
     List<DcMotor> lifts;
 
@@ -20,6 +21,7 @@ public class NewArm {
     public boolean hang = false;
     public boolean outtake = false;
     public int intake = 0;
+    public boolean pivot = false;
 
     public NewArm(HardwareMap hardwareMap){
         this.leftLift = hardwareMap.get(DcMotor.class, RobotConfig.liftL);
@@ -27,6 +29,7 @@ public class NewArm {
         this.clawRotator = hardwareMap.get(Servo.class, RobotConfig.clawRotator);
         this.leftClaw = hardwareMap.get(Servo.class, RobotConfig.leftClaw);
         this.rightClaw = hardwareMap.get(Servo.class, RobotConfig.rightClaw);
+        this.clawPivot = hardwareMap.get(Servo.class, RobotConfig.clawPivot);
 
         lifts = Arrays.asList(leftLift, rightLift);
         for(DcMotor lift: lifts){
@@ -57,37 +60,40 @@ public class NewArm {
     }
 
     public void openClaw() {
-        leftClaw.setPosition(.33);
-        rightClaw.setPosition(0.95);
+        leftClaw.setPosition(0.2);
+        rightClaw.setPosition(0.8);
     }
 
     public void openLeftClaw() {
-        leftClaw.setPosition(.33);
+        leftClaw.setPosition(0.2);
     }
 
     public void openRightClaw() {
-        rightClaw.setPosition(0.95);
+        rightClaw.setPosition(0.8);
     }
 
     public void closeRightClaw() {
-        rightClaw.setPosition(.5);
+        rightClaw.setPosition(0.5);
     }
 
     public void closeLeftClaw() {
-        leftClaw.setPosition(.7);
+        leftClaw.setPosition(0.5);
     }
 
     public void closeClaw() {
-        leftClaw.setPosition(0.7);
+        leftClaw.setPosition(0.5);
         rightClaw.setPosition(0.5);
     }
 
     public void update() {
         for (DcMotor lift : lifts) {
             //claw stopper
-            if(intake == 0) clawRotator.setPosition(0.43);
-            else if (intake == 1) clawRotator.setPosition(0.66);
-            else clawRotator.setPosition(1);
+            if(intake == 0) clawRotator.setPosition(0.01);
+            else if (intake == 1) clawRotator.setPosition(0.45);
+            else clawRotator.setPosition(0.92);
+
+            /*if (pivot) clawPivot.setPosition(.01);
+            else clawPivot.setPosition(.96);*/
 
             //the actual lift part
             if (currentState == ArmState.none) {
@@ -99,7 +105,7 @@ public class NewArm {
                 if (currentState == ArmState.intake) {lift.setTargetPosition(0); outtake = false;}
                 else if (currentState == ArmState.outtake) {lift.setTargetPosition(1380); hang = false; outtake = true;}
                 else if (currentState == ArmState.hang) {lift.setTargetPosition(1100); hang = true; outtake = false;}
-                else if (currentState == ArmState.level1) {lift.setTargetPosition(275); hang = false;}
+                else if (currentState == ArmState.level1) {lift.setTargetPosition(375); hang = false;}
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 if (lift.isBusy()) {
