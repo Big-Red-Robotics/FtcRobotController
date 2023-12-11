@@ -50,7 +50,6 @@ public class MainTeleOp extends LinearOpMode {
                     )
             );
             chassis.update();
-            arm.clawPivot.setPosition(gamepad2.right_stick_y * 0.5 + 0.5);
 
             if (gamepad2.left_trigger > 0) arm.closeRightClaw();
             if (gamepad2.right_trigger > 0) arm.closeLeftClaw();

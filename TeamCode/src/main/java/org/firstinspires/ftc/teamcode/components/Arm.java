@@ -133,6 +133,9 @@ public class Arm {
             else if (intake == 1) clawRotator.setPosition(0.66);
             else clawRotator.setPosition(1);
 
+            if (pivot) clawPivot.setPosition(0.0);
+            else clawPivot.setPosition(1.0);
+
             //the actual lift part
             if (currentState == ArmState.none) {
                 lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
