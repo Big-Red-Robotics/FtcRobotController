@@ -129,12 +129,13 @@ public class Arm {
     public void update() {
         for (DcMotor lift : lifts) {
             //claw rotator
-            if(intake == 0) clawRotator.setPosition(0.43);
-            else if (intake == 1) clawRotator.setPosition(0.66);
+            if(intake == 0) clawRotator.setPosition(0.001);
+            else if (intake == 1) clawRotator.setPosition(0.4);
+            else if (intake == 2) clawRotator.setPosition(0.77);
             else clawRotator.setPosition(1);
 
-            if (pivot) clawPivot.setPosition(0.0);
-            else clawPivot.setPosition(1.0);
+            if (pivot) clawPivot.setPosition(0.265);
+            else clawPivot.setPosition(0.949);
 
             //the actual lift part
             if (currentState == ArmState.none) {
