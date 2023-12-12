@@ -65,8 +65,7 @@ public class MainTeleOp extends LinearOpMode {
             else if (gamepad2.dpad_down) arm.openClaw();
             if (gamepad2.dpad_left) {arm.setState(Arm.ArmState.level1); arm.intake = 1; arm.pivot = true;}
 
-            if (gamepad2.left_trigger > 0 || gamepad2.right_trigger > 0) arm.setLiftPower(gamepad2.right_trigger * 0.75 - gamepad2.left_trigger * 0.5);
-            else arm.update();
+            arm.update();
 
             telemetry.addData("arm position", arm.getLiftPosition());
             telemetry.addData("current mode", arm.getCurrentState());
