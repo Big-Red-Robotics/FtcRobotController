@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -54,20 +55,24 @@ public class NewAutonomous extends LinearOpMode {
         telemetry.addData("Detected indicator", indicator);
         telemetry.update();
 
-        //path building
         chassis.setPoseEstimate(startPose);
 
+        //ALL, startPosition ~ pixel location
         TrajectorySequence traj1 = chassis.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(prePixel)
                 .lineToLinearHeading(dropPixel)
                 .build();
 
+        //CLOSE TO BACKDROP, dropped pixel ~ backdrop
         TrajectorySequence traj2 = chassis.trajectorySequenceBuilder(dropPixel)
                 .back(5)
                 .addDisplacementMarker(() -> arm.toPosition(Arm.ArmState.level1))
-                .lineToLinearHeading(backDrop)
+                .turn(Math.toRadians(180))
+                .lineToLinearHeading(backDrop, Chassis.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        Chassis.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
+        //CLOSE TO BACKDROP, backdrop ~ park
         TrajectorySequence traj3 = chassis.trajectorySequenceBuilder(backDrop)
                 .back(10,
                         Chassis.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
@@ -75,9 +80,13 @@ public class NewAutonomous extends LinearOpMode {
                 .lineToLinearHeading(park)
                 .build();
 
+        //FAR FROM BACKDROP, dropped pixel ~ backdrop
         TrajectorySequence traj4 = chassis.trajectorySequenceBuilder(dropPixel)
                 .back(5)
-                .lineToLinearHeading(park)
+                .lineToLinearHeading((new Pose2d((isRed) ? 48 : -48, -60, Math.toRadians((isRed) ? 180 : 0))))
+                .forward(36)
+                .strafeTo(new Vector2d((isRed) ? 12 : -12, 12))
+                .lineToLinearHeading(backDrop)
                 .build();
 
         //actual autonomous sequence
