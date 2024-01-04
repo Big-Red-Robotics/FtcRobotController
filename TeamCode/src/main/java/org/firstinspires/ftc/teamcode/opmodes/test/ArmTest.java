@@ -17,8 +17,8 @@ public class ArmTest extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()) {
-            if (gamepad1.a) arm.toPosition(Arm.ArmState.hang);
-            if (gamepad1.b) arm.toPosition(Arm.ArmState.level1);
+            if (gamepad1.a) arm.toPosition(Arm.ArmState.hang, false);
+            if (gamepad1.b) arm.toPosition(Arm.ArmState.level1, false);
 
             if (gamepad1.dpad_up) arm.setLiftPower(0.7);
             if (gamepad1.dpad_down) arm.setLiftPower(-0.7);

@@ -66,7 +66,7 @@ public class NewAutonomous extends LinearOpMode {
         //CLOSE TO BACKDROP, dropped pixel ~ backdrop
         TrajectorySequence traj2 = chassis.trajectorySequenceBuilder(dropPixel)
                 .back(5)
-                .addDisplacementMarker(() -> arm.toPosition(Arm.ArmState.level1))
+                .addDisplacementMarker(() -> arm.toPosition(Arm.ArmState.level1, true))
                 .turn(Math.toRadians(180))
                 .lineToLinearHeading(backDrop, Chassis.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         Chassis.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
@@ -94,7 +94,7 @@ public class NewAutonomous extends LinearOpMode {
         if(RobotConfig.teamColor == TeamColor.BLUE) arm.openRightClaw();
         else arm.openLeftClaw();
         waitSeconds(1.0);
-        arm.setClawRotatorPosition(0.66);
+        arm.setClawRotatorPosition(0.69);
         waitSeconds(1.0);
         if(isRight == isRed){
             chassis.followTrajectorySequence(traj2);
