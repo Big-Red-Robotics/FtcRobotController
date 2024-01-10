@@ -25,6 +25,7 @@ public class MainTeleOp extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            //chassis
             if (gamepad1.left_bumper) {
                 forwardSpeed = 0.4;
                 strafeSpeed = 0.4;
@@ -51,22 +52,40 @@ public class MainTeleOp extends LinearOpMode {
             );
             chassis.update();
 
+            //arm
+            if(gamepad2.left_stick_y != 0.0) arm.setLiftPower(-0.5 * gamepad2.left_stick_y);
+
             if (gamepad2.left_trigger > 0) arm.closeRightClaw();
             if (gamepad2.right_trigger > 0) arm.closeLeftClaw();
             if (gamepad2.right_bumper) arm.openRightClaw();
             if (gamepad2.left_bumper) arm.openLeftClaw();
 
-            if (gamepad2.a) {arm.setState(Arm.ArmState.intake); arm.intake = 0; drone.home(); arm.pivot = false;}
-            else if (gamepad2.x) {arm.setState(Arm.ArmState.outtake); arm.intake = 2; arm.pivot = false;}
-            else if (gamepad2.y) {arm.setState(Arm.ArmState.hang); drone.prepareLaunch(); arm.intake = 2; arm.pivot = false;}
+            if (gamepad2.left_bumper) arm.openLeftClaw();
+            if (gamepad2.right_bumper) arm.openRightClaw();
+
+            if (gamepad2.a) {
+                arm.closeClaw();
+                arm.setState(Arm.ArmState.ground, 0, false);
+            } else if (gamepad2.y) arm.setState(Arm.ArmState.hang, 2, false);
+            else if (gamepad2.x) arm.setState(Arm.ArmState.high, 2, false);
             else if (gamepad2.b && arm.hang) drone.launch();
 
-            if (gamepad2.dpad_up) {arm.closeClaw(); arm.pivot = false; sleep(200); arm.intake = 3; arm.setState(Arm.ArmState.intake); }
+            if (gamepad2.dpad_left) arm.setState(Arm.ArmState.low, 1, true);
             else if (gamepad2.dpad_down) arm.openClaw();
-            if (gamepad2.dpad_left) {arm.setState(Arm.ArmState.level1); arm.intake = 1; arm.pivot = true;}
+            else if (gamepad2.dpad_up) {
+                arm.closeClaw();
+                sleep(200);
+                arm.setState(arm.getCurrentState(), 3, arm.getClawFlip());
+            }
 
-            arm.update();
+            arm.update(true);
 
+            //drone
+            if (gamepad2.a) drone.home();
+            else if (gamepad2.y) drone.prepareLaunch();
+            else if (gamepad2.b && arm.hang) drone.launch();
+
+            //telemetry
             telemetry.addData("arm position", arm.getLiftPosition());
             telemetry.addData("current mode", arm.getCurrentState());
             telemetry.addData("drone position", drone.positionDrone.getPosition());
@@ -77,6 +96,8 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("wrist encoder",arm.clawRotator.getPosition());
 
             telemetry.update();
+
+            if(isStopRequested()) drone.home();
         }
     }
 }
