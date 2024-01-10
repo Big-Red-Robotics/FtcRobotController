@@ -48,7 +48,7 @@ public class Arm {
 
     
     public void openLeftClaw() {
-        leftClaw.setPosition(0.2);
+        leftClaw.setPosition(0.4);
     }
     public void openRightClaw() {
         rightClaw.setPosition(0.8);
@@ -57,14 +57,14 @@ public class Arm {
         rightClaw.setPosition(0.5);
     }
     public void closeLeftClaw() {
-        leftClaw.setPosition(0.5);
+        leftClaw.setPosition(1.0);
     }
     public void openClaw() {
-        leftClaw.setPosition(0.2);
+        leftClaw.setPosition(0.4);
         rightClaw.setPosition(0.8);
     }
     public void closeClaw() {
-        leftClaw.setPosition(0.5);
+        leftClaw.setPosition(1.0);
         rightClaw.setPosition(0.5);
     }
 
