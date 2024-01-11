@@ -12,6 +12,7 @@ public class RobotConfig {
 
     public static String motorFL = "dFL", motorFR = "dFR", motorBL = "dBL", motorBR = "dBR";
     public static String liftR = "liftR", liftL = "liftL";
+    public static String armExtension = "armEx";
     public static String clawRotator = "wrist";
     public static String leftClaw = "leftClaw";
     public static String rightClaw = "rightClaw";

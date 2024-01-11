@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.Arm;
 import org.firstinspires.ftc.teamcode.components.Drone;
 
-@TeleOp(name="Dec 3 TeleOp")
+@TeleOp(name="Jan 14 TeleOp")
 public class MainTeleOp extends LinearOpMode {
 
     @Override

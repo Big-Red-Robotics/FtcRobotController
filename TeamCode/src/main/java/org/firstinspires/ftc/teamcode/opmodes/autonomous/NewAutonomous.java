@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.InitialSide;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
 
-@Autonomous(name="2023-24 CenterStage")
+@Autonomous(name="2023-24 CenterStage", preselectTeleOp="Jan 14 TeleOp")
 public class NewAutonomous extends LinearOpMode {
     //indicator
     int indicator;
@@ -82,18 +82,14 @@ public class NewAutonomous extends LinearOpMode {
         //CLOSE TO BACKDROP, backdrop ~ park
         TrajectorySequence traj3 = chassis.trajectorySequenceBuilder(backDrop)
                 .back(15,
-                        Chassis.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        Chassis.getVelocityConstraint(8, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         Chassis.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .addDisplacementMarker(() -> {
                     arm.toPosition(Arm.ArmState.low, 1,false);
-                    waitSeconds(1.0);
                     arm.toPosition(Arm.ArmState.ground, 0, false);
-                    telemetry.addLine("line to linear heading");
                     arm.closeClaw();
-                    waitSeconds(1.0);
-                    telemetry.update();
                 })
-                .lineToLinearHeading(park)
+                .splineToLinearHeading(park, Math.toRadians(-90))
                 .build();
 
         //FAR FROM BACKDROP, dropped pixel ~ backdrop

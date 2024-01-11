@@ -92,7 +92,7 @@ public class Arm {
         //claw rotator
         //ground: 0, low: 1, high: 2, slight lift: 3
         if(rotator == 0) clawRotator.setPosition(0.007);
-        else if (rotator == 1) clawRotator.setPosition(0.445);
+        else if (rotator == 1) clawRotator.setPosition(0.4);
         else if (rotator == 2) clawRotator.setPosition(0.77);
         else if (rotator == 3) clawRotator.setPosition(1);
         else clawRotator.setPosition(clawRotator.getPosition());
@@ -104,7 +104,7 @@ public class Arm {
         for (DcMotor lift : lifts){
             switch (armState){
                 case low:
-                    lift.setTargetPosition(375);
+                    lift.setTargetPosition(350);
                     break;
                 case hang:
                     lift.setTargetPosition(1100);
