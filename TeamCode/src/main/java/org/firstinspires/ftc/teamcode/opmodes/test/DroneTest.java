@@ -24,19 +24,18 @@ public class DroneTest extends LinearOpMode {
             while (opModeIsActive()) {
                 chassis.setWeightedDrivePower(
                         new Pose2d(
-                                gamepad1.left_stick_y * speed,
+                                -gamepad1.left_stick_y * speed,
                                 -gamepad1.left_stick_x * speed,
                                 -gamepad1.right_stick_x * speed
                         )
                 );
 
                 chassis.update();
-            }
 
-            if(gamepad1.a) drone.home();
-            if(gamepad1.b) drone.positionDrone.setPosition(0.30);
-            if(gamepad1.x) drone.positionDrone.setPosition(0.35);
-            if(gamepad1.y) drone.prepareLaunch();
+                if(gamepad1.a) drone.home();
+                if(gamepad1.b) drone.positionDrone.setPosition(0.30);
+                if(gamepad1.x) drone.positionDrone.setPosition(0.35);
+                if(gamepad1.y) drone.prepareLaunch();
 
 //            if (gamepad1.a) launchPos += 0.01;
 //            if (gamepad1.b) launchPos -= 0.01;
@@ -47,8 +46,9 @@ public class DroneTest extends LinearOpMode {
 //            drone.positionDrone.setPosition(posPos);
 
 //            telemetry.addData("launch",drone.launchDrone.getPosition());
-            telemetry.addData("position",drone.positionDrone.getPosition());
-            telemetry.update();
+                telemetry.addData("position",drone.positionDrone.getPosition());
+                telemetry.update();
+            }
         }
     }
 }
