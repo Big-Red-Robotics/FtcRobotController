@@ -57,8 +57,6 @@ public class MainTeleOp extends LinearOpMode {
 
             if (gamepad2.left_trigger > 0) arm.closeRightClaw();
             if (gamepad2.right_trigger > 0) arm.closeLeftClaw();
-            if (gamepad2.right_bumper) arm.openRightClaw();
-            if (gamepad2.left_bumper) arm.openLeftClaw();
 
             if (gamepad2.left_bumper) arm.openLeftClaw();
             if (gamepad2.right_bumper) arm.openRightClaw();

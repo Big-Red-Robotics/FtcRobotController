@@ -50,7 +50,7 @@ public class Arm {
 
     
     public void openLeftClaw() {
-        leftClaw.setPosition(0.4);
+        leftClaw.setPosition(0.0);
     }
     public void openRightClaw() {
         rightClaw.setPosition(0.8);
@@ -59,14 +59,14 @@ public class Arm {
         rightClaw.setPosition(0.5);
     }
     public void closeLeftClaw() {
-        leftClaw.setPosition(1.0);
+        leftClaw.setPosition(0.65);
     }
     public void openClaw() {
-        leftClaw.setPosition(0.4);
+        leftClaw.setPosition(0.0);
         rightClaw.setPosition(0.8);
     }
     public void closeClaw() {
-        leftClaw.setPosition(1.0);
+        leftClaw.setPosition(0.62);
         rightClaw.setPosition(0.5);
     }
 
@@ -97,8 +97,8 @@ public class Arm {
         else if (rotator == 3) clawRotator.setPosition(1);
         else clawRotator.setPosition(clawRotator.getPosition());
 
-        if (pivot) clawPivot.setPosition(0.265);
-        else clawPivot.setPosition(0.949);
+        if (pivot) clawPivot.setPosition(0.91);
+        else clawPivot.setPosition(0.0);
 
         //set lift target
         for (DcMotor lift : lifts){
@@ -138,14 +138,14 @@ public class Arm {
             //claw rotator
             if(rotateClaw){
                 //ground: 0, low: 1, high: 2, all the way: 3
-                if(rotatorLevel == 0) clawRotator.setPosition(0.007);
-                else if (rotatorLevel == 1) clawRotator.setPosition(0.445);
+                if(rotatorLevel == 0) clawRotator.setPosition(0.0);
+                else if (rotatorLevel == 1) clawRotator.setPosition(0.435);
                 else if (rotatorLevel == 2) clawRotator.setPosition(0.77);
-                else clawRotator.setPosition(1);
+                else clawRotator.setPosition(0.89);
             }
 
-            if (clawFlip) clawPivot.setPosition(0.265);
-            else clawPivot.setPosition(0.949);
+            if (clawFlip) clawPivot.setPosition(0.91);
+            else clawPivot.setPosition(0.0);
 
             //the actual lift part
             for (DcMotor lift : lifts) {
