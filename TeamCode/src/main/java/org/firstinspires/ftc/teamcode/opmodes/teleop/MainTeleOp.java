@@ -63,13 +63,14 @@ public class MainTeleOp extends LinearOpMode {
 
             if (gamepad2.a) {
                 arm.closeClaw();
-                arm.setState(Arm.ArmState.ground, 0, false);
+                arm.setState(Arm.ArmState.ground, 2, false);
             } else if (gamepad2.y) arm.setState(Arm.ArmState.hang, 2, false);
             else if (gamepad2.x) arm.setState(Arm.ArmState.high, 2, false);
             else if (gamepad2.b && arm.hang) drone.launch();
 
             if (gamepad2.dpad_left) arm.setState(Arm.ArmState.low, 1, true);
             else if (gamepad2.dpad_down) arm.openClaw();
+            else if (gamepad2.dpad_right) {arm.setState(Arm.ArmState.ground, 0, false); arm.openClaw();}
             else if (gamepad2.dpad_up) {
                 arm.closeClaw();
                 sleep(200);
