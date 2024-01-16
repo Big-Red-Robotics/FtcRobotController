@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.apache.commons.math3.analysis.function.Abs;
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.Arm;
 import org.firstinspires.ftc.teamcode.components.Drone;
@@ -53,8 +54,6 @@ public class MainTeleOp extends LinearOpMode {
             chassis.update();
 
             //arm
-            if(gamepad2.left_stick_y != 0.0) arm.setLiftPower(-0.5 * gamepad2.left_stick_y);
-
             if (gamepad2.left_trigger > 0) arm.closeRightClaw();
             if (gamepad2.right_trigger > 0) arm.closeLeftClaw();
 
@@ -74,10 +73,13 @@ public class MainTeleOp extends LinearOpMode {
             else if (gamepad2.dpad_up) {
                 arm.closeClaw();
                 sleep(200);
-                arm.setState(arm.getCurrentState(), 3, arm.getClawFlip());
+                arm.setState(arm.getCurrentState(), 2, arm.getClawFlip());
             }
 
-            arm.update(true);
+            if(gamepad2.left_stick_button) arm.reset();
+
+            if(gamepad2.left_stick_y != 0.0) arm.setLiftPower(-0.5 * gamepad2.left_stick_y);
+            else arm.update(true);
 
             //drone
             if (gamepad2.a) drone.home();

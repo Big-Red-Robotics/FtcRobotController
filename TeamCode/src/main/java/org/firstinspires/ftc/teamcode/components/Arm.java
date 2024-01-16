@@ -48,6 +48,13 @@ public class Arm {
         this.clawFlip = flipClaw;
     }
 
+    public void reset(){
+        for(DcMotor lift: lifts){
+            lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+    }
     
     public void openLeftClaw() {
         leftClaw.setPosition(0.0);
@@ -92,7 +99,7 @@ public class Arm {
         //claw rotator
         //ground: 0, low: 1, high: 2, slight lift: 3
         if(rotator == 0) clawRotator.setPosition(0.0);
-        else if (rotator == 1) clawRotator.setPosition(0.37);
+        else if (rotator == 1) clawRotator.setPosition(0.35);
         else if (rotator == 2) clawRotator.setPosition(0.735);
         else if (rotator == 3) clawRotator.setPosition(1);
         else clawRotator.setPosition(clawRotator.getPosition());
@@ -104,7 +111,7 @@ public class Arm {
         for (DcMotor lift : lifts){
             switch (armState){
                 case low:
-                    lift.setTargetPosition(375);
+                    lift.setTargetPosition(350);
                     break;
                 case hang:
                     lift.setTargetPosition(1100);
