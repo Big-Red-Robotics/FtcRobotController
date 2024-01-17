@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import java.util.Arrays;
 import java.util.List;
 
-public class NewArm {
+public class Arm {
     public DcMotor leftLift, rightLift;
     public Servo clawRotator;
     public Servo claw;
@@ -20,7 +20,7 @@ public class NewArm {
     public boolean hang = false;
     public boolean outtake = false;
 
-    public NewArm(HardwareMap hardwareMap){
+    public Arm(HardwareMap hardwareMap){
         this.leftLift = hardwareMap.get(DcMotor.class, RobotConfig.liftL);
         this.rightLift = hardwareMap.get(DcMotor.class, RobotConfig.liftR);
         this.clawRotator = hardwareMap.get(Servo.class, RobotConfig.clawRotator);

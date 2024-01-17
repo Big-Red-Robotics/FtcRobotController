@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.components.Chassis;
-import org.firstinspires.ftc.teamcode.components.NewArm;
-import org.firstinspires.ftc.teamcode.components.NewVision;
+import org.firstinspires.ftc.teamcode.components.Arm;
+import org.firstinspires.ftc.teamcode.components.Vision;
 
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.InitialSide;
@@ -23,8 +23,8 @@ public class FirstAutonomous extends LinearOpMode {
     @Override
     public void runOpMode() {
         Chassis chassis = new Chassis(hardwareMap);
-        NewArm arm = new NewArm(hardwareMap);
-        NewVision vision = new NewVision(hardwareMap);
+        Arm arm = new Arm(hardwareMap);
+        Vision vision = new Vision(hardwareMap);
 
         //open claw for 18-inch restriction
         arm.openClaw();

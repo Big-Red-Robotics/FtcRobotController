@@ -15,11 +15,10 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.opencv.core.Rect;
 
 import java.util.List;
 
-public class NewVision {
+public class Vision {
     private VisionPortal visionPortal;
     private final int screenWidth = RobotConfig.cameraWidth;
 
@@ -37,7 +36,7 @@ public class NewVision {
 //
 //    public Processor currentProcessor;
 
-    public NewVision(HardwareMap hardwareMap){
+    public Vision(HardwareMap hardwareMap){
         //Setup vision portal
         VisionPortal.Builder builder = new VisionPortal.Builder();
         builder.setCamera(hardwareMap.get(WebcamName.class, RobotConfig.cameraName));

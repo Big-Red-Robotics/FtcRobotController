@@ -1,17 +1,16 @@
 package org.firstinspires.ftc.teamcode.opmodes.test;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.components.NewDrone;
+import org.firstinspires.ftc.teamcode.components.Drone;
 
 @TeleOp
 public class DroneTest extends LinearOpMode {
 
     @Override
     public void runOpMode(){
-        NewDrone drone = new NewDrone(hardwareMap);
+        Drone drone = new Drone(hardwareMap);
 
         telemetry.addLine("waiting to start!");
         telemetry.update();

@@ -6,8 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.components.Chassis;
-import org.firstinspires.ftc.teamcode.components.NewVision;
-import org.firstinspires.ftc.teamcode.components.old.Vision;
+import org.firstinspires.ftc.teamcode.components.Vision;
 import org.firstinspires.ftc.teamcode.components.lib.drive.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.InitialSide;
@@ -25,7 +24,7 @@ public class NewAutonomous extends LinearOpMode {
     @Override
     public void runOpMode() {
         Chassis chassis = new Chassis(hardwareMap);
-        NewVision vision = new NewVision(hardwareMap);
+        Vision vision = new Vision(hardwareMap);
 
         //.waitSeconds
         TrajectorySequence traj = chassis.trajectorySequenceBuilder(startPose)
@@ -71,7 +70,7 @@ public class NewAutonomous extends LinearOpMode {
         }
     }
 
-    void adjust(Chassis chassis, Vision vision, int mode){
+    void adjust(Chassis chassis, org.firstinspires.ftc.teamcode.components.old.Vision vision, int mode){
         final int rotate = 0;
         final int strafe = 1;
         while(Math.abs(vision.getAutonPipeline().differenceX()) > 20) {

@@ -1,24 +1,23 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.components.Chassis;
-import org.firstinspires.ftc.teamcode.components.NewArm;
-import org.firstinspires.ftc.teamcode.components.NewDrone;
+import org.firstinspires.ftc.teamcode.components.Arm;
+import org.firstinspires.ftc.teamcode.components.Drone;
 
 @TeleOp(name="Oct 29 TeleOp")
-public class FirstTeleOp extends LinearOpMode {
+public class MainTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() {
         //initialize components
         Chassis chassis = new Chassis(hardwareMap);
         double forwardSpeed, strafeSpeed, rotateSpeed;
-        NewArm arm = new NewArm(hardwareMap);
-        NewDrone drone = new NewDrone(hardwareMap);
+        Arm arm = new Arm(hardwareMap);
+        Drone drone = new Drone(hardwareMap);
 
         //log data
         telemetry.addLine("waiting to start!");
@@ -61,11 +60,11 @@ public class FirstTeleOp extends LinearOpMode {
 
             if (gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) arm.setLiftPower(gamepad2.right_trigger*.75 - gamepad2.left_trigger*.5);
 
-            if (gamepad2.a) arm.setState(NewArm.ArmState.intake);
-            if (gamepad2.x) arm.setState(NewArm.ArmState.outtake);
-            if (gamepad2.y) arm.setState(NewArm.ArmState.hang);
+            if (gamepad2.a) arm.setState(Arm.ArmState.intake);
+            if (gamepad2.x) arm.setState(Arm.ArmState.outtake);
+            if (gamepad2.y) arm.setState(Arm.ArmState.hang);
 
-            if (gamepad2.dpad_up) {arm.setState(NewArm.ArmState.hang); drone.prepareLaunch();}
+            if (gamepad2.dpad_up) {arm.setState(Arm.ArmState.hang); drone.prepareLaunch();}
             if (gamepad2.dpad_left || gamepad2.dpad_right) drone.launch();
             arm.update();
 
