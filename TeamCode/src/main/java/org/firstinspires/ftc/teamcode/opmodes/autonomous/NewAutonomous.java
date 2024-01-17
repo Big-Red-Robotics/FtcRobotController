@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.InitialSide;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
 
-@Autonomous(name="2023-24 CenterStage", preselectTeleOp="Jan 14 TeleOp")
+@Autonomous(name="2023-24 CenterStage", preselectTeleOp = "Jan 14 TeleOp")
 public class NewAutonomous extends LinearOpMode {
     //indicator
     int indicator;
@@ -25,7 +25,7 @@ public class NewAutonomous extends LinearOpMode {
     boolean isRight, isRed;
 
     //odometry spots
-    Pose2d startPose, prePixel, dropPixel, park, backDrop;
+    Pose2d startPose, prePixel, dropPixel, park, backDrop, intermediate;
 
     @Override
     public void runOpMode() {
@@ -54,7 +54,7 @@ public class NewAutonomous extends LinearOpMode {
 
         //put claw down (claw flipped up for initialization due to 18-inch restriction)
         arm.setClawRotatorPosition(0.007);
-        waitSeconds(1.5);
+        waitSeconds(5); //TODO
 
         //update indicator information
         indicator = vision.getIndicator();
@@ -81,23 +81,20 @@ public class NewAutonomous extends LinearOpMode {
 
         //CLOSE TO BACKDROP, backdrop ~ park
         TrajectorySequence traj3 = chassis.trajectorySequenceBuilder(backDrop)
-                .back(15,
+                .back(10,
                         Chassis.getVelocityConstraint(8, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         Chassis.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .addDisplacementMarker(() -> {
-                    arm.toPosition(Arm.ArmState.low, 1,false);
-                    arm.toPosition(Arm.ArmState.ground, 0, false);
-                    arm.closeClaw();
-                })
-                .splineToLinearHeading(park, Math.toRadians(-90))
+                .lineToLinearHeading(park)
                 .build();
 
         //FAR FROM BACKDROP, dropped pixel ~ backdrop
         TrajectorySequence traj4 = chassis.trajectorySequenceBuilder(dropPixel)
                 .back(5)
-                .lineToLinearHeading((new Pose2d((isRed) ? 48 : -48, -60, Math.toRadians((isRed) ? 180 : 0))))
+                .lineToLinearHeading(intermediate)
                 .forward(36)
-                .strafeTo(new Vector2d((isRed) ? 12 : -12, 12))
+                .turn(Math.toRadians((isRed) ? -90 : 90))
+                .strafeTo(new Vector2d((isRed) ? 10 : -10, 20))
+                .addDisplacementMarker(() -> arm.toPosition(Arm.ArmState.low, 1,true))
                 .lineToLinearHeading(backDrop)
                 .build();
 
@@ -105,20 +102,22 @@ public class NewAutonomous extends LinearOpMode {
         chassis.followTrajectorySequence(traj1);
         if(RobotConfig.teamColor == TeamColor.BLUE) arm.openRightClaw();
         else arm.openLeftClaw();
-        waitSeconds(0.7);
-        arm.setClawRotatorPosition(0.4);
-        waitSeconds(0.7);
-        if(isRight == isRed){
-            chassis.followTrajectorySequence(traj2);
-            arm.openLeftClaw();
-            if(RobotConfig.teamColor == TeamColor.BLUE) arm.openLeftClaw();
-            else arm.openRightClaw();
-            waitSeconds(2.0);
-            chassis.followTrajectorySequence(traj3);
-        } else {
-            chassis.followTrajectorySequence(traj4);
-        }
+        waitSeconds(0.6);
+        arm.setClawRotatorPosition(0.8);
+        waitSeconds(0.5);
 
+        if(isRight == isRed)chassis.followTrajectorySequence(traj2);
+        else chassis.followTrajectorySequence(traj4);
+
+        //at backdrop
+        if(RobotConfig.teamColor == TeamColor.BLUE) arm.openLeftClaw();
+        else arm.openRightClaw();
+        waitSeconds(0.6);
+        chassis.followTrajectorySequence(traj3);
+        arm.closeClaw();
+        arm.toPosition(Arm.ArmState.low, 1,false);
+        waitSeconds(1.0);
+        arm.toPosition(Arm.ArmState.ground, 0, false);
     }
 
     void waitSeconds(double seconds){
@@ -132,34 +131,53 @@ public class NewAutonomous extends LinearOpMode {
         int color = (isRed) ? 1 : -1;
         int initialHeading = (isRed) ? 180 : 0;
         startPose = new Pose2d(65 * color, (closeToBackdrop) ? 10 : -34, Math.toRadians(initialHeading));
+        park = new Pose2d(10 * color, 47, Math.toRadians(90)); //final position
 
         if(closeToBackdrop){
-            /*close to backdrop, takes priority, scores pixel in backdrop*/
-            park = new Pose2d(62 * color, 45, Math.toRadians(-90)); //final position
+//            park = new Pose2d(62 * color, 47, Math.toRadians(90)); //final position, corner
             prePixel = new Pose2d(36 * color, 24, Math.toRadians(-90)); //middle position before first pixel
+            intermediate = park; //will not use
             if(indicator == MIDDLE){
                 /*middle for both colors*/
                 dropPixel = new Pose2d(25 * color, 24, Math.toRadians(-90));
-                if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-42, 54, Math.toRadians(90));
-                else backDrop = new Pose2d(35, 48, Math.toRadians(90));
             } else if((indicator == LEFT) == (RobotConfig.teamColor == TeamColor.BLUE)){
                 /*left for blue, right for red (furthest from the center)*/
                 dropPixel = new Pose2d(32 * color, 35, Math.toRadians(-90));
-                if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-53, 54, Math.toRadians(90));
-                else backDrop = new Pose2d(43, 48, Math.toRadians(90));
             } else {
                 //right for blue, left for red (closest to the center)
                 dropPixel = new Pose2d(32 * color, 13, Math.toRadians(-90));
-                if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-31, 54, Math.toRadians(90));
-                else backDrop = new Pose2d(27, 48, Math.toRadians(90));
             }
         } else {
+//            park = new Pose2d(10 * color, 47, Math.toRadians(90)); //final position
             prePixel = new Pose2d(43 * color, -34, Math.toRadians(initialHeading)); //middle position before first pixel
-            park = startPose; //final position
-            if(indicator == MIDDLE) dropPixel = new Pose2d(38 * color, -33, Math.toRadians(initialHeading));
-            else if((indicator == RIGHT) == (RobotConfig.teamColor == TeamColor.BLUE)) dropPixel = new Pose2d(38 * color, -56, Math.toRadians(initialHeading - (45*color)));
-            else dropPixel = new Pose2d(38 * color, -33, Math.toRadians(initialHeading - (45*color)));
-            backDrop = dropPixel; //is not used (cannot leave null for trajectory building)
+            if(indicator == MIDDLE) {
+                dropPixel = new Pose2d(38 * color, -33, Math.toRadians(initialHeading));
+                intermediate = new Pose2d((isRed) ? 48 : -48, -60, Math.toRadians((isRed) ? 180 : 0));
+            } else if((indicator == LEFT) == (RobotConfig.teamColor == TeamColor.BLUE)) {
+                /*left for blue, right for red (furthest from the center)*/
+                dropPixel = new Pose2d(38 * color, -35, Math.toRadians(initialHeading - (45*color)));
+                intermediate = new Pose2d((isRed) ? 48 : -48, -46, Math.toRadians((isRed) ? 180 : 0));
+            } else {
+                //right for blue, left for red (closest to the center)
+                dropPixel = new Pose2d(43 * color, -50, Math.toRadians(initialHeading));
+                intermediate = new Pose2d((isRed) ? 48 : -48, -33, Math.toRadians((isRed) ? 180 : 0));
+            }
+        }
+
+        if(indicator == MIDDLE){
+            /*middle for both colors*/
+            if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-42, 54, Math.toRadians(90));
+            else backDrop = new Pose2d(39, 54, Math.toRadians(90));
+        } else if((indicator == LEFT) == (RobotConfig.teamColor == TeamColor.BLUE)){
+            /*left for blue, right for red (furthest from the center)*/
+            if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-49, 52, Math.toRadians(90));
+//            else backDrop = new Pose2d(46, 54, Math.toRadians(90));
+            else backDrop = new Pose2d(44, 54, Math.toRadians(90));
+        } else {
+            //right for blue, left for red (closest to the center)
+            if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-28, 54, Math.toRadians(90));
+//            else backDrop = new Pose2d(28, 54, Math.toRadians(90));
+            else backDrop = new Pose2d(30, 54, Math.toRadians(90));
         }
     }
 

@@ -52,9 +52,16 @@ public class Arm {
         this.clawFlip = flipClaw;
     }
 
+    public void reset(){
+        for(DcMotor lift: lifts){
+            lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+    }
     
     public void openLeftClaw() {
-        leftClaw.setPosition(0.2);
+        leftClaw.setPosition(0.0);
     }
     public void openRightClaw() {
         rightClaw.setPosition(0.8);
@@ -63,14 +70,14 @@ public class Arm {
         rightClaw.setPosition(0.5);
     }
     public void closeLeftClaw() {
-        leftClaw.setPosition(0.5);
+        leftClaw.setPosition(0.65);
     }
     public void openClaw() {
-        leftClaw.setPosition(0.2);
+        leftClaw.setPosition(0.0);
         rightClaw.setPosition(0.8);
     }
     public void closeClaw() {
-        leftClaw.setPosition(0.5);
+        leftClaw.setPosition(0.62);
         rightClaw.setPosition(0.5);
     }
 
@@ -95,14 +102,14 @@ public class Arm {
     public void toPosition(ArmState armState, int rotator, boolean pivot){
         //claw rotator
         //ground: 0, low: 1, high: 2, slight lift: 3
-        if(rotator == 0) clawRotator.setPosition(0.007);
-        else if (rotator == 1) clawRotator.setPosition(0.4);
-        else if (rotator == 2) clawRotator.setPosition(0.77);
+        if(rotator == 0) clawRotator.setPosition(0.0);
+        else if (rotator == 1) clawRotator.setPosition(0.35);
+        else if (rotator == 2) clawRotator.setPosition(0.735);
         else if (rotator == 3) clawRotator.setPosition(1);
         else clawRotator.setPosition(clawRotator.getPosition());
 
-        if (pivot) clawPivot.setPosition(0.265);
-        else clawPivot.setPosition(0.949);
+        if (pivot) clawPivot.setPosition(0.91);
+        else clawPivot.setPosition(0.0);
 
         //set lift target
         for (DcMotor lift : lifts){
@@ -117,7 +124,7 @@ public class Arm {
                     lift.setTargetPosition(1380);
                     break;
                 default:
-                    lift.setTargetPosition(50);
+                    lift.setTargetPosition(10);
             }
             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
@@ -142,14 +149,14 @@ public class Arm {
             //claw rotator
             if(rotateClaw){
                 //ground: 0, low: 1, high: 2, all the way: 3
-                if(rotatorLevel == 0) clawRotator.setPosition(0.007);
-                else if (rotatorLevel == 1) clawRotator.setPosition(0.445);
-                else if (rotatorLevel == 2) clawRotator.setPosition(0.77);
-                else clawRotator.setPosition(1);
+                if(rotatorLevel == 0) clawRotator.setPosition(0.0);
+                else if (rotatorLevel == 1) clawRotator.setPosition(0.35);
+                else if (rotatorLevel == 2) clawRotator.setPosition(0.735);
+                else clawRotator.setPosition(0.89);
             }
 
-            if (clawFlip) clawPivot.setPosition(0.265);
-            else clawPivot.setPosition(0.949);
+            if (clawFlip) clawPivot.setPosition(0.91);
+            else clawPivot.setPosition(0.0);
 
             armExtension.setTargetPosition(0);
             armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
