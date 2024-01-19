@@ -37,8 +37,8 @@ public class NewAutonomous extends LinearOpMode {
             indicator = vision.getIndicator();
             updateSideConfiguration();
 
-            if (gamepad1.left_bumper || gamepad2.left_bumper) arm.setState(Arm.ArmState.low, 0,false);
-            if (gamepad1.right_bumper || gamepad2.right_bumper) arm.setState(Arm.ArmState.ground, 0,false);
+            if (gamepad1.left_bumper || gamepad2.left_bumper) arm.setLiftPosition(arm.low);
+            if (gamepad1.right_bumper || gamepad2.right_bumper) arm.setLiftPosition(arm.ground);
 
             arm.update(false);
 
@@ -73,7 +73,7 @@ public class NewAutonomous extends LinearOpMode {
         //CLOSE TO BACKDROP, dropped pixel ~ backdrop
         TrajectorySequence traj2 = chassis.trajectorySequenceBuilder(dropPixel)
                 .back(5)
-                .addDisplacementMarker(() -> arm.toPosition(Arm.ArmState.low, 1,true))
+                .addDisplacementMarker(() -> arm.toPosition(arm.low, 1,true))
                 .turn(Math.toRadians(180))
                 .lineToLinearHeading(backDrop, Chassis.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         Chassis.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
@@ -94,7 +94,7 @@ public class NewAutonomous extends LinearOpMode {
                 .forward(36)
                 .turn(Math.toRadians((isRed) ? -90 : 90))
                 .strafeTo(new Vector2d((isRed) ? 10 : -10, 20))
-                .addDisplacementMarker(() -> arm.toPosition(Arm.ArmState.low, 1,true))
+                .addDisplacementMarker(() -> arm.toPosition(arm.low, 1,true))
                 .lineToLinearHeading(backDrop)
                 .build();
 
@@ -115,9 +115,9 @@ public class NewAutonomous extends LinearOpMode {
         waitSeconds(0.6);
         chassis.followTrajectorySequence(traj3);
         arm.closeClaw();
-        arm.toPosition(Arm.ArmState.low, 1,false);
+        arm.toPosition(arm.low, 1,false);
         waitSeconds(1.0);
-        arm.toPosition(Arm.ArmState.ground, 0, false);
+        arm.toPosition(arm.ground, 0, false);
     }
 
     void waitSeconds(double seconds){

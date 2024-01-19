@@ -4,7 +4,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.apache.commons.math3.analysis.function.Abs;
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.Arm;
 import org.firstinspires.ftc.teamcode.components.Drone;
@@ -18,6 +17,7 @@ public class MainTeleOp extends LinearOpMode {
         Chassis chassis = new Chassis(hardwareMap);
         double forwardSpeed, strafeSpeed, rotateSpeed;
         Arm arm = new Arm(hardwareMap);
+        arm.setLiftPosition(arm.ground);
         Drone drone = new Drone(hardwareMap);
 
         //log data
@@ -53,48 +53,76 @@ public class MainTeleOp extends LinearOpMode {
             );
             chassis.update();
 
-            //arm
-            if (gamepad2.left_trigger > 0) arm.closeRightClaw();
-            if (gamepad2.right_trigger > 0) arm.closeLeftClaw();
+            //claw
+            if (gamepad2.left_trigger > 0) //TODO: ENABLE AUTO GRAB
+            if (gamepad2.right_trigger > 0) arm.toggleClaw();
 
-            if (gamepad2.left_bumper) arm.openLeftClaw();
-            if (gamepad2.right_bumper) arm.openRightClaw();
+            if(gamepad2.left_bumper || gamepad2.right_bumper){
+                if (gamepad2.left_bumper) arm.toggleLeftClaw();
+                else arm.toggleRightClaw();
 
-            if (gamepad2.a) {
-                arm.closeClaw();
-                arm.setState(Arm.ArmState.ground, 2, false);
-            } else if (gamepad2.y) arm.setState(Arm.ArmState.hang, 2, false);
-            else if (gamepad2.x) arm.setState(Arm.ArmState.high, 2, false);
-            else if (gamepad2.b && arm.hang) drone.launch();
-
-            if (gamepad2.dpad_left) arm.setState(Arm.ArmState.low, 1, true);
-            else if (gamepad2.dpad_down) arm.openClaw();
-            else if (gamepad2.dpad_right) {arm.setState(Arm.ArmState.ground, 0, false); arm.openClaw();}
-            else if (gamepad2.dpad_up) {
-                arm.closeClaw();
                 sleep(200);
-                arm.setState(arm.getCurrentState(), 2, arm.getClawFlip());
             }
 
-            if(gamepad2.left_stick_button) arm.reset();
 
+            //lift
+            if (gamepad2.a) {
+                arm.setLiftPosition(arm.ground);
+                arm.setRotatorLevel(0);
+                arm.setClawFlip(false);
+            }
+            else if (gamepad2.x) {
+                if(gamepad2.dpad_down || gamepad2.dpad_left){
+                    if(gamepad2.dpad_down) arm.setLiftPosition(arm.low);
+                    else arm.setLiftPosition(arm.middle);
+
+                    arm.setClawFlip(true);
+                    arm.setRotatorLevel(1);
+                }
+            } else if (gamepad2.y) {
+                arm.setLiftPosition(arm.hang);
+                arm.setClawFlip(false);
+            }
+            else if (gamepad2.b) {
+                arm.setLiftPosition(arm.high);
+                arm.setClawFlip(false);
+            }
+
+            //armEx
+//            if (!gamepad2.x && gamepad2.dpad_down) arm.setArmExtensionPosition(0);
+//            else if (!gamepad2.x && gamepad2.dpad_left) arm.setArmExtensionPosition(1000);
+//            else if (gamepad2.dpad_up) arm.setArmExtensionPosition(1700);
+            //claw rotator
+            else if (gamepad2.dpad_right) arm.toggleClawRotator();
+
+            //manual lift
+            if(gamepad2.left_stick_button) arm.resetLift();
             if(gamepad2.left_stick_y != 0.0) arm.setLiftPower(-0.5 * gamepad2.left_stick_y);
             else arm.update(true);
 
+            //manual armEx
+//            if(gamepad2.left_stick_button) arm.resetArmExtension();
+//            if(gamepad2.left_stick_y != 0.0) arm.setArmExtensionPower(-0.5 * gamepad2.right_stick_y);
+
             //drone
-            if (gamepad2.a) drone.home();
-            else if (gamepad2.y) drone.prepareLaunch();
-            else if (gamepad2.b && arm.hang) drone.launch();
+            if (gamepad2.a || gamepad2.x) drone.home();
+            else if (gamepad2.y) drone.launch();
+            else if (gamepad2.b) drone.prepareLaunch();
 
             //telemetry
             telemetry.addData("arm position", arm.getLiftPosition());
-            telemetry.addData("current mode", arm.getCurrentState());
+            telemetry.addData("arm target", arm.getLiftTargetPosition());
+
             telemetry.addData("drone position", drone.positionDrone.getPosition());
-            telemetry.addData("arm target", arm.getTargetPosition());
-            telemetry.addData("left claw position", arm.leftClaw.getPosition());
-            telemetry.addData("right claw position", arm.rightClaw.getPosition());
-            telemetry.addData("rotator encoder", arm.clawPivot.getPosition());
-            telemetry.addData("wrist encoder",arm.clawRotator.getPosition());
+
+            telemetry.addData("left claw position", arm.getLeftClawPosition());
+            telemetry.addData("right claw position", arm.getRightClawPosition());
+
+            telemetry.addData("pivot encoder", arm.getClawPivotPosition());
+            telemetry.addData("rotator  encoder",arm.getRotatorPosition());
+
+//            telemetry.addData("ArmEx power", arm.getArmExPower());
+//            telemetry.addData("ArmEx position", arm.getArmExPosition());
 
             telemetry.update();
 
