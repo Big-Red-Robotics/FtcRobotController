@@ -54,12 +54,15 @@ public class MainTeleOp extends LinearOpMode {
             chassis.update();
 
             //claw
-            if (gamepad2.left_trigger > 0) //TODO: ENABLE AUTO GRAB
-            if (gamepad2.right_trigger > 0) arm.toggleClaw();
+//            if (gamepad2.left_trigger > 0) TODO: ENABLE AUTO GRAB
+            if (gamepad2.right_trigger > 0) {
+                arm.toggleClaw();
+                sleep(300);
+            }
 
             if(gamepad2.left_bumper || gamepad2.right_bumper){
                 if (gamepad2.left_bumper) arm.toggleLeftClaw();
-                else arm.toggleRightClaw();
+                if (gamepad2.right_bumper) arm.toggleRightClaw();
 
                 sleep(200);
             }
@@ -120,6 +123,7 @@ public class MainTeleOp extends LinearOpMode {
 
             telemetry.addData("pivot encoder", arm.getClawPivotPosition());
             telemetry.addData("rotator  encoder",arm.getRotatorPosition());
+
 
 //            telemetry.addData("ArmEx power", arm.getArmExPower());
 //            telemetry.addData("ArmEx position", arm.getArmExPosition());

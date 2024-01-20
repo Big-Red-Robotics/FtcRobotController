@@ -27,6 +27,7 @@ public class Arm {
 
     private int rotatorLevel = 0;
     private boolean clawFlip = false;
+    private boolean rightClawOpen = false, leftClawOpen = false;
 
     public Arm(HardwareMap hardwareMap){
         this.leftLift = hardwareMap.get(DcMotor.class, RobotConfig.liftL);
@@ -100,25 +101,33 @@ public class Arm {
     //claw
     public void openLeftClaw() {
         leftClaw.setPosition(0.4);
+        leftClawOpen = true;
     }
-    public void closeLeftClaw() {leftClaw.setPosition(0.75);}
+    public void closeLeftClaw() {
+        leftClaw.setPosition(0.75);
+        leftClawOpen = false;
+    }
     public void toggleLeftClaw(){
-        if(leftClaw.getPosition() == 0.4) closeLeftClaw();
-        else if(leftClaw.getPosition() == 0.75) openLeftClaw();
+        if(leftClawOpen) closeLeftClaw();
+        else openLeftClaw();
     }
 
     public void openRightClaw() {
         rightClaw.setPosition(0.7);
+        rightClawOpen = true;
     }
-    public void closeRightClaw() {rightClaw.setPosition(0.35);}
+    public void closeRightClaw() {
+        rightClaw.setPosition(0.35);
+        rightClawOpen = false;
+    }
     public void toggleRightClaw(){
-        if(rightClaw.getPosition() == 0.7) closeRightClaw();
-        else if(rightClaw.getPosition() == 0.35) openRightClaw();
+        if(rightClawOpen) closeRightClaw();
+        else openRightClaw();
     }
 
     public void toggleClaw(){
-        if(rightClaw.getPosition() == 0.7) closeClaw();
-        else if (rightClaw.getPosition() == 0.35) openClaw();
+        if(rightClawOpen || leftClawOpen) closeClaw();
+        else openClaw();
     }
     public void openClaw() {
         openLeftClaw();
