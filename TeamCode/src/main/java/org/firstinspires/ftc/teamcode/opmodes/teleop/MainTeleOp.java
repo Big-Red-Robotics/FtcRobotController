@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.Arm;
 import org.firstinspires.ftc.teamcode.components.Drone;
+import org.firstinspires.ftc.teamcode.components.PixelIndicator;
 
 @TeleOp(name="Jan 14 TeleOp")
 public class MainTeleOp extends LinearOpMode {
@@ -19,6 +21,7 @@ public class MainTeleOp extends LinearOpMode {
         Arm arm = new Arm(hardwareMap);
         arm.setLiftPosition(arm.ground);
         Drone drone = new Drone(hardwareMap);
+        PixelIndicator pixelIndicator = new PixelIndicator(hardwareMap);
 
         //log data
         telemetry.addLine("waiting to start!");
@@ -53,8 +56,34 @@ public class MainTeleOp extends LinearOpMode {
             );
             chassis.update();
 
-            //claw
-//            if (gamepad2.left_trigger > 0) TODO: ENABLE AUTO GRAB
+
+            //auto grab
+            if (gamepad2.left_trigger > 0){
+                if(pixelIndicator.isTherePixelL()) arm.closeLeftClaw();
+                if(pixelIndicator.isTherePixelR()) arm.closeRightClaw();
+            }
+
+            //light indicator when both claw is closed.
+            if(arm.leftClawOpen && arm.rightClawOpen)
+                if(pixelIndicator.isTherePixelL() && pixelIndicator.isTherePixelR())
+                    pixelIndicator.light1.setPower(-0.5);
+                else
+                    pixelIndicator.light1.setPower(0);
+            else
+                pixelIndicator.light1.setPower(0);
+
+            //auto re-grab
+            if(gamepad1.right_bumper){
+                arm.openClaw();
+                while(!pixelIndicator.isThereAnyPixel()){
+                    chassis.forward(0.3);
+                    arm.closeClaw();
+                }
+                chassis.stop();
+            }
+
+
+
             if (gamepad2.right_trigger > 0) {
                 arm.toggleClaw();
                 sleep(300);
@@ -90,6 +119,9 @@ public class MainTeleOp extends LinearOpMode {
                 arm.setLiftPosition(arm.high);
                 arm.setClawFlip(false);
             }
+
+
+
 
             //armEx
 //            if (!gamepad2.x && gamepad2.dpad_down) arm.setArmExtensionPosition(0);

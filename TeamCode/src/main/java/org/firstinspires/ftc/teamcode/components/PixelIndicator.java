@@ -26,6 +26,10 @@ public class PixelIndicator {
         light1 = hardwareMap.get(DcMotor.class,"light");
 
     }
+
+    public boolean isThereAnyPixel(){
+        return isTherePixelL() || isTherePixelR();
+    }
     public boolean isTherePixelL(){
         return getDistanceL() < 2.3;
     }
