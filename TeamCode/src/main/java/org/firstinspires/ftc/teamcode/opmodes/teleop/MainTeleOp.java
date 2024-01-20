@@ -124,9 +124,9 @@ public class MainTeleOp extends LinearOpMode {
 
 
             //armEx
-//            if (!gamepad2.x && gamepad2.dpad_down) arm.setArmExtensionPosition(0);
-//            else if (!gamepad2.x && gamepad2.dpad_left) arm.setArmExtensionPosition(1000);
-//            else if (gamepad2.dpad_up) arm.setArmExtensionPosition(1700);
+            if (!gamepad2.x && gamepad2.dpad_down) arm.setArmExtensionPosition(0);
+            else if (!gamepad2.x && gamepad2.dpad_left) arm.setArmExtensionPosition(1000);
+            else if (gamepad2.dpad_up) arm.setArmExtensionPosition(1700);
             //claw rotator
             else if (gamepad2.dpad_right) arm.toggleClawRotator();
 
@@ -136,8 +136,8 @@ public class MainTeleOp extends LinearOpMode {
             else arm.update(true);
 
             //manual armEx
-//            if(gamepad2.left_stick_button) arm.resetArmExtension();
-//            if(gamepad2.left_stick_y != 0.0) arm.setArmExtensionPower(-0.5 * gamepad2.right_stick_y);
+            if(gamepad2.left_stick_button) arm.resetArmExtension();
+            if(gamepad2.left_stick_y != 0.0) arm.setArmExtensionPower(-0.5 * gamepad2.right_stick_y);
 
             //drone
             if (gamepad2.a || gamepad2.x) drone.home();
