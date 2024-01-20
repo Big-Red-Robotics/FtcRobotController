@@ -118,6 +118,9 @@ public class NewAutonomous extends LinearOpMode {
         arm.toPosition(Arm.ArmState.low, 1,false);
         waitSeconds(1.0);
         arm.toPosition(Arm.ArmState.ground, 0, false);
+
+
+        //
     }
 
     void waitSeconds(double seconds){

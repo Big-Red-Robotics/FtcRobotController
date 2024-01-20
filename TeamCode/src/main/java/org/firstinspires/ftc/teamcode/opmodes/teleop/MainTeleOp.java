@@ -1,13 +1,18 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.apache.commons.math3.analysis.function.Abs;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.Arm;
 import org.firstinspires.ftc.teamcode.components.Drone;
+import org.firstinspires.ftc.teamcode.components.PixelIndicator;
+
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 @TeleOp(name="Jan 14 TeleOp")
 public class MainTeleOp extends LinearOpMode {
@@ -19,6 +24,8 @@ public class MainTeleOp extends LinearOpMode {
         double forwardSpeed, strafeSpeed, rotateSpeed;
         Arm arm = new Arm(hardwareMap);
         Drone drone = new Drone(hardwareMap);
+        PixelIndicator pixelIndicator = new PixelIndicator(hardwareMap);
+        RevColorSensorV3 cs = pixelIndicator.csL;
 
         //log data
         telemetry.addLine("waiting to start!");
@@ -52,6 +59,29 @@ public class MainTeleOp extends LinearOpMode {
                     )
             );
             chassis.update();
+
+            telemetry.addData("Green",cs.green());
+            telemetry.addData("Blue",cs.blue());
+            telemetry.addData("Red",cs.red());
+            telemetry.addData("Argb",cs.argb());
+            telemetry.addData("Raw Light Detected",cs.getRawLightDetected());
+            telemetry.addData("Light Detected",cs.getLightDetected());
+            telemetry.addData("Alpha",cs.alpha());
+            telemetry.addData("Distance",cs.getDistance(DistanceUnit.CM));
+
+            if(gamepad1.right_bumper){
+                if(pixelIndicator.isTherePixelL()) arm.closeLeftClaw();
+                if(pixelIndicator.isTherePixelR()) arm.closeRightClaw();
+            }
+
+            if((arm.leftClaw.getPosition() > 0.64 && arm.leftClaw.getPosition() < 0.65001)  && arm.rightClaw.getPosition() == 0.50)
+                if(pixelIndicator.isTherePixelL() && pixelIndicator.isTherePixelR())
+                    pixelIndicator.light1.setPower(-0.5);
+                else
+                    pixelIndicator.light1.setPower(0);
+            else
+                pixelIndicator.light1.setPower(0);
+
 
             //arm
             if (gamepad2.left_trigger > 0) arm.closeRightClaw();

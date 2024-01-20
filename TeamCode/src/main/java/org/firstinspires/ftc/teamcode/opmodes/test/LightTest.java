@@ -23,7 +23,6 @@ public class LightTest extends LinearOpMode {
         while(opModeIsActive()) {
 
             if(gamepad1.a) light.setPower(-0.5);
-            if(gamepad1.b) light.setPower(0.0);
 
             telemetry.addData("light power", light.getPower());
             telemetry.update();
