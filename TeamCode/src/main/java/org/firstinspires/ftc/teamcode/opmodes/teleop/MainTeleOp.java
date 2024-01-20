@@ -33,7 +33,7 @@ public class MainTeleOp extends LinearOpMode {
                 rotateSpeed = 0.4;
             } else {
                 forwardSpeed = 1;
-                strafeSpeed = 0.8;
+                strafeSpeed = 1;
                 rotateSpeed = 0.9;
             }
 
@@ -46,9 +46,9 @@ public class MainTeleOp extends LinearOpMode {
             }
             chassis.setWeightedDrivePower(
                     new Pose2d(
-                            -gamepad1.left_stick_y * forwardSpeed,
+                            gamepad1.left_stick_y * forwardSpeed,
                             -gamepad1.left_stick_x * strafeSpeed,
-                            -gamepad1.right_stick_x * rotateSpeed
+                            gamepad1.right_stick_x * rotateSpeed
                     )
             );
             chassis.update();
@@ -92,9 +92,9 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             //armEx
-//            if (!gamepad2.x && gamepad2.dpad_down) arm.setArmExtensionPosition(0);
-//            else if (!gamepad2.x && gamepad2.dpad_left) arm.setArmExtensionPosition(1000);
-//            else if (gamepad2.dpad_up) arm.setArmExtensionPosition(1700);
+            if (!gamepad2.x && gamepad2.dpad_down) arm.setArmExtensionPosition(0);
+            else if (!gamepad2.x && gamepad2.dpad_left) arm.setArmExtensionPosition(1000);
+            else if (gamepad2.dpad_up) arm.setArmExtensionPosition(1700);
             //claw rotator
             else if (gamepad2.dpad_right) arm.toggleClawRotator();
 
@@ -104,8 +104,8 @@ public class MainTeleOp extends LinearOpMode {
             else arm.update(true);
 
             //manual armEx
-//            if(gamepad2.left_stick_button) arm.resetArmExtension();
-//            if(gamepad2.left_stick_y != 0.0) arm.setArmExtensionPower(-0.5 * gamepad2.right_stick_y);
+            if(gamepad2.left_stick_button) arm.resetArmExtension();
+            if(gamepad2.left_stick_y != 0.0) arm.setArmExtensionPower(-0.5 * gamepad2.right_stick_y);
 
             //drone
             if (gamepad2.a || gamepad2.x) drone.home();
@@ -125,8 +125,8 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("rotator  encoder",arm.getRotatorPosition());
 
 
-//            telemetry.addData("ArmEx power", arm.getArmExPower());
-//            telemetry.addData("ArmEx position", arm.getArmExPosition());
+            telemetry.addData("ArmEx power", arm.getArmExPower());
+            telemetry.addData("ArmEx position", arm.getArmExPosition());
 
             telemetry.update();
 
