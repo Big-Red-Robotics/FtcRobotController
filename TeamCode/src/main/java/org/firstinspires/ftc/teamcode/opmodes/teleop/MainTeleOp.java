@@ -5,6 +5,7 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.apache.commons.math3.analysis.function.Abs;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.components.Chassis;
@@ -64,6 +65,8 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Blue",cs.blue());
             telemetry.addData("Red",cs.red());
             telemetry.addData("Argb",cs.argb());
+            telemetry.addData("L Pixel",pixelIndicator.isTherePixelL());
+            telemetry.addData("r Pixel",pixelIndicator.isTherePixelR());
             telemetry.addData("Raw Light Detected",cs.getRawLightDetected());
             telemetry.addData("Light Detected",cs.getLightDetected());
             telemetry.addData("Alpha",cs.alpha());
@@ -82,6 +85,20 @@ public class MainTeleOp extends LinearOpMode {
             else
                 pixelIndicator.light1.setPower(0);
 
+            //auto re-grab
+            if(gamepad1.right_bumper){
+                ElapsedTime timer = new ElapsedTime();
+                arm.openClaw();
+                timer.reset();
+                while(!pixelIndicator.isThereAnyPixel() && timer.seconds() < 1){
+                    chassis.forward(0.6);
+                }
+                if(pixelIndicator.isTherePixelL())
+                    arm.closeLeftClaw();
+                if(pixelIndicator.isTherePixelR())
+                    arm.closeRightClaw();
+                chassis.stop();
+            }
 
             //arm
             if (gamepad2.left_trigger > 0) arm.closeRightClaw();
