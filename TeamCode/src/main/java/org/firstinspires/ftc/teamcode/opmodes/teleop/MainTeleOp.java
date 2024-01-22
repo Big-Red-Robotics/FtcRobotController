@@ -46,9 +46,9 @@ public class MainTeleOp extends LinearOpMode {
             }
             chassis.setWeightedDrivePower(
                     new Pose2d(
-                            gamepad1.left_stick_y * forwardSpeed,
+                            -gamepad1.left_stick_y * forwardSpeed,
                             -gamepad1.left_stick_x * strafeSpeed,
-                            gamepad1.right_stick_x * rotateSpeed
+                            -gamepad1.right_stick_x * rotateSpeed
                     )
             );
             chassis.update();
@@ -94,7 +94,7 @@ public class MainTeleOp extends LinearOpMode {
             //armEx
             if (!gamepad2.x && gamepad2.dpad_down) arm.setArmExtensionPosition(0);
             else if (!gamepad2.x && gamepad2.dpad_left) arm.setArmExtensionPosition(1000);
-            else if (gamepad2.dpad_up) arm.setArmExtensionPosition(1700);
+            else if (gamepad2.dpad_up) arm.setArmExtensionPosition(1600);
             //claw rotator
             else if (gamepad2.dpad_right) arm.toggleClawRotator();
 

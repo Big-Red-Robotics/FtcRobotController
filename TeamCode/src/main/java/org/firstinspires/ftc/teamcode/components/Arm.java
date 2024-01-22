@@ -50,6 +50,7 @@ public class Arm {
 
         armExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armExtension.setTargetPosition(0);
+        armExtension.setPower(0.0);
     }
 
     public void resetLift(){
@@ -230,4 +231,5 @@ public class Arm {
 
     public double getArmExPower() {return armExtension.getPower();}
     public double getArmExPosition() {return armExtension.getCurrentPosition();}
+    public double getArmExTargetPosition() {return armExtension.getTargetPosition();}
 }
