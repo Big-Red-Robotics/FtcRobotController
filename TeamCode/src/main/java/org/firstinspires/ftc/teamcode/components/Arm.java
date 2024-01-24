@@ -36,7 +36,7 @@ public class Arm {
         this.leftClaw = hardwareMap.get(Servo.class, RobotConfig.leftClaw);
         this.rightClaw = hardwareMap.get(Servo.class, RobotConfig.rightClaw);
         this.clawPivot = hardwareMap.get(Servo.class, RobotConfig.clawPivot);
-//        this.armExtension = hardwareMap.get(DcMotor.class, RobotConfig.armExtension);
+        this.armExtension = hardwareMap.get(DcMotor.class, RobotConfig.armExtension);
 
         lifts = Arrays.asList(leftLift, rightLift);
         for(DcMotor lift: lifts){
@@ -48,7 +48,9 @@ public class Arm {
         rightLift.setDirection(DcMotor.Direction.FORWARD);
         leftLift.setDirection(DcMotor.Direction.REVERSE);
 
-//        armExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armExtension.setTargetPosition(0);
+        armExtension.setPower(0.0);
     }
 
     public void resetLift(){
@@ -90,6 +92,7 @@ public class Arm {
     //armEx
     public void setArmExtensionPosition(int position){
         armExtension.setTargetPosition(position);
+        armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void setArmExtensionPower(double power){
         armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -195,8 +198,8 @@ public class Arm {
         if (clawFlip) clawPivot.setPosition(0.91);
         else clawPivot.setPosition(0.0);
 
-//        if(armExtension.isBusy()) armExtension.setPower(0.6);
-//        else armExtension.setPower(0.0);
+        if(armExtension.isBusy()) armExtension.setPower(0.6);
+        else armExtension.setPower(0.0);
 
         //the actual lift part
         for (DcMotor lift : lifts) {
@@ -228,4 +231,5 @@ public class Arm {
 
     public double getArmExPower() {return armExtension.getPower();}
     public double getArmExPosition() {return armExtension.getCurrentPosition();}
+    public double getArmExTargetPosition() {return armExtension.getTargetPosition();}
 }

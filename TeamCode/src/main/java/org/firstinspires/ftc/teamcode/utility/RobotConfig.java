@@ -22,10 +22,14 @@ public class RobotConfig {
 
     //unused
     public static String imu = "imu";
-    public static String distanceSensor = "distanceSensor";
+    public static String distanceSensor = "distance";
 
     //Webcam: Logitech HD Webcam C270
     public static String cameraName = "Webcam 1";
     public static int cameraWidth = 640;
     public static int cameraHeight = 480;
+
+    //blinkin
+    public static String blinkinLeft = "blinkinL";
+    public static String blinkinRight = "blinkinR";
 }
