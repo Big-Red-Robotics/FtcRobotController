@@ -104,8 +104,8 @@ public class MainTeleOp extends LinearOpMode {
             else arm.update(true);
 
             //manual armEx
-            if(gamepad2.left_stick_button) arm.resetArmExtension();
-            if(gamepad2.left_stick_y != 0.0) arm.setArmExtensionPower(-0.5 * gamepad2.right_stick_y);
+            if(gamepad2.right_stick_button) arm.resetArmExtension();
+            if(gamepad2.right_stick_y != 0.0) arm.setArmExtensionPower(-0.5 * gamepad2.right_stick_y);
 
             //drone
             if (gamepad2.a || gamepad2.x) drone.home();
@@ -127,6 +127,7 @@ public class MainTeleOp extends LinearOpMode {
 
             telemetry.addData("ArmEx power", arm.getArmExPower());
             telemetry.addData("ArmEx position", arm.getArmExPosition());
+            telemetry.addData("ArmEx target position", arm.getArmExTargetPosition());
 
             telemetry.update();
 
