@@ -54,11 +54,14 @@ public class MainTeleOp extends LinearOpMode {
             chassis.update();
 
             //arm
-            if (gamepad2.left_trigger > 0) arm.closeRightClaw();
+            /*if (gamepad2.left_trigger > 0) arm.closeRightClaw();
             if (gamepad2.right_trigger > 0) arm.closeLeftClaw();
 
             if (gamepad2.left_bumper) arm.openLeftClaw();
-            if (gamepad2.right_bumper) arm.openRightClaw();
+            if (gamepad2.right_bumper) arm.openRightClaw();*/
+
+            arm.clawRotator.setPosition(gamepad2.left_stick_y * 0.5 + 0.5);
+            arm.clawPivot.setPosition(gamepad2.right_stick_x * 0.5 + 0.5);
 
             if (gamepad2.a) {
                 arm.closeClaw();
@@ -78,8 +81,8 @@ public class MainTeleOp extends LinearOpMode {
 
             if(gamepad2.left_stick_button) arm.reset();
 
-            if(gamepad2.left_stick_y != 0.0) arm.setLiftPower(-0.5 * gamepad2.left_stick_y);
-            else arm.update(true);
+            /*if(gamepad2.left_stick_y != 0.0) arm.setLiftPower(-0.5 * gamepad2.left_stick_y);
+            else*/ arm.update(true);
 
             //drone
             if (gamepad2.a) drone.home();

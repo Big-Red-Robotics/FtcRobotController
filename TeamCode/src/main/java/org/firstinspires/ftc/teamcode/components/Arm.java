@@ -143,7 +143,7 @@ public class Arm {
     public void update(boolean rotateClaw) {
         if(currentState != ArmState.manual){
             //claw rotator
-            if(rotateClaw){
+            /*if(rotateClaw){
                 //ground: 0, low: 1, high: 2, all the way: 3
                 if(rotatorLevel == 0) clawRotator.setPosition(0.0);
                 else if (rotatorLevel == 1) clawRotator.setPosition(0.35);
@@ -152,7 +152,7 @@ public class Arm {
             }
 
             if (clawFlip) clawPivot.setPosition(0.91);
-            else clawPivot.setPosition(0.0);
+            else clawPivot.setPosition(0.0);*/
 
             //the actual lift part
             for (DcMotor lift : lifts) {
