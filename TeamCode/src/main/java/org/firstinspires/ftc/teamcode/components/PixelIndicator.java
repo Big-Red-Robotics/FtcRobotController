@@ -53,20 +53,20 @@ public class PixelIndicator {
         return csR.getDistance(DistanceUnit.CM);
     }
 
-    public boolean isGreen(){
-        return false;
+    public boolean isGreen(int green, int red, int blue, int alpha){
+        return green > 585 && blue > 245 && red > 200 && (alpha > 340 && alpha < 600);
     }
 
-    public boolean isPurple(){
-        return false;
+    public boolean isPurple(int green, int red, int blue, int alpha){
+        return (green > 600 && green < 1000) && blue > 950 && red > 530 && alpha > 750;
     }
 
-    public boolean isWhite(){
-        return false;
+    public boolean isWhite(int green, int red, int blue, int alpha){
+        return green > 1700 && blue > 1450 && red > 1000 && alpha > 1400;
     }
 
-    public boolean isYellow(){
-        return false;
+    public boolean isYellow(int green, int red, int blue, int alpha){
+        return green > 900 && blue > 250 && red > 650 && (alpha > 615 && alpha < 800);
     }
 
 }

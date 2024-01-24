@@ -2,9 +2,12 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.Arm;
 import org.firstinspires.ftc.teamcode.components.Drone;
@@ -12,6 +15,7 @@ import org.firstinspires.ftc.teamcode.components.PixelIndicator;
 
 @TeleOp(name="Jan 14 TeleOp")
 public class MainTeleOp extends LinearOpMode {
+    RevBlinkinLedDriver.BlinkinPattern pattern;
 
     @Override
     public void runOpMode() {
@@ -21,6 +25,8 @@ public class MainTeleOp extends LinearOpMode {
         Arm arm = new Arm(hardwareMap);
         arm.setLiftPosition(arm.ground);
         Drone drone = new Drone(hardwareMap);
+        RevBlinkinLedDriver ledL = hardwareMap.get(RevBlinkinLedDriver.class,"blinkinL");
+        RevBlinkinLedDriver ledR = hardwareMap.get(RevBlinkinLedDriver.class,"blinkinR");
         PixelIndicator pixelIndicator = new PixelIndicator(hardwareMap);
 
         //log data
@@ -65,38 +71,73 @@ public class MainTeleOp extends LinearOpMode {
 
             //light indicator when both claw is closed.
             if(arm.leftClawOpen && arm.rightClawOpen)
-                if(pixelIndicator.isTherePixelL() && pixelIndicator.isTherePixelR())
-                    pixelIndicator.light1.setPower(-0.5);
-                else
-                    pixelIndicator.light1.setPower(0);
-            else
-                pixelIndicator.light1.setPower(0);
+                if(pixelIndicator.isTherePixelR()){
+                    int g = pixelIndicator.csR.green();
+                    int r = pixelIndicator.csR.red();
+                    int b = pixelIndicator.csR.blue();
+                    int a = pixelIndicator.csR.alpha();
+                    if(pixelIndicator.isGreen(g,r,b,a))
+                        pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+                    else if(pixelIndicator.isWhite(g,r,b,a))
+                        pattern = RevBlinkinLedDriver.BlinkinPattern.WHITE;
+                    else if(pixelIndicator.isYellow(g,r,b,a))
+                        pattern = RevBlinkinLedDriver.BlinkinPattern.YELLOW;
+                    else if(pixelIndicator.isPurple(g,r,b,a))
+                        pattern = RevBlinkinLedDriver.BlinkinPattern.VIOLET;
+                    pattern = pattern.next();
+                    ledR.setPattern(pattern);
+                }else if(pixelIndicator.isTherePixelL()){
+                    int g = pixelIndicator.csL.green();
+                    int r = pixelIndicator.csL.red();
+                    int b = pixelIndicator.csL.blue();
+                    int a = pixelIndicator.csL.alpha();
+                    if(pixelIndicator.isGreen(g,r,b,a))
+                        pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+                    else if(pixelIndicator.isWhite(g,r,b,a))
+                        pattern = RevBlinkinLedDriver.BlinkinPattern.WHITE;
+                    else if(pixelIndicator.isYellow(g,r,b,a))
+                        pattern = RevBlinkinLedDriver.BlinkinPattern.YELLOW;
+                    else if(pixelIndicator.isPurple(g,r,b,a))
+                        pattern = RevBlinkinLedDriver.BlinkinPattern.VIOLET;
+                    pattern = pattern.next();
+                    ledL.setPattern(pattern);
+                }
+
+            else{
+                pattern = RevBlinkinLedDriver.BlinkinPattern.ORANGE;
+                pattern = pattern.next();
+                ledR.setPattern(pattern);
+                ledL.setPattern(pattern);
+            }
 
             //auto re-grab
             if(gamepad1.right_bumper){
-                arm.openClaw();
-                while(!pixelIndicator.isThereAnyPixel()){
-                    chassis.forward(0.3);
-                    arm.closeClaw();
+                ElapsedTime timer = new ElapsedTime();
+                timer.reset();
+                if(!pixelIndicator.isTherePixelL())
+                    arm.openLeftClaw();
+                else if(!pixelIndicator.isTherePixelR())
+                    arm.openRightClaw();
+                while(!pixelIndicator.isThereAnyPixel() && timer.seconds() < 1){
+                    chassis.forward(0.6);
                 }
+                if(pixelIndicator.isTherePixelL())
+                    arm.closeLeftClaw();
+                if(pixelIndicator.isTherePixelR())
+                    arm.closeRightClaw();
                 chassis.stop();
             }
-
-
 
             if (gamepad2.right_trigger > 0) {
                 arm.toggleClaw();
                 sleep(300);
             }
-
             if(gamepad2.left_bumper || gamepad2.right_bumper){
                 if (gamepad2.left_bumper) arm.toggleLeftClaw();
                 if (gamepad2.right_bumper) arm.toggleRightClaw();
 
                 sleep(200);
             }
-
-
             //lift
             if (gamepad2.a) {
                 arm.setLiftPosition(arm.ground);
