@@ -90,8 +90,8 @@ public class Chassis extends MecanumDrive {
         }
 
         //motors config
-        motorBL.setDirection(DcMotor.Direction.REVERSE);
-        motorFL.setDirection(DcMotor.Direction.REVERSE);
+        motorBR.setDirection(DcMotor.Direction.REVERSE);
+        motorFR.setDirection(DcMotor.Direction.REVERSE);
         motors = Arrays.asList(motorFL, motorBL, motorBR, motorFR);
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
