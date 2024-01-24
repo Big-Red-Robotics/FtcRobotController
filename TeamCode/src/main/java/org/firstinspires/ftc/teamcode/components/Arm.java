@@ -27,7 +27,7 @@ public class Arm {
 
     private int rotatorLevel = 0;
     private boolean clawFlip = false;
-    private boolean rightClawOpen = false, leftClawOpen = false;
+    public boolean rightClawOpen = false, leftClawOpen = false;
 
     public Arm(HardwareMap hardwareMap){
         this.leftLift = hardwareMap.get(DcMotor.class, RobotConfig.liftL);
