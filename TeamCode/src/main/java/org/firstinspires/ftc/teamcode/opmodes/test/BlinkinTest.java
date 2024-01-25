@@ -16,9 +16,9 @@ public class BlinkinTest extends LinearOpMode {
         //initialize components
         RevBlinkinLedDriver blinkinRight = hardwareMap.get(RevBlinkinLedDriver.class, RobotConfig.blinkinRight);
         RevBlinkinLedDriver blinkinLeft = hardwareMap.get(RevBlinkinLedDriver.class, RobotConfig.blinkinLeft);
-        DcMotor blinkinPower = hardwareMap.get(DcMotor.class, "blinkinPower");
+        DcMotor blinkinPower = hardwareMap.get(DcMotor.class, RobotConfig.blinkinPower);
 
-        RevBlinkinLedDriver.BlinkinPattern pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
+        RevBlinkinLedDriver.BlinkinPattern pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET;
         blinkinRight.setPattern(pattern);
         blinkinLeft.setPattern(pattern);
 
@@ -37,7 +37,7 @@ public class BlinkinTest extends LinearOpMode {
                 sleep(500);
             }
 
-            telemetry.addData("data", null);
+            telemetry.addData("pattern name", pattern.name());
             telemetry.update();
         }
     }
