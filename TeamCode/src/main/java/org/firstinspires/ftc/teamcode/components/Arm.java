@@ -11,9 +11,9 @@ import java.util.List;
 
 public class Arm {
     private final DcMotor leftLift, rightLift;
-    private final Servo clawRotator;
-    private final Servo clawPivot;
-    private final Servo leftClaw, rightClaw;
+    public final Servo clawRotator;
+    public final Servo clawPivot;
+    public final Servo leftClaw, rightClaw;
     public DcMotor armExtension;
     List<DcMotor> lifts;
 
@@ -103,11 +103,11 @@ public class Arm {
 
     //claw
     public void openLeftClaw() {
-        leftClaw.setPosition(0.4);
+        leftClaw.setPosition(0.31);
         leftClawOpen = true;
     }
     public void closeLeftClaw() {
-        leftClaw.setPosition(0.75);
+        leftClaw.setPosition(0.7);
         leftClawOpen = false;
     }
     public void toggleLeftClaw(){
@@ -116,7 +116,7 @@ public class Arm {
     }
 
     public void openRightClaw() {
-        rightClaw.setPosition(0.7);
+        rightClaw.setPosition(0.9);
         rightClawOpen = true;
     }
     public void closeRightClaw() {
@@ -157,7 +157,7 @@ public class Arm {
 
     public void toPosition(int position, int rotator, boolean pivot){
         //claw rotator
-        this.rotatorLevel = rotator;
+        /*this.rotatorLevel = rotator;
         if(rotator == 0) clawRotator.setPosition(0.0);
         else if (rotator == 1) clawRotator.setPosition(0.35);
         else if (rotator == 2) clawRotator.setPosition(0.735);
@@ -165,7 +165,7 @@ public class Arm {
 
         //claw pivot
         if (pivot) clawPivot.setPosition(0.91);
-        else clawPivot.setPosition(0.0);
+        else clawPivot.setPosition(0.0);*/
 
         //set lift target
         setLiftPosition(position);
