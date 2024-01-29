@@ -138,6 +138,7 @@ public class MainTeleOp extends LinearOpMode {
 
                 sleep(200);
             }
+
             //lift
             if (gamepad2.a) {
                 arm.setLiftPosition(arm.ground);
