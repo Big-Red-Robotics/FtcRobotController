@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
@@ -52,6 +53,9 @@ public class Arm {
         armExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armExtension.setTargetPosition(0);
         armExtension.setPower(0.0);
+
+        clawPivot.setPwmRange(new PwmControl.PwmRange(1200, 1800));
+        clawPivot.setPosition(0.95);
     }
 
     public void resetLift(){
@@ -196,8 +200,8 @@ public class Arm {
             else clawRotator.setPosition(1);
         }
 
-        if (clawFlip) clawPivot.setPosition(0.91);
-        else clawPivot.setPosition(0.0);
+        if (clawFlip) clawPivot.setPosition(0.29);
+        else clawPivot.setPosition(0.95);
 
         if(armExtension.isBusy()) armExtension.setPower(0.6);
         else armExtension.setPower(0.0);
