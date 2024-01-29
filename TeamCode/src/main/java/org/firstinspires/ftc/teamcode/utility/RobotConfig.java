@@ -32,4 +32,5 @@ public class RobotConfig {
     //blinkin
     public static String blinkinLeft = "blinkinL";
     public static String blinkinRight = "blinkinR";
+    public static String blinkinPower = "blinkinPower";
 }
