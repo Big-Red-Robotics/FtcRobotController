@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.components;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 
@@ -11,9 +12,9 @@ import java.util.List;
 
 public class Arm {
     private final DcMotor leftLift, rightLift;
-    private final Servo clawRotator;
-    private final Servo clawPivot;
-    private final Servo leftClaw, rightClaw;
+    public final Servo clawRotator;
+    public final ServoImplEx clawPivot;
+    public final Servo leftClaw, rightClaw;
     public DcMotor armExtension;
     List<DcMotor> lifts;
 
@@ -35,7 +36,7 @@ public class Arm {
         this.clawRotator = hardwareMap.get(Servo.class, RobotConfig.clawRotator);
         this.leftClaw = hardwareMap.get(Servo.class, RobotConfig.leftClaw);
         this.rightClaw = hardwareMap.get(Servo.class, RobotConfig.rightClaw);
-        this.clawPivot = hardwareMap.get(Servo.class, RobotConfig.clawPivot);
+        this.clawPivot = hardwareMap.get(ServoImplEx.class, RobotConfig.clawPivot);
         this.armExtension = hardwareMap.get(DcMotor.class, RobotConfig.armExtension);
 
         lifts = Arrays.asList(leftLift, rightLift);
@@ -189,10 +190,10 @@ public class Arm {
         //claw rotator
         if(rotateClaw){
             //ground: 0, low: 1, high: 2, all the way: 3
-            if(rotatorLevel == 0) clawRotator.setPosition(0.0);
-            else if (rotatorLevel == 1) clawRotator.setPosition(0.35);
-            else if (rotatorLevel == 2) clawRotator.setPosition(0.735);
-            else clawRotator.setPosition(0.89);
+            if(rotatorLevel == 0) clawRotator.setPosition(0.5);
+            else if (rotatorLevel == 1) clawRotator.setPosition(0.75);
+            else if (rotatorLevel == 2) clawRotator.setPosition(1);
+            else clawRotator.setPosition(1);
         }
 
         if (clawFlip) clawPivot.setPosition(0.91);
