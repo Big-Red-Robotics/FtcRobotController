@@ -157,7 +157,7 @@ public class Arm {
 
     public void toPosition(int position, int rotator, boolean pivot){
         //claw rotator
-        /*this.rotatorLevel = rotator;
+        this.rotatorLevel = rotator;
         if(rotator == 0) clawRotator.setPosition(0.0);
         else if (rotator == 1) clawRotator.setPosition(0.35);
         else if (rotator == 2) clawRotator.setPosition(0.735);
@@ -165,7 +165,7 @@ public class Arm {
 
         //claw pivot
         if (pivot) clawPivot.setPosition(0.91);
-        else clawPivot.setPosition(0.0);*/
+        else clawPivot.setPosition(0.0);
 
         //set lift target
         setLiftPosition(position);
