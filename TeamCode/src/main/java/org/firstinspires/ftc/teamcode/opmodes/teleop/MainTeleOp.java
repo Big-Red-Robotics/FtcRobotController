@@ -99,6 +99,7 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.update();
 
             if(isStopRequested()) drone.home();
+            Hitec
         }
     }
 }
