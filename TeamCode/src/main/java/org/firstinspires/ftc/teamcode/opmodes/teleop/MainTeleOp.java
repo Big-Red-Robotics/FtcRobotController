@@ -175,6 +175,7 @@ public class MainTeleOp extends LinearOpMode {
             if(gamepad2.left_stick_y != 0.0) arm.setLiftPower(-0.5 * gamepad2.left_stick_y);
             else if(gamepad2.right_stick_y != 0.0) arm.setArmExtensionPower(-0.5 * gamepad2.right_stick_y);
             else arm.update(true);
+            //TODO: this is not the ideal structure bc manual lift is restricting other movements, but its ok
 
             //manual armEx
             if(gamepad2.right_stick_button) arm.resetArmExtension();

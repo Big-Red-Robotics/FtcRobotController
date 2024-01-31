@@ -216,11 +216,13 @@ public class Arm {
         if (clawFlip) clawPivot.setPosition(0.29);
         else clawPivot.setPosition(0.95);
 
-        if(armExtension.isBusy()) {
+
+        if (armExtension.getTargetPosition() == 0){
+            if(!slideZeroReset.isPressed()) armExtension.setPower(0.5); //TODO: we might have to flip the power by -1
+        } else if(armExtension.isBusy()) {
             if(getLiftTargetPosition() == LOW || getLiftTargetPosition() == MIDDLE) armExtension.setPower(0.6);
             else armExtension.setPower(1.0);
-        }
-        else armExtension.setPower(0.0);
+        } else armExtension.setPower(0.0);
 
         //the actual lift part
         for (DcMotor lift : lifts) {
