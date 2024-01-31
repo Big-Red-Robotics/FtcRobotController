@@ -18,7 +18,7 @@ public class Arm {
     private final Servo clawRotator;
     private final ServoImplEx clawPivot;
     private final Servo leftClaw, rightClaw;
-    private DcMotor armExtension;
+    private final DcMotor armExtension;
     List<DcMotor> lifts;
 
     //arm position
