@@ -21,9 +21,8 @@ public class Arm {
 
     //arm position
     public int ground = 0,
-               low_b = 410,
-               low = 350,
-               middle = 410,
+               low = 400,
+               middle = 600,
                hang = 1100,
                high = 1380;
 
@@ -108,11 +107,11 @@ public class Arm {
 
     //claw
     public void openLeftClaw() {
-        leftClaw.setPosition(0.31);
+        leftClaw.setPosition(0.9);
         leftClawOpen = true;
     }
     public void closeLeftClaw() {
-        leftClaw.setPosition(0.7);
+        leftClaw.setPosition(0.5);
         leftClawOpen = false;
     }
     public void toggleLeftClaw(){
@@ -161,13 +160,6 @@ public class Arm {
     }
 
     public void toPosition(int position, int rotator, boolean pivot){
-        //claw rotator
-        this.rotatorLevel = rotator;
-        if(rotator == 0) clawRotator.setPosition(0.0);
-        else if (rotator == 1) clawRotator.setPosition(0.35);
-        else if (rotator == 2) clawRotator.setPosition(0.735);
-        else if (rotator == 3) clawRotator.setPosition(1);
-
         //claw pivot
         if (pivot) clawPivot.setPosition(0.91);
         else clawPivot.setPosition(0.0);
@@ -188,14 +180,21 @@ public class Arm {
                 } else lift.setPower(0.8);
             }
         }
+
+        //claw rotator
+        this.rotatorLevel = rotator;
+        if(rotator == 0) clawRotator.setPosition(0.0);
+        else if (rotator == 1) clawRotator.setPosition(0.43);
+        else if (rotator == 2) clawRotator.setPosition(0.85);
+        else if (rotator == 3) clawRotator.setPosition(1);
     }
 
     public void update(boolean rotateClaw) {
         //claw rotator
         if(rotateClaw){
-            //ground: 0, low: 1, high: 2, all the way: 3
-            if(rotatorLevel == 0) clawRotator.setPosition(0.5);
-            else if (rotatorLevel == 1) clawRotator.setPosition(0.75);
+            //ground: 0, low: 1, middle & high: 2, all the way: 3
+            if(rotatorLevel == 0) clawRotator.setPosition(0.45);
+            else if (rotatorLevel == 1) clawRotator.setPosition(0.6);
             else if (rotatorLevel == 2) clawRotator.setPosition(1);
             else clawRotator.setPosition(1);
         }

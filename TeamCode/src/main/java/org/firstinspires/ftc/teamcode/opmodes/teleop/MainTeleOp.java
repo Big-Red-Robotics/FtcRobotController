@@ -38,11 +38,11 @@ public class MainTeleOp extends LinearOpMode {
             //chassis
             if (gamepad1.left_bumper) {
                 forwardSpeed = 0.4;
-                strafeSpeed = 0.4;
+                strafeSpeed = 0.7;
                 rotateSpeed = 0.4;
             } else {
                 forwardSpeed = 1;
-                strafeSpeed = 1;
+                strafeSpeed = 1.5;
                 rotateSpeed = 0.9;
             }
 
@@ -62,7 +62,6 @@ public class MainTeleOp extends LinearOpMode {
             );
             chassis.update();
 
-
             //auto grab
             if (gamepad2.left_trigger > 0){
                 if(pixelIndicator.isTherePixelL()) arm.closeLeftClaw();
@@ -70,41 +69,18 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             //light indicator when both claw is closed.
-            if(arm.leftClawOpen && arm.rightClawOpen)
-                if(pixelIndicator.isTherePixelR()){
-                    int g = pixelIndicator.csR.green();
-                    int r = pixelIndicator.csR.red();
-                    int b = pixelIndicator.csR.blue();
-                    int a = pixelIndicator.csR.alpha();
-                    if(pixelIndicator.isGreen(g,r,b,a))
-                        pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
-                    else if(pixelIndicator.isWhite(g,r,b,a))
-                        pattern = RevBlinkinLedDriver.BlinkinPattern.WHITE;
-                    else if(pixelIndicator.isYellow(g,r,b,a))
-                        pattern = RevBlinkinLedDriver.BlinkinPattern.YELLOW;
-                    else if(pixelIndicator.isPurple(g,r,b,a))
-                        pattern = RevBlinkinLedDriver.BlinkinPattern.VIOLET;
+            if(arm.leftClawOpen && arm.rightClawOpen) {
+                if (pixelIndicator.isTherePixelR()) {
+                    pattern = RevBlinkinLedDriver.BlinkinPattern.WHITE;
                     pattern = pattern.next();
                     ledR.setPattern(pattern);
-                }else if(pixelIndicator.isTherePixelL()){
-                    int g = pixelIndicator.csL.green();
-                    int r = pixelIndicator.csL.red();
-                    int b = pixelIndicator.csL.blue();
-                    int a = pixelIndicator.csL.alpha();
-                    if(pixelIndicator.isGreen(g,r,b,a))
-                        pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
-                    else if(pixelIndicator.isWhite(g,r,b,a))
-                        pattern = RevBlinkinLedDriver.BlinkinPattern.WHITE;
-                    else if(pixelIndicator.isYellow(g,r,b,a))
-                        pattern = RevBlinkinLedDriver.BlinkinPattern.YELLOW;
-                    else if(pixelIndicator.isPurple(g,r,b,a))
-                        pattern = RevBlinkinLedDriver.BlinkinPattern.VIOLET;
+                } else if (pixelIndicator.isTherePixelL()) {
+                    pattern = RevBlinkinLedDriver.BlinkinPattern.WHITE;
                     pattern = pattern.next();
                     ledL.setPattern(pattern);
                 }
-
-            else{
-                pattern = RevBlinkinLedDriver.BlinkinPattern.ORANGE;
+            } else {
+                pattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
                 pattern = pattern.next();
                 ledR.setPattern(pattern);
                 ledL.setPattern(pattern);
@@ -143,15 +119,22 @@ public class MainTeleOp extends LinearOpMode {
             if (gamepad2.a) {
                 arm.setLiftPosition(arm.ground);
                 arm.setRotatorLevel(0);
+                arm.setArmExtensionPosition(0);
                 arm.setClawFlip(false);
             }
             else if (gamepad2.x) {
                 if(gamepad2.dpad_down || gamepad2.dpad_left){
-                    if(gamepad2.dpad_down) arm.setLiftPosition(arm.low);
-                    else arm.setLiftPosition(arm.middle);
+                    if(gamepad2.dpad_down) {
+                        arm.setLiftPosition(arm.low);
+                        arm.setArmExtensionPosition(200);
+                        arm.setRotatorLevel(1);
+                    } else {
+                        arm.setLiftPosition(arm.middle);
+                        arm.setArmExtensionPosition(1600);
+                        arm.setRotatorLevel(0);
+                    }
 
                     arm.setClawFlip(true);
-                    arm.setRotatorLevel(1);
                 }
             } else if (gamepad2.y) {
                 arm.setLiftPosition(arm.hang);
@@ -161,9 +144,6 @@ public class MainTeleOp extends LinearOpMode {
                 arm.setLiftPosition(arm.high);
                 arm.setClawFlip(false);
             }
-
-
-
 
             //armEx
             if (!gamepad2.x && gamepad2.dpad_down) arm.setArmExtensionPosition(0);
