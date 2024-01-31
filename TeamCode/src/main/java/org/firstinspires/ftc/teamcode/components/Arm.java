@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.components;
 
+import android.text.method.Touch;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 
 import java.util.Arrays;
@@ -29,7 +31,10 @@ public class Arm {
     private boolean clawFlip = false;
     private boolean rightClawOpen = false, leftClawOpen = false;
 
+    private TouchSensor slideZeroReset;
+
     public Arm(HardwareMap hardwareMap){
+        this.slideZeroReset = hardwareMap.get(TouchSensor.class,"touch");
         this.leftLift = hardwareMap.get(DcMotor.class, RobotConfig.liftL);
         this.rightLift = hardwareMap.get(DcMotor.class, RobotConfig.liftR);
         this.clawRotator = hardwareMap.get(Servo.class, RobotConfig.clawRotator);
@@ -186,6 +191,9 @@ public class Arm {
     }
 
     public void update(boolean rotateClaw) {
+
+        if(slideZeroReset.getValue() == 1) armExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         //claw rotator
         if(rotateClaw){
             //ground: 0, low: 1, high: 2, all the way: 3
