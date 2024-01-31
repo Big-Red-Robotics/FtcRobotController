@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.Arm;
@@ -23,16 +23,19 @@ public class MainTeleOp extends LinearOpMode {
         Chassis chassis = new Chassis(hardwareMap);
         double forwardSpeed, strafeSpeed, rotateSpeed;
         Arm arm = new Arm(hardwareMap);
-        arm.setLiftPosition(arm.ground);
+        arm.setLiftPosition(arm.GROUND);
         Drone drone = new Drone(hardwareMap);
         RevBlinkinLedDriver ledL = hardwareMap.get(RevBlinkinLedDriver.class,"blinkinL");
         RevBlinkinLedDriver ledR = hardwareMap.get(RevBlinkinLedDriver.class,"blinkinR");
+        DcMotor blinkinPower = hardwareMap.get(DcMotor.class,"blinkinPower");
         PixelIndicator pixelIndicator = new PixelIndicator(hardwareMap);
 
         //log data
         telemetry.addLine("waiting to start!");
         telemetry.update();
         waitForStart();
+
+        arm.setArmExtensionPosition(0);
 
         while (opModeIsActive()) {
             //chassis
@@ -43,7 +46,7 @@ public class MainTeleOp extends LinearOpMode {
             } else {
                 forwardSpeed = 1;
                 strafeSpeed = 1.5;
-                rotateSpeed = 0.9;
+                rotateSpeed = 0.7;
             }
 
             double left_y = gamepad1.left_stick_y;
@@ -63,7 +66,9 @@ public class MainTeleOp extends LinearOpMode {
             chassis.update();
 
             //auto grab
-            if (gamepad2.left_trigger > 0){
+            if (gamepad1.right_bumper){
+                arm.setRotatorLevel(0);
+                arm.openClaw();
                 if(pixelIndicator.isTherePixelL()) arm.closeLeftClaw();
                 if(pixelIndicator.isTherePixelR()) arm.closeRightClaw();
             }
@@ -71,6 +76,7 @@ public class MainTeleOp extends LinearOpMode {
             //light indicator when both claw is closed.
             if(arm.leftClawOpen && arm.rightClawOpen) {
                 if (pixelIndicator.isTherePixelR()) {
+                    blinkinPower.setPower(0.5);
                     pattern = RevBlinkinLedDriver.BlinkinPattern.WHITE;
                     pattern = pattern.next();
                     ledR.setPattern(pattern);
@@ -80,6 +86,7 @@ public class MainTeleOp extends LinearOpMode {
                     ledL.setPattern(pattern);
                 }
             } else {
+                blinkinPower.setPower(0.0);
                 pattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
                 pattern = pattern.next();
                 ledR.setPattern(pattern);
@@ -87,7 +94,7 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             //auto re-grab
-            if(gamepad1.right_bumper){
+            if(gamepad1.right_trigger > 0){
                 ElapsedTime timer = new ElapsedTime();
                 timer.reset();
                 if(!pixelIndicator.isTherePixelL())
@@ -116,53 +123,62 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             //lift
-            if (gamepad2.a) {
-                arm.setLiftPosition(arm.ground);
+            if (gamepad2.left_trigger > 0){
+                arm.openClaw();
+                arm.setLiftPosition(arm.GROUND);
                 arm.setRotatorLevel(0);
+                arm.setArmExtensionPosition(0);
+                arm.setClawFlip(false);
+            } else if (gamepad2.a) {
+                arm.closeClaw();
+                arm.setLiftPosition(arm.GROUND);
+                arm.setRotatorLevel(2);
                 arm.setArmExtensionPosition(0);
                 arm.setClawFlip(false);
             }
             else if (gamepad2.x) {
                 if(gamepad2.dpad_down || gamepad2.dpad_left){
                     if(gamepad2.dpad_down) {
-                        arm.setLiftPosition(arm.low);
-                        arm.setArmExtensionPosition(200);
+                        arm.setLiftPosition(arm.LOW);
+                        arm.setArmExtensionPosition(600);
                         arm.setRotatorLevel(1);
-                    } else {
-                        arm.setLiftPosition(arm.middle);
-                        arm.setArmExtensionPosition(1600);
-                        arm.setRotatorLevel(0);
+                    } else if (gamepad2.dpad_left){
+                        arm.setLiftPosition(arm.MIDDLE);
+                        arm.setArmExtensionPosition(1500);
+                        arm.setRotatorLevel(5);
                     }
 
                     arm.setClawFlip(true);
                 }
             } else if (gamepad2.y) {
-                arm.setLiftPosition(arm.hang);
+                arm.setLiftPosition(arm.HANG);
                 arm.setClawFlip(false);
             }
             else if (gamepad2.b) {
-                arm.setLiftPosition(arm.high);
+                arm.setLiftPosition(arm.HIGH);
+                arm.setArmExtensionPosition(0);
+                arm.setRotatorLevel(2);
                 arm.setClawFlip(false);
             }
 
             //armEx
             if (!gamepad2.x && gamepad2.dpad_down) arm.setArmExtensionPosition(0);
             else if (!gamepad2.x && gamepad2.dpad_left) arm.setArmExtensionPosition(1000);
-            else if (gamepad2.dpad_up) arm.setArmExtensionPosition(1600);
+            else if (gamepad2.dpad_up) arm.setArmExtensionPosition(1550);
             //claw rotator
             else if (gamepad2.dpad_right) arm.toggleClawRotator();
 
             //manual lift
             if(gamepad2.left_stick_button) arm.resetLift();
             if(gamepad2.left_stick_y != 0.0) arm.setLiftPower(-0.5 * gamepad2.left_stick_y);
+            else if(gamepad2.right_stick_y != 0.0) arm.setArmExtensionPower(-0.5 * gamepad2.right_stick_y);
             else arm.update(true);
 
             //manual armEx
             if(gamepad2.right_stick_button) arm.resetArmExtension();
-            if(gamepad2.right_stick_y != 0.0) arm.setArmExtensionPower(-0.5 * gamepad2.right_stick_y);
 
             //drone
-            if (gamepad2.a || gamepad2.x) drone.home();
+            if (gamepad2.a || gamepad2.x || gamepad2.left_trigger > 0) drone.home();
             else if (gamepad2.y) drone.launch();
             else if (gamepad2.b) drone.prepareLaunch();
 

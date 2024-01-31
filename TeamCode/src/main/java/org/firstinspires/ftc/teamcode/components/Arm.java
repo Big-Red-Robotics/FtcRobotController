@@ -13,18 +13,18 @@ import java.util.List;
 
 public class Arm {
     private final DcMotor leftLift, rightLift;
-    public final Servo clawRotator;
-    public final ServoImplEx clawPivot;
-    public final Servo leftClaw, rightClaw;
-    public DcMotor armExtension;
+    private final Servo clawRotator;
+    private final ServoImplEx clawPivot;
+    private final Servo leftClaw, rightClaw;
+    private DcMotor armExtension;
     List<DcMotor> lifts;
 
     //arm position
-    public int ground = 0,
-               low = 400,
-               middle = 600,
-               hang = 1100,
-               high = 1380;
+    public final int GROUND = 0,
+                     LOW = 410,
+                     MIDDLE = 550,
+                     HANG = 1100,
+                     HIGH = 1380;
 
     private int rotatorLevel = 0;
     private boolean clawFlip = false;
@@ -73,6 +73,13 @@ public class Arm {
         armExtension.setTargetPosition(armExtension.getTargetPosition());
     }
 
+    public void setArmExtensionPower(double power){
+        armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armExtension.setPower(power);
+        armExtension.setTargetPosition(armExtension.getCurrentPosition());
+    }
+
     public void setLiftPosition(int armPosition){
         for(DcMotor lift: lifts){
             lift.setTargetPosition(armPosition);
@@ -98,12 +105,8 @@ public class Arm {
         armExtension.setTargetPosition(position);
         armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-    public void setArmExtensionPower(double power){
-        armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armExtension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armExtension.setPower(power);
-        armExtension.setTargetPosition(armExtension.getCurrentPosition());
-    }
+
+
 
     //claw
     public void openLeftClaw() {
@@ -120,11 +123,11 @@ public class Arm {
     }
 
     public void openRightClaw() {
-        rightClaw.setPosition(0.9);
+        rightClaw.setPosition(0.35);
         rightClawOpen = true;
     }
     public void closeRightClaw() {
-        rightClaw.setPosition(0.35);
+        rightClaw.setPosition(0.9);
         rightClawOpen = false;
     }
     public void toggleRightClaw(){
@@ -171,13 +174,14 @@ public class Arm {
         while (leftLift.isBusy() || rightLift.isBusy()) {
             for(DcMotor lift: lifts){
                 if (lift.getCurrentPosition() > lift.getTargetPosition()) {
-                    if ((lift.getCurrentPosition() < 900 || lift.getCurrentPosition() > 1300) && lift.getTargetPosition() != hang) {
+                    if ((lift.getCurrentPosition() < 700 || lift.getCurrentPosition() > 1300) && lift.getTargetPosition() != HANG) {
                         //can depend on gravity
-                        if (lift.getCurrentPosition() < 450) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                        if (lift.getCurrentPosition() < MIDDLE) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                         else lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                         lift.setPower(0.0);
-                    } else lift.setPower(0.4);
-                } else lift.setPower(0.8);
+                    } else lift.setPower(0.3);
+                } else if(lift.getCurrentPosition() > LOW && lift.getTargetPosition() == MIDDLE) lift.setPower(0.3);
+                else lift.setPower(0.8);
             }
         }
 
@@ -187,6 +191,7 @@ public class Arm {
         else if (rotator == 1) clawRotator.setPosition(0.43);
         else if (rotator == 2) clawRotator.setPosition(0.85);
         else if (rotator == 3) clawRotator.setPosition(1);
+        else if (rotator == 5) clawRotator.setPosition(0.1);
     }
 
     public void update(boolean rotateClaw) {
@@ -196,27 +201,32 @@ public class Arm {
             if(rotatorLevel == 0) clawRotator.setPosition(0.45);
             else if (rotatorLevel == 1) clawRotator.setPosition(0.6);
             else if (rotatorLevel == 2) clawRotator.setPosition(1);
+            else if (rotatorLevel == 5) clawRotator.setPosition(0.5);
             else clawRotator.setPosition(1);
         }
 
         if (clawFlip) clawPivot.setPosition(0.29);
         else clawPivot.setPosition(0.95);
 
-        if(armExtension.isBusy()) armExtension.setPower(0.6);
+        if(armExtension.isBusy()) {
+            if(getLiftTargetPosition() == LOW || getLiftTargetPosition() == MIDDLE) armExtension.setPower(0.6);
+            else armExtension.setPower(1.0);
+        }
         else armExtension.setPower(0.0);
 
         //the actual lift part
         for (DcMotor lift : lifts) {
             if (lift.isBusy()) {
                 if (lift.getCurrentPosition() > lift.getTargetPosition()) {
-                    if (lift.getCurrentPosition() < 900 && lift.getTargetPosition() != hang) {
+                    if (lift.getCurrentPosition() < 700 && lift.getTargetPosition() != HANG) {
                         //can depend on gravity
-                        if (lift.getCurrentPosition() < 450) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                        if (lift.getCurrentPosition() < MIDDLE) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                         else lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                         lift.setPower(0.0);
                     } else lift.setPower(0.4);
-                } else lift.setPower(0.8);
-            } else if (lift.getTargetPosition() == high || lift.getTargetPosition() == ground) {
+                } else if(lift.getCurrentPosition() > LOW && lift.getTargetPosition() == MIDDLE) lift.setPower(0.3);
+                else lift.setPower(0.8);
+            } else if (lift.getTargetPosition() == HIGH || lift.getTargetPosition() == GROUND) {
                 lift.setPower(0.0);
             }
         }
@@ -234,6 +244,6 @@ public class Arm {
     public boolean getClawFlip() {return clawFlip;}
 
     public double getArmExPower() {return armExtension.getPower();}
-    public double getArmExPosition() {return armExtension.getCurrentPosition();}
-    public double getArmExTargetPosition() {return armExtension.getTargetPosition();}
+    public int getArmExPosition() {return armExtension.getCurrentPosition();}
+    public int getArmExTargetPosition() {return armExtension.getTargetPosition();}
 }
