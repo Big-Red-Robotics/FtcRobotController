@@ -19,16 +19,16 @@ public class ArmExTest extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()) {
-            if (gamepad1.a) arm.armExtension.setTargetPosition(0);
-            if (gamepad1.b) arm.armExtension.setTargetPosition(800);
-            if (gamepad1.y) arm.armExtension.setTargetPosition(1600);
-            else arm.armExtension.setTargetPosition(arm.armExtension.getCurrentPosition());
+            if (gamepad1.a) arm.setArmExtensionPosition(0);
+            if (gamepad1.b) arm.setArmExtensionPosition(800);
+            if (gamepad1.y) arm.setArmExtensionPosition(1600);
+            else arm.setArmExtensionPosition(arm.getArmExPosition());
 
-            arm.armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            arm.armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//            while(arm.armExtension.isBusy()) arm.armExtension.setPower(0.6);
 
-            while(arm.armExtension.isBusy()) arm.armExtension.setPower(0.6);
-
-            telemetry.addData("arm position",arm.armExtension.getCurrentPosition());
+            telemetry.addData("arm position",arm.getArmExPosition());
             telemetry.update();
         }
     }
