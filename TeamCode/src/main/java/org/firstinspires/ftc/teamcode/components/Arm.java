@@ -108,7 +108,6 @@ public class Arm {
     //armEx
     public void setArmExtensionPosition(int position){
         armExtension.setTargetPosition(position);
-        armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
 
@@ -200,8 +199,8 @@ public class Arm {
     }
 
     public void update(boolean rotateClaw) {
-
-        if(slideZeroReset.getValue() == 1) armExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //this touch sensor is flipped
+        if(!slideZeroReset.isPressed()) armExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //claw rotator
         if(rotateClaw){
@@ -218,8 +217,11 @@ public class Arm {
 
 
         if (armExtension.getTargetPosition() == 0){
-            if(!slideZeroReset.isPressed()) armExtension.setPower(0.5); //TODO: we might have to flip the power by -1
+            armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            if(slideZeroReset.isPressed()) armExtension.setPower(-0.6); //TODO: we might have to flip the power by -1
+            else armExtension.setPower(0.0);
         } else if(armExtension.isBusy()) {
+            armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             if(getLiftTargetPosition() == LOW || getLiftTargetPosition() == MIDDLE) armExtension.setPower(0.6);
             else armExtension.setPower(1.0);
         } else armExtension.setPower(0.0);
