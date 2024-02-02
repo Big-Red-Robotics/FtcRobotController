@@ -72,7 +72,6 @@ public class MainTeleOp extends LinearOpMode {
                 arm.openClaw();
                 if(pixelIndicator.isTherePixelL()) arm.closeLeftClaw();
                 if(pixelIndicator.isTherePixelR()) arm.closeRightClaw();
-                if(!arm.rightClawOpen && !arm.leftClawOpen) arm.setRotatorLevel(2);
             }
 
             //light indicator when both claw is closed.
@@ -130,13 +129,13 @@ public class MainTeleOp extends LinearOpMode {
                 arm.openClaw();
                 arm.setLiftPosition(arm.GROUND);
                 arm.setRotatorLevel(0);
-                arm.setArmExtensionPosition(15);
+                arm.setArmExtensionPosition(10);
                 arm.setClawFlip(false);
             } else if (gamepad2.a) {
                 arm.closeClaw();
                 arm.setLiftPosition(arm.GROUND);
                 arm.setRotatorLevel(2);
-                arm.setArmExtensionPosition(15);
+                arm.setArmExtensionPosition(10);
                 arm.setClawFlip(false);
             }
             else if (gamepad2.x) {

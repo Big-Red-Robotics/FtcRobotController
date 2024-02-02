@@ -204,7 +204,7 @@ public class Arm {
         //claw rotator
         if(rotateClaw){
             //ground: 0, low: 1, middle & high: 2, all the way: 3
-            if(rotatorLevel == 0) clawRotator.setPosition(0.42);
+            if(rotatorLevel == 0) clawRotator.setPosition(0.40);
             else if (rotatorLevel == 1) clawRotator.setPosition(0.55);
             else if (rotatorLevel == 2) clawRotator.setPosition(1);
             else if (rotatorLevel == 5) clawRotator.setPosition(0.5);
@@ -216,7 +216,7 @@ public class Arm {
 
         if (armExtension.getTargetPosition() == 0){
             armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            if(slideZeroReset.isPressed()) armExtension.setPower(-0.6); //TODO: we might have to flip the power by -1
+            if(slideZeroReset.isPressed()) armExtension.setPower(-0.6);
             else armExtension.setPower(0.0);
         } else if(armExtension.isBusy()) {
             armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -230,7 +230,7 @@ public class Arm {
                 if (lift.getCurrentPosition() > lift.getTargetPosition()) {
                     if (lift.getCurrentPosition() < 700 && lift.getTargetPosition() != HANG) {
                         //can depend on gravity
-                        if (lift.getCurrentPosition() < MIDDLE) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                        if ((lift.getCurrentPosition() < MIDDLE && lift.getTargetPosition() == 0) || (lift.getCurrentPosition() < MIDDLE + 100)) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                         else lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                         lift.setPower(0.0);
                     } else lift.setPower(0.4);
