@@ -190,11 +190,11 @@ public class Arm {
         }
 
         //claw rotator
-        this.rotatorLevel = rotator;
-        if(rotator == 0) clawRotator.setPosition(0.0);
-        else if (rotator == 1) clawRotator.setPosition(0.40);
-        else if (rotator == 2) clawRotator.setPosition(0.85);
-        else if (rotator == 3) clawRotator.setPosition(1);
+//        this.rotatorLevel = rotator;
+//        if(rotator == 0) clawRotator.setPosition(0.0);
+//        else if (rotator == 1) clawRotator.setPosition(0.40);
+//        else if (rotator == 2) clawRotator.setPosition(0.85);
+//        else if (rotator == 3) clawRotator.setPosition(1);
     }
 
     public void update(boolean rotateClaw) {
@@ -203,11 +203,11 @@ public class Arm {
 
         //claw rotator
         if(rotateClaw){
-            //ground: 0, low: 1, middle & high: 2, all the way: 3
-            if(rotatorLevel == 0) clawRotator.setPosition(0.40);
-            else if (rotatorLevel == 1) clawRotator.setPosition(0.55);
+            //ground: 0, low: 1, middle: 5, all the way: 2
+            if(rotatorLevel == 0) clawRotator.setPosition(0.38);
+            else if (rotatorLevel == 1) clawRotator.setPosition(0.45);
+            else if (rotatorLevel == 5) clawRotator.setPosition(0.4);
             else if (rotatorLevel == 2) clawRotator.setPosition(1);
-            else if (rotatorLevel == 5) clawRotator.setPosition(0.5);
         }
 
         if (clawFlip) clawPivot.setPosition(0.29);
@@ -216,7 +216,11 @@ public class Arm {
 
         if (armExtension.getTargetPosition() == 0){
             armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            if(slideZeroReset.isPressed()) armExtension.setPower(-0.6);
+            //the touch sensor is flipped
+            if(slideZeroReset.isPressed()) {
+                if (Math.abs(armExtension.getCurrentPosition()) < 50) armExtension.setPower(-0.1);
+                armExtension.setPower(-0.6);
+            }
             else armExtension.setPower(0.0);
         } else if(armExtension.isBusy()) {
             armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);

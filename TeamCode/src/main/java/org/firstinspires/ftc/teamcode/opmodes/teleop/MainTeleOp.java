@@ -129,13 +129,13 @@ public class MainTeleOp extends LinearOpMode {
                 arm.openClaw();
                 arm.setLiftPosition(arm.GROUND);
                 arm.setRotatorLevel(0);
-                arm.setArmExtensionPosition(10);
+                arm.setArmExtensionPosition(20);
                 arm.setClawFlip(false);
             } else if (gamepad2.a) {
                 arm.closeClaw();
                 arm.setLiftPosition(arm.GROUND);
                 arm.setRotatorLevel(2);
-                arm.setArmExtensionPosition(10);
+                arm.setArmExtensionPosition(20);
                 arm.setClawFlip(false);
             }
             else if (gamepad2.x) {
@@ -146,7 +146,7 @@ public class MainTeleOp extends LinearOpMode {
                         arm.setRotatorLevel(1);
                     } else if (gamepad2.dpad_left){
                         arm.setLiftPosition(arm.MIDDLE);
-                        arm.setArmExtensionPosition(1500);
+                        arm.setArmExtensionPosition(1000);
                         arm.setRotatorLevel(5);
                     }
 
