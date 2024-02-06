@@ -189,8 +189,7 @@ public class Arm {
             else armExtension.setPower(0.0);
         } else if(armExtension.isBusy()) {
             armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            if(getLiftTargetPosition() == LOW || getLiftTargetPosition() == MIDDLE) armExtension.setPower(0.6);
-            else armExtension.setPower(1.0);
+            armExtension.setPower(0.6);
         } else armExtension.setPower(0.0);
 
         //set lift power
@@ -264,7 +263,7 @@ public class Arm {
                         if ((lift.getCurrentPosition() < MIDDLE && lift.getTargetPosition() == 0) || (lift.getCurrentPosition() < MIDDLE + 100)) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                         else lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                         lift.setPower(0.0);
-                    } else lift.setPower(0.4);
+                    } else lift.setPower(0.7);
                 } else if(lift.getCurrentPosition() > LOW && lift.getTargetPosition() == MIDDLE) lift.setPower(0.3);
                 else lift.setPower(0.8);
             } else if (lift.getTargetPosition() == HIGH || lift.getTargetPosition() == GROUND) {

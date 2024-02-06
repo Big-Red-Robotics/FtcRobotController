@@ -38,7 +38,7 @@ public class NewAutonomous extends LinearOpMode {
             indicator = vision.getIndicator();
             updateSideConfiguration();
 
-            arm.update(false);
+            if(gamepad1.right_bumper) arm.resetLift();
 
             telemetry.addData("Team color", RobotConfig.teamColor);
             telemetry.addData("Initial side", RobotConfig.initialSide);
@@ -50,6 +50,7 @@ public class NewAutonomous extends LinearOpMode {
 
         //put claw down (claw flipped up for initialization due to 18-inch restriction)
         arm.setClawRotatorPosition(0.40);
+        arm.setArmExtensionPosition(15);
         if(isRight == isRed) waitSeconds(1.0);
         else waitSeconds(4.5);
 
@@ -108,7 +109,7 @@ public class NewAutonomous extends LinearOpMode {
         waitSeconds(0.5);
 
         //go to backdrop
-        if(isRight == isRed) chassis.followTrajectorySequence(closesideToBackdrop);
+        if(isRight == isRed) chassis.followTrajectorySequence(closesideToPreBackdrop);
         else chassis.followTrajectorySequence(farsideToPreBackdrop);
 
         arm.toPosition(Arm.AUTON, 1,false, telemetry);
@@ -147,7 +148,7 @@ public class NewAutonomous extends LinearOpMode {
             //CLOSE TO BACKDROP
 //            park = new Pose2d(62 * color, 47, Math.toRadians(90)); //final position, corner
             prePixel = new Pose2d(36 * color, 24, Math.toRadians(-90)); //middle position before first pixel
-            intermediate = new Pose2d(26, 40, Math.toRadians(90));
+            intermediate = new Pose2d(30 * color, 40, Math.toRadians(90));
             if(indicator == MIDDLE){
                 /*middle for both colors*/
                 dropPixel = new Pose2d(25 * color, 24, Math.toRadians(-90));

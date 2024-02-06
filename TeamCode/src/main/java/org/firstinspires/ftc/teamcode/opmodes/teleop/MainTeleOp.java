@@ -36,7 +36,7 @@ public class MainTeleOp extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        arm.setArmExtensionPosition(20);
+        arm.setArmExtensionPosition(15);
 
         while (opModeIsActive()) {
             //chassis
@@ -130,13 +130,13 @@ public class MainTeleOp extends LinearOpMode {
                 arm.openClaw();
                 arm.setLiftPosition(Arm.GROUND);
                 arm.setRotatorLevel(0);
-                arm.setArmExtensionPosition(20);
+                arm.setArmExtensionPosition(15);
                 arm.setClawFlip(false);
             } else if (gamepad2.a) {
                 arm.closeClaw();
                 arm.setLiftPosition(Arm.GROUND);
                 arm.setRotatorLevel(2);
-                arm.setArmExtensionPosition(20);
+                arm.setArmExtensionPosition(15);
                 arm.setClawFlip(false);
             }
             else if (gamepad2.x) {
