@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import com.qualcomm.robotcore.hardware.TouchSensor;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 
 import java.util.Arrays;
@@ -22,15 +24,18 @@ public class Arm {
     List<DcMotor> lifts;
 
     //arm position
-    public final int GROUND = 0,
-                     LOW = 450,
-                     MIDDLE = 550,
-                     HANG = 1100,
-                     HIGH = 1380;
+    public static final int GROUND = 0,
+                            AUTON = 350,
+                            LOW = 450,
+                            MIDDLE = 580,
+                            HANG = 1100,
+                            HIGH = 1380;
 
     private int rotatorLevel = 0;
     private boolean clawFlip = false;
     public boolean rightClawOpen = false, leftClawOpen = false;
+
+    public boolean hang = false;
 
     private TouchSensor slideZeroReset;
 
@@ -110,8 +115,6 @@ public class Arm {
         armExtension.setTargetPosition(position);
     }
 
-
-
     //claw
     public void openLeftClaw() {
         leftClaw.setPosition(0.9);
@@ -166,35 +169,55 @@ public class Arm {
         }
     }
 
-    public void toPosition(int position, int rotator, boolean pivot){
+    public void toPosition(int position, int rotator, boolean pivot, Telemetry t){
         //claw pivot
-        if (pivot) clawPivot.setPosition(0.91);
-        else clawPivot.setPosition(0.0);
+        if (pivot) clawPivot.setPosition(0.29);
+        else clawPivot.setPosition(0.95);
 
         //set lift target
         setLiftPosition(position);
+        leftLift.setPower(0.1);
+        rightLift.setPower(0.1);
+
+        if (armExtension.getTargetPosition() == 0){
+            armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //the touch sensor is flipped
+            if(slideZeroReset.isPressed()) {
+                if (Math.abs(armExtension.getCurrentPosition()) < 50) armExtension.setPower(-0.1);
+                armExtension.setPower(-0.6);
+            }
+            else armExtension.setPower(0.0);
+        } else if(armExtension.isBusy()) {
+            armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if(getLiftTargetPosition() == LOW || getLiftTargetPosition() == MIDDLE) armExtension.setPower(0.6);
+            else armExtension.setPower(1.0);
+        } else armExtension.setPower(0.0);
 
         //set lift power
         while (leftLift.isBusy() || rightLift.isBusy()) {
+            t.addData("target position", getLiftTargetPosition());
+            t.addData("current position", getLiftPosition());
+            t.update();
             for(DcMotor lift: lifts){
                 if (lift.getCurrentPosition() > lift.getTargetPosition()) {
-                    if ((lift.getCurrentPosition() < 700 || lift.getCurrentPosition() > 1300) && lift.getTargetPosition() != HANG) {
+                    if ((lift.getCurrentPosition() < 700 || lift.getCurrentPosition() > 1300) && !hang) {
                         //can depend on gravity
                         if (lift.getCurrentPosition() < MIDDLE) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                         else lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                         lift.setPower(0.0);
-                    } else lift.setPower(0.3);
+                    } else if(hang) lift.setPower(0.6);
+                    else lift.setPower(0.3);
                 } else if(lift.getCurrentPosition() > LOW && lift.getTargetPosition() == MIDDLE) lift.setPower(0.3);
                 else lift.setPower(0.8);
             }
         }
+        leftLift.setPower(0.5);
+        rightLift.setPower(0.5);
 
         //claw rotator
-//        this.rotatorLevel = rotator;
-//        if(rotator == 0) clawRotator.setPosition(0.0);
-//        else if (rotator == 1) clawRotator.setPosition(0.40);
-//        else if (rotator == 2) clawRotator.setPosition(0.85);
-//        else if (rotator == 3) clawRotator.setPosition(1);
+        if(rotator == 0) clawRotator.setPosition(0.4);
+        else if (rotator == 1) clawRotator.setPosition(0.5);
+        else if (rotator == 2) clawRotator.setPosition(1);
     }
 
     public void update(boolean rotateClaw) {
@@ -204,15 +227,15 @@ public class Arm {
         //claw rotator
         if(rotateClaw){
             //ground: 0, low: 1, middle: 5, all the way: 2
-            if(rotatorLevel == 0) clawRotator.setPosition(0.38);
-            else if (rotatorLevel == 1) clawRotator.setPosition(0.45);
-            else if (rotatorLevel == 5) clawRotator.setPosition(0.4);
+            if(rotatorLevel == 0) clawRotator.setPosition(0.4);
+            else if (rotatorLevel == 1) clawRotator.setPosition(0.55);
+            else if (rotatorLevel == 5) clawRotator.setPosition(0.5);
             else if (rotatorLevel == 2) clawRotator.setPosition(1);
+            else if (rotatorLevel == 3) clawRotator.setPosition(0.8);
         }
 
         if (clawFlip) clawPivot.setPosition(0.29);
         else clawPivot.setPosition(0.95);
-
 
         if (armExtension.getTargetPosition() == 0){
             armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -231,8 +254,12 @@ public class Arm {
         //the actual lift part
         for (DcMotor lift : lifts) {
             if (lift.isBusy()) {
-                if (lift.getCurrentPosition() > lift.getTargetPosition()) {
-                    if (lift.getCurrentPosition() < 700 && lift.getTargetPosition() != HANG) {
+                if(lift.getTargetPosition() == HIGH && lift.getCurrentPosition() > HANG + 50){
+                    //can depend on gravity
+                    lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                    lift.setPower(0.0);
+                } else if (lift.getCurrentPosition() > lift.getTargetPosition()) {
+                    if (lift.getCurrentPosition() < 700 && !hang) {
                         //can depend on gravity
                         if ((lift.getCurrentPosition() < MIDDLE && lift.getTargetPosition() == 0) || (lift.getCurrentPosition() < MIDDLE + 100)) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                         else lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

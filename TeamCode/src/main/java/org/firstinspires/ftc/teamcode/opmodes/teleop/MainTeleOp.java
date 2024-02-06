@@ -24,7 +24,7 @@ public class MainTeleOp extends LinearOpMode {
         Chassis chassis = new Chassis(hardwareMap);
         double forwardSpeed, strafeSpeed, rotateSpeed;
         Arm arm = new Arm(hardwareMap);
-        arm.setLiftPosition(arm.GROUND);
+        arm.setLiftPosition(Arm.GROUND);
         Drone drone = new Drone(hardwareMap);
         RevBlinkinLedDriver ledL = hardwareMap.get(RevBlinkinLedDriver.class,"blinkinL");
         RevBlinkinLedDriver ledR = hardwareMap.get(RevBlinkinLedDriver.class,"blinkinR");
@@ -36,7 +36,7 @@ public class MainTeleOp extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        arm.setArmExtensionPosition(0);
+        arm.setArmExtensionPosition(20);
 
         while (opModeIsActive()) {
             //chassis
@@ -126,26 +126,28 @@ public class MainTeleOp extends LinearOpMode {
 
             //lift
             if (gamepad2.left_trigger > 0){
+                arm.hang = false;
                 arm.openClaw();
-                arm.setLiftPosition(arm.GROUND);
+                arm.setLiftPosition(Arm.GROUND);
                 arm.setRotatorLevel(0);
                 arm.setArmExtensionPosition(20);
                 arm.setClawFlip(false);
             } else if (gamepad2.a) {
                 arm.closeClaw();
-                arm.setLiftPosition(arm.GROUND);
+                arm.setLiftPosition(Arm.GROUND);
                 arm.setRotatorLevel(2);
                 arm.setArmExtensionPosition(20);
                 arm.setClawFlip(false);
             }
             else if (gamepad2.x) {
                 if(gamepad2.dpad_down || gamepad2.dpad_left){
+                    arm.hang = false;
                     if(gamepad2.dpad_down) {
-                        arm.setLiftPosition(arm.LOW);
+                        arm.setLiftPosition(Arm.LOW);
                         arm.setArmExtensionPosition(600);
                         arm.setRotatorLevel(1);
                     } else if (gamepad2.dpad_left){
-                        arm.setLiftPosition(arm.MIDDLE);
+                        arm.setLiftPosition(Arm.MIDDLE);
                         arm.setArmExtensionPosition(1000);
                         arm.setRotatorLevel(5);
                     }
@@ -153,13 +155,15 @@ public class MainTeleOp extends LinearOpMode {
                     arm.setClawFlip(true);
                 }
             } else if (gamepad2.y) {
-                arm.setLiftPosition(arm.HANG);
+                arm.hang = true;
+                arm.setLiftPosition(Arm.HANG);
                 arm.setClawFlip(false);
             }
             else if (gamepad2.b) {
-                arm.setLiftPosition(arm.HIGH);
+                arm.hang = false;
+                arm.setLiftPosition(Arm.HIGH);
                 arm.setArmExtensionPosition(0);
-                arm.setRotatorLevel(2);
+                arm.setRotatorLevel(3);
                 arm.setClawFlip(false);
             }
 
