@@ -138,15 +138,23 @@ public class MainTeleOp extends LinearOpMode {
                 arm.setRotatorLevel(2);
                 arm.setArmExtensionPosition(15);
                 arm.setClawFlip(false);
+
+                if(arm.hang){
+
+                }
             }
             else if (gamepad2.x) {
-                if(gamepad2.dpad_down || gamepad2.dpad_left){
+                if(gamepad2.dpad_down || gamepad2.dpad_left || gamepad2.dpad_up){
                     arm.hang = false;
-                    if(gamepad2.dpad_down) {
+                    if(gamepad2.dpad_down){
+                        arm.setLiftPosition(Arm.AUTON);
+                        arm.setArmExtensionPosition(400);
+                        arm.setRotatorLevel(1);
+                    } else if(gamepad2.dpad_left) {
                         arm.setLiftPosition(Arm.LOW);
                         arm.setArmExtensionPosition(600);
                         arm.setRotatorLevel(1);
-                    } else if (gamepad2.dpad_left){
+                    } else if (gamepad2.dpad_up){
                         arm.setLiftPosition(Arm.MIDDLE);
                         arm.setArmExtensionPosition(1000);
                         arm.setRotatorLevel(5);
@@ -177,12 +185,10 @@ public class MainTeleOp extends LinearOpMode {
             //manual lift
             if(gamepad2.left_stick_button) arm.resetLift();
             if(gamepad2.left_stick_y != 0.0) arm.setLiftPower(-0.5 * gamepad2.left_stick_y);
-            else if(gamepad2.right_stick_y != 0.0) arm.setArmExtensionPower(-0.5 * gamepad2.right_stick_y);
             else arm.update(true);
-            //TODO: this is not the ideal structure bc manual lift is restricting other movements, but its ok
+            //TODO: this is not the ideal structure bc manual lift is restricting other movements
 
             //manual armEx
-            if(gamepad2.right_stick_button) arm.resetArmExtension();
             if(gamepad2.right_stick_y != 0.0) arm.setArmExtensionPower(-0.5 * gamepad2.right_stick_y);
 
             //drone

@@ -15,22 +15,21 @@ public class Drone {
     public Drone(HardwareMap hardwareMap){
         this.launchDrone = hardwareMap.get(Servo.class, RobotConfig.launchDrone);
         this.positionDrone = hardwareMap.get(Servo.class, RobotConfig.positionDrone);
-        launchDrone.setPosition(0.4);
-        positionDrone.setPosition(0.63);
+        home();
     }
 
     public void home(){
-        launchDrone.setPosition(0.4);
-        positionDrone.setPosition(0.63);
+        launchDrone.setPosition(0.6);
+        positionDrone.setPosition(0.1);
     }
 
     public void prepareLaunch(){
-        launchDrone.setPosition(0.4);
-        positionDrone.setPosition(0.79);
+        launchDrone.setPosition(0.6);
+        positionDrone.setPosition(0.6);
     }
 
     public void launch(){
-        launchDrone.setPosition(0.73);
-        positionDrone.setPosition(0.79);
+        launchDrone.setPosition(0.95);
+        positionDrone.setPosition(0.6);
     }
 }

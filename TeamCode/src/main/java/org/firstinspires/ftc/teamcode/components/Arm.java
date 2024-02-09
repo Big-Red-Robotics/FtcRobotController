@@ -215,7 +215,7 @@ public class Arm {
 
         //claw rotator
         if(rotator == 0) clawRotator.setPosition(0.4);
-        else if (rotator == 1) clawRotator.setPosition(0.5);
+        else if (rotator == 1) clawRotator.setPosition(0.53);
         else if (rotator == 2) clawRotator.setPosition(1);
     }
 
