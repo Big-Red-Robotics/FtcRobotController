@@ -27,7 +27,7 @@ public class Arm {
     public static final int GROUND = 0,
                             AUTON = 370,
                             VERY_LOW = 420,
-                            LOW = 470,
+                            LOW = 500,
                             MIDDLE = 580,
                             HANG = 1100,
                             HIGH = 1380;
@@ -245,7 +245,8 @@ public class Arm {
             else armExtension.setPower(0.0);
         } else if(armExtension.isBusy()) {
             armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            if(getLiftTargetPosition() == LOW || getLiftTargetPosition() == MIDDLE || getLiftTargetPosition() == VERY_LOW || getLiftTargetPosition() == AUTON)
+            if(armExtension.getTargetPosition() == 100) armExtension.setPower(1.0);
+            else if(getLiftTargetPosition() == LOW || getLiftTargetPosition() == MIDDLE || getLiftTargetPosition() == VERY_LOW || getLiftTargetPosition() == AUTON)
                 armExtension.setPower(0.6);
             else armExtension.setPower(1.0);
         } else armExtension.setPower(0.0);
@@ -253,9 +254,9 @@ public class Arm {
         //the actual lift part
         for (DcMotor lift : lifts) {
             if (lift.isBusy()) {
-                if(lift.getTargetPosition() == HIGH && lift.getCurrentPosition() > HANG + 50){
+                if(lift.getTargetPosition() == HIGH && lift.getCurrentPosition() > HANG + 20){
                     //can depend on gravity
-                    lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                    lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                     lift.setPower(0.0);
                 } else if (lift.getCurrentPosition() > lift.getTargetPosition()) {
                     if (lift.getCurrentPosition() < 700 && !hang) {

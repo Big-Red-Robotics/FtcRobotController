@@ -133,7 +133,7 @@ public class MainTeleOp extends LinearOpMode {
                         arm.setRotatorLevel(1);
                     } else if (gamepad2.dpad_right){
                         arm.setLiftPosition(Arm.MIDDLE);
-                        arm.setArmExtensionPosition(1000);
+                        arm.setArmExtensionPosition(1200);
                         arm.setRotatorLevel(5);
                     }
                     arm.setClawFlip(true);
@@ -154,7 +154,7 @@ public class MainTeleOp extends LinearOpMode {
             if(!gamepad2.x){
                 //armEx
                 if (gamepad2.dpad_down) arm.setArmExtensionPosition(0);
-                else if (gamepad2.dpad_left) arm.setArmExtensionPosition(1000);
+                else if (gamepad2.dpad_left) arm.setArmExtensionPosition(800);
                 else if (gamepad2.dpad_up) arm.setArmExtensionPosition(1550);
 
                 //claw rotator
@@ -171,7 +171,8 @@ public class MainTeleOp extends LinearOpMode {
             //TODO: this is not the ideal structure bc manual lift is restricting other movements
 
             //manual armEx
-            if(gamepad2.right_stick_y != 0.0) arm.setArmExtensionPower(-0.5 * gamepad2.right_stick_y);
+//            if(gamepad2.right_stick_y != 0.0) arm.setArmExtensionPower(-0.5 * gamepad2.right_stick_y);
+            if(gamepad2.right_stick_button) arm.setArmExtensionPosition(100);
 
             //drone
             if (gamepad2.a || gamepad2.x || gamepad2.left_trigger > 0) drone.home();

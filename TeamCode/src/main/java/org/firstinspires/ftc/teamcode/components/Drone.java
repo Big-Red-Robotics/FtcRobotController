@@ -25,11 +25,11 @@ public class Drone {
 
     public void prepareLaunch(){
         launchDrone.setPosition(0.6);
-        positionDrone.setPosition(0.6);
+        positionDrone.setPosition(0.55);
     }
 
     public void launch(){
         launchDrone.setPosition(0.95);
-        positionDrone.setPosition(0.6);
+        positionDrone.setPosition(0.55);
     }
 }
