@@ -38,6 +38,8 @@ public class NewAutonomous extends LinearOpMode {
             indicator = vision.getIndicator();
             updateSideConfiguration();
 
+            arm.setArmExtensionPosition(0);
+
             if(gamepad1.right_bumper) arm.resetLift();
 
             telemetry.addData("Team color", RobotConfig.teamColor);
@@ -186,7 +188,7 @@ public class NewAutonomous extends LinearOpMode {
             /*left for blue, right for red (closest to the backdrop)*/
             if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-49, 54, Math.toRadians(90));
             else backDrop = new Pose2d(44, 54, Math.toRadians(90));
-            //TODO
+            //TODO: close to backdrop
         } else {
             //right for blue, left for red (furthest from the backdrop)
             if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-30, 54, Math.toRadians(90));

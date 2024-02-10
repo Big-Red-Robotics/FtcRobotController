@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.components;
 
-import android.text.method.Touch;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
@@ -21,12 +20,14 @@ public class Arm {
     private final ServoImplEx clawPivot;
     private final Servo leftClaw, rightClaw;
     private final DcMotor armExtension;
+    public final TouchSensor slideZeroReset;
     List<DcMotor> lifts;
 
     //arm position
     public static final int GROUND = 0,
-                            AUTON = 350,
-                            LOW = 450,
+                            AUTON = 370,
+                            VERY_LOW = 420,
+                            LOW = 470,
                             MIDDLE = 580,
                             HANG = 1100,
                             HIGH = 1380;
@@ -36,8 +37,6 @@ public class Arm {
     public boolean rightClawOpen = false, leftClawOpen = false;
 
     public boolean hang = false;
-
-    private TouchSensor slideZeroReset;
 
     public Arm(HardwareMap hardwareMap){
         this.slideZeroReset = hardwareMap.get(TouchSensor.class,"touch");
@@ -230,7 +229,7 @@ public class Arm {
             else if (rotatorLevel == 1) clawRotator.setPosition(0.55);
             else if (rotatorLevel == 5) clawRotator.setPosition(0.5);
             else if (rotatorLevel == 2) clawRotator.setPosition(1);
-            else if (rotatorLevel == 3) clawRotator.setPosition(0.8);
+            else if (rotatorLevel == 3) clawRotator.setPosition(0.95);
         }
 
         if (clawFlip) clawPivot.setPosition(0.29);
@@ -246,7 +245,8 @@ public class Arm {
             else armExtension.setPower(0.0);
         } else if(armExtension.isBusy()) {
             armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            if(getLiftTargetPosition() == LOW || getLiftTargetPosition() == MIDDLE) armExtension.setPower(0.6);
+            if(getLiftTargetPosition() == LOW || getLiftTargetPosition() == MIDDLE || getLiftTargetPosition() == VERY_LOW || getLiftTargetPosition() == AUTON)
+                armExtension.setPower(0.6);
             else armExtension.setPower(1.0);
         } else armExtension.setPower(0.0);
 
