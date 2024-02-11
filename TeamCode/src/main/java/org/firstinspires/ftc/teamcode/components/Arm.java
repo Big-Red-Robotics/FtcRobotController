@@ -240,7 +240,7 @@ public class Arm {
             //the touch sensor is flipped
             if(slideZeroReset.isPressed()) {
                 if (Math.abs(armExtension.getCurrentPosition()) < 50) armExtension.setPower(-0.1);
-                armExtension.setPower(-0.6);
+                else armExtension.setPower(-0.6);
             }
             else armExtension.setPower(0.0);
         } else if(armExtension.isBusy()) {

@@ -54,7 +54,7 @@ public class NewAutonomous extends LinearOpMode {
         arm.setClawRotatorPosition(0.40);
         arm.setArmExtensionPosition(15);
         if(isRight == isRed) waitSeconds(1.0);
-        else waitSeconds(4.5);
+//        else waitSeconds(8.5);
 
         //update indicator information
         indicator = vision.getIndicator();
@@ -68,6 +68,10 @@ public class NewAutonomous extends LinearOpMode {
         TrajectorySequence startToPixel = chassis.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(prePixel)
                 .lineToLinearHeading(dropPixel)
+                .build();
+
+        TrajectorySequence temp = chassis.trajectorySequenceBuilder(dropPixel)
+                .back(5)
                 .build();
 
         //CLOSE TO BACKDROP, dropped pixel ~ backdrop
@@ -107,28 +111,49 @@ public class NewAutonomous extends LinearOpMode {
         if(RobotConfig.teamColor == TeamColor.RED) arm.openRightClaw();
         else arm.openLeftClaw();
         waitSeconds(0.6);
-        arm.setClawRotatorPosition(1);
+        arm.setClawRotatorPosition(2);
         waitSeconds(0.5);
 
-        //go to backdrop
-        if(isRight == isRed) chassis.followTrajectorySequence(closesideToPreBackdrop);
-        else chassis.followTrajectorySequence(farsideToPreBackdrop);
+        if (isRight == isRed){
+            //go to backdrop
+            chassis.followTrajectorySequence(closesideToPreBackdrop);
+            arm.toPosition(Arm.AUTON, 1,false, telemetry);
+            arm.toPosition(Arm.AUTON, 1,true, telemetry);
+            chassis.followTrajectorySequence(closesideToBackdrop);
+            //at backdrop
+            if(RobotConfig.teamColor == TeamColor.RED) arm.openLeftClaw();
+            else arm.openRightClaw();
+            waitSeconds(0.6);
+            chassis.followTrajectorySequence(backdropToPark);
+            arm.closeClaw();
+            arm.toPosition(Arm.AUTON, 2,false, telemetry);
+            waitSeconds(0.5);
+            arm.toPosition(Arm.GROUND, 2, false, telemetry);
+        } else {
+            chassis.followTrajectorySequence(temp);
+            arm.toPosition(Arm.GROUND, 2, false, telemetry);
+        }
 
-        arm.toPosition(Arm.AUTON, 1,false, telemetry);
-        arm.toPosition(Arm.AUTON, 1,true, telemetry);
-
-        if(isRight == isRed) chassis.followTrajectorySequence(closesideToBackdrop);
-        else chassis.followTrajectorySequence(farsideToBackdrop);
-
-        //at backdrop
-        if(RobotConfig.teamColor == TeamColor.RED) arm.openLeftClaw();
-        else arm.openRightClaw();
-        waitSeconds(0.6);
-        chassis.followTrajectorySequence(backdropToPark);
-        arm.closeClaw();
-        arm.toPosition(Arm.AUTON, 2,false, telemetry);
-        waitSeconds(0.5);
-        arm.toPosition(Arm.GROUND, 2, false, telemetry);
+//        //go to backdrop
+//
+//        if(isRight == isRed) chassis.followTrajectorySequence(closesideToPreBackdrop);
+//        else chassis.followTrajectorySequence(farsideToPreBackdrop);
+//
+//        arm.toPosition(Arm.AUTON, 1,false, telemetry);
+//        arm.toPosition(Arm.AUTON, 1,true, telemetry);
+//
+//        if(isRight == isRed) chassis.followTrajectorySequence(closesideToBackdrop);
+//        else chassis.followTrajectorySequence(farsideToBackdrop);
+//
+//        //at backdrop
+//        if(RobotConfig.teamColor == TeamColor.RED) arm.openLeftClaw();
+//        else arm.openRightClaw();
+//        waitSeconds(0.6);
+//        chassis.followTrajectorySequence(backdropToPark);
+//        arm.closeClaw();
+//        arm.toPosition(Arm.AUTON, 2,false, telemetry);
+//        waitSeconds(0.5);
+//        arm.toPosition(Arm.GROUND, 2, false, telemetry);
     }
 
     void waitSeconds(double seconds){

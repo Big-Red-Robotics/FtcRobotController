@@ -115,8 +115,7 @@ public class MainTeleOp extends LinearOpMode {
                 arm.setRotatorLevel(2);
                 arm.setArmExtensionPosition(15);
                 arm.setClawFlip(false);
-            }
-            else if (gamepad2.x) {
+            } else if (gamepad2.x) {
                 if(gamepad2.dpad_down || gamepad2.dpad_left || gamepad2.dpad_up || gamepad2.dpad_right){
                     arm.hang = false;
                     if(gamepad2.dpad_down){
@@ -142,8 +141,7 @@ public class MainTeleOp extends LinearOpMode {
                 arm.hang = true;
                 arm.setLiftPosition(Arm.HANG);
                 arm.setClawFlip(false);
-            }
-            else if (gamepad2.b) {
+            } else if (gamepad2.b) {
                 arm.hang = false;
                 arm.setLiftPosition(Arm.HIGH);
                 arm.setArmExtensionPosition(0);
