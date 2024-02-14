@@ -92,6 +92,7 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             if (gamepad2.right_trigger > 0) {
+                sleep(100);
                 arm.toggleClaw();
                 delay = true;
             }
@@ -99,10 +100,10 @@ public class MainTeleOp extends LinearOpMode {
             if(gamepad2.left_bumper || gamepad2.right_bumper){
                 //claw rotator
                 //TODO
-                if (gamepad2.left_bumper && arm.getLiftPosition() != Arm.GROUND) arm.toggleRightClaw();
-                else if(gamepad2.left_bumper && arm.getLiftPosition() == Arm.GROUND)  arm.toggleLeftClaw();
-                if (gamepad2.right_bumper && arm.getLiftPosition() != Arm.GROUND) arm.toggleLeftClaw();
-                else if(gamepad2.right_bumper && arm.getLiftPosition() == Arm.GROUND) arm.toggleRightClaw();
+                if (gamepad2.left_bumper && arm.getLiftTargetPosition() != Arm.GROUND) arm.toggleRightClaw();
+                else if(gamepad2.left_bumper && arm.getLiftTargetPosition() == Arm.GROUND)  arm.toggleLeftClaw();
+                if (gamepad2.right_bumper && arm.getLiftTargetPosition() != Arm.GROUND) arm.toggleLeftClaw();
+                else if(gamepad2.right_bumper && arm.getLiftTargetPosition() == Arm.GROUND) arm.toggleRightClaw();
                 delay = true;
             }
 
