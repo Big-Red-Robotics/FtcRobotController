@@ -83,10 +83,8 @@ public class AutonomousNew extends LinearOpMode {
 
         //FAR FROM BACKDROP, dropped pixel ~ backdrop
         TrajectorySequence farsideToPreBackdrop = chassis.trajectorySequenceBuilder(dropPixel)
-                .back(5)
-                .lineToLinearHeading(intermediate)
-                .forward(32)
-                .turn(Math.toRadians((isRed) ? -90 : 90))
+                .back(50)
+                .turn(Math.toRadians(180))
                 .strafeTo(new Vector2d((isRed) ? 10 : -10, 20))
                 .build();
 
@@ -102,6 +100,10 @@ public class AutonomousNew extends LinearOpMode {
                 .lineToLinearHeading(park)
                 .build();
 
+        TrajectorySequence pixelToStack = chassis.trajectorySequenceBuilder(intermediate)
+                .lineToLinearHeading(grabStack)
+                .build();
+
         //actual autonomous sequence
         chassis.followTrajectorySequence(startToPixel);
         if(RobotConfig.teamColor == TeamColor.RED) arm.openRightClaw();
@@ -110,17 +112,22 @@ public class AutonomousNew extends LinearOpMode {
         arm.setClawRotatorPosition(2);
         waitSeconds(0.5);
 
+
         //go to backdrop
         if(isRight == isRed) chassis.followTrajectorySequence(closesideToPreBackdrop);
         else {
-            //TODO: go to stack (trajectory sequence)
-            //note: you have to figure out a Pose2D value for grabStack
-            //TODO: move
+            // arm lift to an apprioatae position and claw opened so that it can actually grab.
+            arm.toPosition(100, 4, false, telemetry);
+
+            chassis.followTrajectorySequence(pixelToStack);
+
             //grab pixel into the appropriate claw
             if(RobotConfig.teamColor == TeamColor.RED) arm.closeRightClaw();
             else arm.closeLeftClaw();
-            //TODO: go to prebackdrop (trajectory sequence, see farsideToPreBackdrop)
-//            chassis.followTrajectorySequence(farsideToPreBackdrop);
+
+            arm.toPosition(Arm.GROUND, 2, false, telemetry);
+
+            chassis.followTrajectorySequence(farsideToPreBackdrop);
         }
 
         arm.toPosition(Arm.AUTON, 1,false, telemetry);
@@ -154,6 +161,9 @@ public class AutonomousNew extends LinearOpMode {
         //final position
         if(isRed) park = new Pose2d(10, 50, Math.toRadians(90));
         else park = new Pose2d(-15, 50, Math.toRadians(90));
+        //stack position
+        if(isRed) grabStack = new Pose2d(12, -55, Math.toRadians(-90));
+        else grabStack = new Pose2d(-12, -55, Math.toRadians(-90));
 
         if(closeToBackdrop){
             //CLOSE TO BACKDROP

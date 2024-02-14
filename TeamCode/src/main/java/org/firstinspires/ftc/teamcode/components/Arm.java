@@ -218,6 +218,7 @@ public class Arm {
         if(rotator == 0) clawRotator.setPosition(0.4);
         else if (rotator == 1) clawRotator.setPosition(0.53);
         else if (rotator == 2) clawRotator.setPosition(1);
+        else if (rotator == 4) clawRotator.setPosition(0.0);
     }
 
     public void update(boolean rotateClaw) {
