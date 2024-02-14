@@ -157,6 +157,7 @@ public class MainTeleOp extends LinearOpMode {
 
                 arm.hang = true;
                 arm.setLiftPosition(Arm.HANG);
+                arm.setArmExtensionPosition(0);
                 arm.setClawFlip(false);
 
                 delay = true;
