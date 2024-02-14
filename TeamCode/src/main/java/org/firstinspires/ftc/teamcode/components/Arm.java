@@ -178,6 +178,7 @@ public class Arm {
         leftLift.setPower(0.1);
         rightLift.setPower(0.1);
 
+        //if retrack back. Default retract at -0.6 unless
         if (armExtension.getTargetPosition() == 0){
             armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             //the touch sensor is flipped
@@ -187,6 +188,7 @@ public class Arm {
             }
             else armExtension.setPower(0.0);
         } else if(armExtension.isBusy()) {
+            // when it has a target.
             armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             armExtension.setPower(0.6);
         } else armExtension.setPower(0.0);
@@ -259,7 +261,7 @@ public class Arm {
                     lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                     lift.setPower(0.0);
                 } else if (lift.getCurrentPosition() > lift.getTargetPosition()) {
-                    if (lift.getCurrentPosition() < 700 && !hang) {
+                    if (lift.getCurrentPosition() < 700) {
                         //can depend on gravity
                         if ((lift.getCurrentPosition() < MIDDLE && lift.getTargetPosition() == 0) || (lift.getCurrentPosition() < MIDDLE + 100)) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                         else lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
