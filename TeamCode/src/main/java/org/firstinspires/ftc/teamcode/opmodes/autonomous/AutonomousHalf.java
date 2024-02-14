@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.Arm;
+import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.Vision;
 import org.firstinspires.ftc.teamcode.components.lib.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.components.lib.drive.trajectorysequence.TrajectorySequence;
@@ -15,8 +14,8 @@ import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.InitialSide;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
 
-@Autonomous(name="2+0 BOTH SIDES", preselectTeleOp = "2023-2024 CENTERSTAGE")
-public class Autonomous_a extends LinearOpMode {
+@Autonomous(name="1+0 AUTONOMOUS", preselectTeleOp = "2023-2024 CENTERSTAGE")
+public class AutonomousHalf extends LinearOpMode {
     //indicator
     int indicator;
     int LEFT = 1, MIDDLE = 2, RIGHT = 3;
@@ -40,7 +39,7 @@ public class Autonomous_a extends LinearOpMode {
 
             arm.setArmExtensionPosition(0);
 
-            if(gamepad1.right_bumper) arm.resetLift();
+            if (gamepad1.right_bumper) arm.resetLift();
 
             telemetry.addData("Team color", RobotConfig.teamColor);
             telemetry.addData("Initial side", RobotConfig.initialSide);
@@ -53,8 +52,8 @@ public class Autonomous_a extends LinearOpMode {
         //put claw down (claw flipped up for initialization due to 18-inch restriction)
         arm.setClawRotatorPosition(0.40);
         arm.setArmExtensionPosition(15);
-        if(isRight == isRed) waitSeconds(1.0);
-        else waitSeconds(8.5); //TODO
+        if (isRight == isRed) waitSeconds(1.0);
+//        else waitSeconds(8.5);
 
         //update indicator information
         indicator = vision.getIndicator();
@@ -70,64 +69,28 @@ public class Autonomous_a extends LinearOpMode {
                 .lineToLinearHeading(dropPixel)
                 .build();
 
-        //CLOSE TO BACKDROP, dropped pixel ~ backdrop
-        TrajectorySequence closesideToPreBackdrop = chassis.trajectorySequenceBuilder(dropPixel)
+        // FARSIDE, dropped pixel to end
+        TrajectorySequence farsideToEnd = chassis.trajectorySequenceBuilder(dropPixel)
                 .back(5)
-                .lineToSplineHeading(intermediate)
                 .build();
 
-        TrajectorySequence closesideToBackdrop = chassis.trajectorySequenceBuilder(intermediate)
-                .lineToSplineHeading(backDrop, Chassis.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        Chassis.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .build();
-
-        //FAR FROM BACKDROP, dropped pixel ~ backdrop
-        TrajectorySequence farsideToPreBackdrop = chassis.trajectorySequenceBuilder(dropPixel)
+        // CLOSE TO BACKDROP, dropped pixel to park
+        TrajectorySequence closeSideToPark = chassis.trajectorySequenceBuilder(backDrop)
                 .back(5)
-                .lineToLinearHeading(intermediate)
-                .forward(32)
-                .turn(Math.toRadians((isRed) ? -90 : 90))
-                .strafeTo(new Vector2d((isRed) ? 10 : -10, 20))
-                .build();
-
-        TrajectorySequence farsideToBackdrop = chassis.trajectorySequenceBuilder(new Pose2d(new Vector2d((isRed) ? 10 : -10, 20), Math.toRadians(90)))
-                .lineToSplineHeading(backDrop)
-                .build();
-
-        //UNIVERSAL backdrop ~ park
-        TrajectorySequence backdropToPark = chassis.trajectorySequenceBuilder(backDrop)
-                .back(10,
-                        Chassis.getVelocityConstraint(8, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        Chassis.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .lineToLinearHeading(park)
                 .build();
 
         //actual autonomous sequence
         chassis.followTrajectorySequence(startToPixel);
-        if(RobotConfig.teamColor == TeamColor.RED) arm.openRightClaw();
+        if (RobotConfig.teamColor == TeamColor.RED) arm.openRightClaw();
         else arm.openLeftClaw();
         waitSeconds(0.6);
         arm.setClawRotatorPosition(2);
         waitSeconds(0.5);
 
-        //go to backdrop
-        if(isRight == isRed) chassis.followTrajectorySequence(closesideToPreBackdrop);
-        else chassis.followTrajectorySequence(farsideToPreBackdrop);
-
-        arm.toPosition(Arm.AUTON, 1,false, telemetry);
-        arm.toPosition(Arm.AUTON, 1,true, telemetry);
-
-        if(isRight == isRed) chassis.followTrajectorySequence(closesideToBackdrop);
-        else chassis.followTrajectorySequence(farsideToBackdrop);
-
-        //at backdrop
-        if(RobotConfig.teamColor == TeamColor.RED) arm.openLeftClaw();
-        else arm.openRightClaw();
-        waitSeconds(0.6);
-        chassis.followTrajectorySequence(backdropToPark);
-        arm.closeClaw();
-        arm.toPosition(Arm.AUTON, 2,false, telemetry);
-        waitSeconds(0.5);
+        chassis.followTrajectorySequence(farsideToEnd);
+        if(isCloseToBackdrop)
+            chassis.followTrajectorySequence(closeSideToPark);
         arm.toPosition(Arm.GROUND, 2, false, telemetry);
     }
 
