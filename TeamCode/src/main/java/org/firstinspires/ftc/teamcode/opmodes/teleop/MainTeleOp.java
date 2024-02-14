@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.components.Arm;
 import org.firstinspires.ftc.teamcode.components.Drone;
 import org.firstinspires.ftc.teamcode.components.PixelIndicator;
 
-@TeleOp(name="Jan 14 TeleOp")
+@TeleOp(name="2023-2024 CENTERSTAGE")
 public class MainTeleOp extends LinearOpMode {
     RevBlinkinLedDriver.BlinkinPattern pattern;
 
