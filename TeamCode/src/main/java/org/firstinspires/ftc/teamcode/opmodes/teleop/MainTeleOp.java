@@ -199,9 +199,9 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addLine();
             telemetry.addData("drone position", drone.positionDrone.getPosition());
             telemetry.addLine();
-//            telemetry.addData("left claw position", arm.getLeftClawPosition());
-//            telemetry.addData("right claw position", arm.getRightClawPosition());
-//            telemetry.addLine();
+            telemetry.addData("left claw position", arm.getLeftClawPosition());
+            telemetry.addData("right claw position", arm.getRightClawPosition());
+            telemetry.addLine();
             telemetry.addData("pivot encoder", arm.getClawPivotPosition());
             telemetry.addData("rotator  encoder",arm.getRotatorPosition());
             telemetry.addLine();

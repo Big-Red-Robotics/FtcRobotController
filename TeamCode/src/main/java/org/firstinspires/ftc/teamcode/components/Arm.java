@@ -115,12 +115,13 @@ public class Arm {
     }
 
     //claw
+    //TODO: this entire thing is flipped (right is left and left is right)
     public void openLeftClaw() {
-        leftClaw.setPosition(0.9);
+        leftClaw.setPosition(1.0);
         leftClawOpen = true;
     }
     public void closeLeftClaw() {
-        leftClaw.setPosition(0.5);
+        leftClaw.setPosition(0.3);
         leftClawOpen = false;
     }
     public void toggleLeftClaw(){
@@ -129,11 +130,11 @@ public class Arm {
     }
 
     public void openRightClaw() {
-        rightClaw.setPosition(0.35);
+        rightClaw.setPosition(0.0);
         rightClawOpen = true;
     }
     public void closeRightClaw() {
-        rightClaw.setPosition(0.9);
+        rightClaw.setPosition(0.7);
         rightClawOpen = false;
     }
     public void toggleRightClaw(){
