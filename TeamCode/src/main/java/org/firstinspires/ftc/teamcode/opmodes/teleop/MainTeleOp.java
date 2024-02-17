@@ -190,6 +190,7 @@ public class MainTeleOp extends LinearOpMode {
             }
             if(gamepad2.right_stick_button) arm.setArmExtensionPosition(100);
 
+
             //drone
             if (gamepad2.a || gamepad2.x || gamepad2.left_trigger > 0 || gamepad1.b) drone.home();
 

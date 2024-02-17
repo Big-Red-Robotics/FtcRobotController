@@ -134,7 +134,7 @@ public class Arm {
         rightClawOpen = true;
     }
     public void closeRightClaw() {
-        rightClaw.setPosition(0.7);
+        rightClaw.setPosition(0.5);
         rightClawOpen = false;
     }
     public void toggleRightClaw(){
