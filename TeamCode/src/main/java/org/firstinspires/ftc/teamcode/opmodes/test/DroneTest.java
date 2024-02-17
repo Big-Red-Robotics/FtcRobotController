@@ -32,10 +32,13 @@ public class DroneTest extends LinearOpMode {
 
                 chassis.update();
 
-                if(gamepad1.a) drone.home();
+                drone.positionDrone.setPosition(gamepad2.left_stick_y * 0.5 + 0.5);
+                drone.launchDrone.setPosition(gamepad2.right_stick_y * 0.5 + 0.5);
+
+                /*if(gamepad1.a) drone.home();
                 if(gamepad1.b) drone.positionDrone.setPosition(0.30);
                 if(gamepad1.x) drone.positionDrone.setPosition(0.35);
-                if(gamepad1.y) drone.prepareLaunch();
+                if(gamepad1.y) drone.prepareLaunch();*/
 
 //            if (gamepad1.a) launchPos += 0.01;
 //            if (gamepad1.b) launchPos -= 0.01;
@@ -45,7 +48,7 @@ public class DroneTest extends LinearOpMode {
 //            if (gamepad1.dpad_down) posPos -= 0.01;
 //            drone.positionDrone.setPosition(posPos);
 
-//            telemetry.addData("launch",drone.launchDrone.getPosition());
+            telemetry.addData("launch",drone.launchDrone.getPosition());
                 telemetry.addData("position",drone.positionDrone.getPosition());
                 telemetry.update();
             }

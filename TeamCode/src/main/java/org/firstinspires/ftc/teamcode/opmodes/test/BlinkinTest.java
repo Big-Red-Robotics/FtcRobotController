@@ -4,6 +4,7 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 
@@ -15,14 +16,17 @@ public class BlinkinTest extends LinearOpMode {
         //initialize components
         RevBlinkinLedDriver blinkinRight = hardwareMap.get(RevBlinkinLedDriver.class, RobotConfig.blinkinRight);
         RevBlinkinLedDriver blinkinLeft = hardwareMap.get(RevBlinkinLedDriver.class, RobotConfig.blinkinLeft);
+        DcMotor blinkinPower = hardwareMap.get(DcMotor.class, RobotConfig.blinkinPower);
 
-        RevBlinkinLedDriver.BlinkinPattern pattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_PARTY_PALETTE;
+        RevBlinkinLedDriver.BlinkinPattern pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET;
         blinkinRight.setPattern(pattern);
         blinkinLeft.setPattern(pattern);
 
         telemetry.addLine("waiting to start!");
         telemetry.update();
         waitForStart();
+
+        blinkinPower.setPower(1.0);
 
         while(opModeIsActive()) {
             //move components and log data
@@ -33,7 +37,7 @@ public class BlinkinTest extends LinearOpMode {
                 sleep(500);
             }
 
-            telemetry.addData("data", null);
+            telemetry.addData("pattern name", pattern.name());
             telemetry.update();
         }
     }
