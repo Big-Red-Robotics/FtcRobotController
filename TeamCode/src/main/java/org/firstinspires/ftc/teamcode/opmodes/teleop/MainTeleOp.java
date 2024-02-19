@@ -28,6 +28,10 @@ public class MainTeleOp extends LinearOpMode {
         Drone drone = new Drone(hardwareMap);
         PixelIndicator pixelIndicator = new PixelIndicator(hardwareMap);
 
+        //states
+        int droneState = 0;
+        int continuousArmControlState = 0;
+
         //log data
         telemetry.addLine("waiting to start!");
         telemetry.update();
@@ -37,6 +41,7 @@ public class MainTeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
             boolean delay = false;
+            droneState = droneState % 3;
 
             //chassis
             if (gamepad1.left_bumper) {
@@ -91,14 +96,12 @@ public class MainTeleOp extends LinearOpMode {
                 chassis.stop();
             }
 
+            //claw
             if (gamepad2.right_trigger > 0) {
                 arm.toggleClaw();
                 delay = true;
             }
-
             if(gamepad2.left_bumper || gamepad2.right_bumper){
-                //claw rotator
-                //TODO
                 if (gamepad2.left_bumper && arm.getLiftPosition() != Arm.GROUND) arm.toggleRightClaw();
                 else if(gamepad2.left_bumper && arm.getLiftPosition() == Arm.GROUND)  arm.toggleLeftClaw();
                 if (gamepad2.right_bumper && arm.getLiftPosition() != Arm.GROUND) arm.toggleLeftClaw();
@@ -106,62 +109,67 @@ public class MainTeleOp extends LinearOpMode {
                 delay = true;
             }
 
-            //lift
-            if(gamepad2.left_trigger > 0){
+            //claw flip only (wrist 2)
+            if(gamepad2.right_stick_x > 0.3){
+                arm.setClawFlip(!arm.getClawFlip());
+                delay = true;
+            }
+
+            //claw rotator only (wrist 1)
+            if(gamepad2.right_stick_x < -0.3){
                 arm.toggleClawRotator();
                 delay = true;
-            }else if (gamepad2.a) {
-                if(arm.getLiftTargetPosition()== Arm.GROUND && arm.getRotatorLevel() == 2)
-                {
-                    arm.hang = false;
-                    arm.openClaw();
-                    arm.setLiftPosition(Arm.GROUND);
-                    arm.setRotatorLevel(0);
-                    arm.setArmExtensionPosition(15);
-                    arm.setClawFlip(false);
-                    telemetry.addLine("I should return un-guarded and open");
-                }else{
-                    // default action, lift down, rotator guarded, no flip.
-                    arm.closeClaw();
-                    arm.setRotatorLevel(2);
-                    arm.setLiftPosition(Arm.GROUND);
-                    arm.setArmExtensionPosition(0);
-                    arm.setClawFlip(false);
-                }
+            }
+
+            //lift (arm)
+            if(gamepad2.right_stick_y > 0.3) {
+                //wrist down, claw open
+                droneState = 0;
+                arm.hang = false;
+                arm.openClaw();
+                arm.setLiftPosition(Arm.GROUND);
+                arm.setRotatorLevel(0);
+                arm.setArmExtensionPosition(15);
+                arm.setClawFlip(false);
+                delay = true;
+            } else if (gamepad2.right_stick_y < -0.3) {
+                //wrist up, claw closed
+                droneState = 0;
+                arm.closeClaw();
+                arm.setRotatorLevel(2);
+                arm.setLiftPosition(Arm.GROUND);
+                arm.setArmExtensionPosition(0);
+                arm.setClawFlip(false);
                 delay = true;
             } else if (gamepad2.x) {
-                if(gamepad2.dpad_down || gamepad2.dpad_left || gamepad2.dpad_up || gamepad2.dpad_right){
-                    arm.hang = false;
-                    if(gamepad2.dpad_down){
-                        arm.setLiftPosition(Arm.AUTON);
-                        arm.setArmExtensionPosition(400);
-                        arm.setRotatorLevel(1);
-                    } else if(gamepad2.dpad_left) {
-                        arm.setLiftPosition(Arm.VERY_LOW);
-                        arm.setArmExtensionPosition(500);
-                        arm.setRotatorLevel(1);
-                    } else if (gamepad2.dpad_up){
-                        arm.setLiftPosition(Arm.LOW);
-                        arm.setArmExtensionPosition(600);
-                        arm.setRotatorLevel(1);
-                    } else if (gamepad2.dpad_right){
-                        arm.setLiftPosition(Arm.MIDDLE);
-                        arm.setArmExtensionPosition(1200);
-                        arm.setRotatorLevel(5);
-                    }
-                    arm.setClawFlip(true);
+                //front drop
+                arm.hang = false;
+                droneState = 0;
+                if(gamepad2.dpad_down){
+                    arm.setLiftPosition(Arm.AUTON);
+                    arm.setArmExtensionPosition(400);
+                    arm.setRotatorLevel(1);
+                } else if(gamepad2.dpad_left) {
+                    arm.setLiftPosition(Arm.VERY_LOW);
+                    arm.setArmExtensionPosition(500);
+                    arm.setRotatorLevel(1);
+                } else if (gamepad2.dpad_up){
+                    arm.setLiftPosition(Arm.LOW);
+                    arm.setArmExtensionPosition(600);
+                    arm.setRotatorLevel(1);
+                } else if (gamepad2.dpad_right){
+                    arm.setLiftPosition(Arm.MIDDLE);
+                    arm.setArmExtensionPosition(1200);
+                    arm.setRotatorLevel(5);
                 }
-            } else if (gamepad2.y) {
-                if(arm.hang) drone.launch();
-                else drone.prepareLaunch();
-
+                arm.setClawFlip(true);
+            } else if(gamepad2.y && gamepad2.dpad_down){
                 arm.hang = true;
                 arm.setLiftPosition(Arm.HANG);
                 arm.setArmExtensionPosition(0);
                 arm.setClawFlip(false);
-
-                delay = true;
             } else if (gamepad2.b) {
+                droneState = 0;
                 arm.hang = false;
                 arm.setLiftPosition(Arm.HIGH);
                 arm.setArmExtensionPosition(0);
@@ -169,7 +177,7 @@ public class MainTeleOp extends LinearOpMode {
                 arm.setClawFlip(false);
             }
 
-            if(!gamepad2.x && !gamepad2.a){
+            if(!gamepad2.x && !gamepad2.a && !gamepad2.y){
                 //armEx
                 if (gamepad2.dpad_down) arm.setArmExtensionPosition(0);
                 else if (gamepad2.dpad_left) arm.setArmExtensionPosition(500);
@@ -178,21 +186,20 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             //manual lift
-            if(gamepad2.left_stick_button) arm.resetLift();
-            if(gamepad2.left_stick_y != 0.0) arm.setLiftPower(-0.5 * gamepad2.left_stick_y);
+            if(gamepad2.y && gamepad2.x) arm.resetLift();
+            if(gamepad2.y && gamepad2.left_stick_y != 0.0) arm.setLiftPower(-0.5 * gamepad2.left_stick_y);
             else arm.update(true);
             //TODO: this is not the ideal structure bc manual lift is restricting other movements
 
-            //manual armEx
-            if(gamepad2.right_stick_y != 0.0) {
-                if(arm.hang) arm.setLiftPower(-1.0); //TODO: maybe flip
-                else arm.setArmExtensionPower(-0.5 * gamepad2.right_stick_y);
-            }
-            if(gamepad2.right_stick_button) arm.setArmExtensionPosition(100);
-
-
             //drone
-            if (gamepad2.a || gamepad2.x || gamepad2.left_trigger > 0 || gamepad1.b) drone.home();
+            if (gamepad2.y && gamepad2.dpad_up) {
+                droneState++;
+                delay = true;
+            }
+
+            if(droneState == 1) drone.prepareLaunch();
+            else if(droneState == 2) drone.launch();
+            else drone.home();
 
             //telemetry
             telemetry.addData("arm position", arm.getLiftPosition());
@@ -215,8 +222,6 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.update();
 
             if(delay) sleep(200);
-
-            if(isStopRequested()) drone.home();
         }
     }
 }
