@@ -88,11 +88,12 @@ public class AutonomousNew extends LinearOpMode {
 
         //FAR FROM BACKDROP, dropped pixel ~ backdrop
         TrajectorySequence farsideToPreBackdrop = chassis.trajectorySequenceBuilder(grabStack)
-                .strafeTo(new Vector2d((isRed) ? 20 : -20, 20))
+                //pre backdrop not really working?
+                .strafeTo(new Vector2d((isRed) ? 20 : -15, 20))
                 .turn(Math.toRadians(180))
                 .build();
 
-        TrajectorySequence farsideToBackdrop = chassis.trajectorySequenceBuilder(new Pose2d((isRed) ? 20 : -20, 20, Math.toRadians(90)))
+        TrajectorySequence farsideToBackdrop = chassis.trajectorySequenceBuilder(new Pose2d((isRed) ? 20 : -15, 20, Math.toRadians(90)))
                 .lineToSplineHeading(backDrop)
                 .build();
 
@@ -164,7 +165,8 @@ public class AutonomousNew extends LinearOpMode {
         else park = new Pose2d(-20, 50, Math.toRadians(90));
         //stack position
         if(isRed) grabStack = new Pose2d(12, -55, Math.toRadians(-90));
-        else grabStack = new Pose2d(-12, -55, Math.toRadians(-90));
+        //TODO this blue grabstack needs to be fixed.
+        else grabStack = new Pose2d(-14, -53.5, Math.toRadians(-90));
 
         if(isCloseToBackdrop){
             //CLOSE TO BACKDROP
@@ -182,9 +184,10 @@ public class AutonomousNew extends LinearOpMode {
                 dropPixel = new Pose2d(32 * color, 13, Math.toRadians(-90));
             }
         } else {
-            //WING SIDE
-//            park = new Pose2d(10 * color, 47, Math.toRadians(90)); //final position
+            //TODO farside
+            park = new Pose2d(10 * color, 47, Math.toRadians(90)); //final position
             prePixel = new Pose2d(43 * color, -34, Math.toRadians(initialHeading)); //middle position before first pixel
+
             if(indicator == MIDDLE) {
                 dropPixel = new Pose2d(38 * color, -33, Math.toRadians(initialHeading));
                 intermediate = new Pose2d((isRed) ? 48 : -48, -50, Math.toRadians((isRed) ? 180 : 0));
@@ -205,15 +208,15 @@ public class AutonomousNew extends LinearOpMode {
         //TODO: adjust
         if(indicator == MIDDLE){
             /*middle for both colors*/
-            if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-41, 54, Math.toRadians(90));
-            else backDrop = new Pose2d(42, 54, Math.toRadians(90));
+            if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-36, 58, Math.toRadians(90));
+            else backDrop = new Pose2d(42, 53, Math.toRadians(90));
         } else if((indicator == LEFT) == (RobotConfig.teamColor == TeamColor.BLUE)){
             /*left for blue, right for red (closest to the backdrop)*/
-            if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-49, 54, Math.toRadians(90));
+            if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-40, 56, Math.toRadians(90));
             else backDrop = new Pose2d(55, 54, Math.toRadians(90));
         } else {
             //right for blue, left for red (furthest from the backdrop)
-            if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-30, 54, Math.toRadians(90));
+            if(RobotConfig.teamColor == TeamColor.BLUE) backDrop = new Pose2d(-26, 54, Math.toRadians(90));
             else backDrop = new Pose2d(35, 54, Math.toRadians(90));
         }
     }
