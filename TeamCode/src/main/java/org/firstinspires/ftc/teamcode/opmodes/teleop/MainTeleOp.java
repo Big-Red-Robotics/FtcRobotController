@@ -66,37 +66,22 @@ public class MainTeleOp extends LinearOpMode {
             );
             chassis.update();
 
-            //auto grab
-            if (gamepad1.right_bumper){
-                arm.setRotatorLevel(0);
-                arm.openClaw();
-                if(pixelIndicator.isTherePixelL()) arm.closeLeftClaw();
-                if(pixelIndicator.isTherePixelR()) arm.closeRightClaw();
-            }
-
-            //auto re-grab
-            if(gamepad1.right_trigger > 0){
-                ElapsedTime timer = new ElapsedTime();
-                timer.reset();
-                if(!pixelIndicator.isTherePixelL())
-                    arm.openLeftClaw();
-                else if(!pixelIndicator.isTherePixelR())
-                    arm.openRightClaw();
-                while(!pixelIndicator.isThereAnyPixel() && timer.seconds() < 1){
-                    chassis.forward(0.6);
-                }
-                if(pixelIndicator.isTherePixelL())
-                    arm.closeLeftClaw();
-                if(pixelIndicator.isTherePixelR())
-                    arm.closeRightClaw();
-                chassis.stop();
-            }
-
             //claw
-            if (gamepad2.right_trigger > 0) {
+            if (gamepad2.right_trigger > 0.3 || gamepad1.right_bumper) {
                 arm.toggleClaw();
                 delay = true;
             }
+
+            if(gamepad1.left_trigger > 0.3 || gamepad1.right_trigger > 0.3){
+                //claw rotator
+                //TODO
+                if (gamepad1.left_trigger  > 0.3 && arm.getLiftPosition() != Arm.GROUND) arm.toggleRightClaw();
+                else if(gamepad1.left_trigger  > 0.3 && arm.getLiftPosition() == Arm.GROUND)  arm.toggleLeftClaw();
+                if (gamepad1.right_trigger  > 0.3 && arm.getLiftPosition() != Arm.GROUND) arm.toggleLeftClaw();
+                else if(gamepad1.right_trigger  > 0.3&& arm.getLiftPosition() == Arm.GROUND) arm.toggleRightClaw();
+                delay = true;
+            }
+
             if(gamepad2.left_bumper || gamepad2.right_bumper){
                 //claw rotator
                 //TODO
@@ -170,7 +155,7 @@ public class MainTeleOp extends LinearOpMode {
                 } else if(droneState == 2) drone.launch();
                 else {
                     drone.home();
-                    arm.setArmExtensionPosition(Arm.GROUND);
+                    arm.setLiftPosition(Arm.GROUND);
                     arm.setArmExtensionPosition(0);
                     arm.closeClaw();
 

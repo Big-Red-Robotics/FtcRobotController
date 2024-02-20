@@ -259,7 +259,8 @@ public class Arm {
         //the actual lift part
         for (DcMotor lift : lifts) {
             if (lift.isBusy()) {
-                if(lift.getTargetPosition() == HIGH && lift.getCurrentPosition() > HANG + 20){
+                if(hang) lift.setPower(1.0);
+                else if(lift.getTargetPosition() == HIGH && lift.getCurrentPosition() > HANG + 20){
                     //can depend on gravity
                     lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                     lift.setPower(0.0);
