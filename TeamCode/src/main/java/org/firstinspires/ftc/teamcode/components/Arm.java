@@ -201,12 +201,13 @@ public class Arm {
             t.update();
             for(DcMotor lift: lifts){
                 if (lift.getCurrentPosition() > lift.getTargetPosition()) {
-                    if ((lift.getCurrentPosition() < 700 || lift.getCurrentPosition() > 1300) && !hang) {
+                    if(hang) lift.setPower(1.0);
+                    else if (lift.getCurrentPosition() < 700 || lift.getCurrentPosition() > 1300) {
                         //can depend on gravity
                         if (lift.getCurrentPosition() < MIDDLE) lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                         else lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                         lift.setPower(0.0);
-                    } else if(hang) lift.setPower(0.6);
+                    }
                     else lift.setPower(0.3);
                 } else if(lift.getCurrentPosition() > LOW && lift.getTargetPosition() == MIDDLE) lift.setPower(0.3);
                 else lift.setPower(0.8);
