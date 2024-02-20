@@ -67,13 +67,11 @@ public class MainTeleOp extends LinearOpMode {
             chassis.update();
 
             //claw
-            if (gamepad2.right_trigger > 0.3 || gamepad1.right_bumper) {
+            if (gamepad1.right_bumper) {
                 arm.toggleClaw();
                 delay = true;
             }
-
             if(gamepad1.left_trigger > 0.3 || gamepad1.right_trigger > 0.3){
-                //claw rotator
                 //TODO
                 if (gamepad1.left_trigger  > 0.3 && arm.getLiftPosition() != Arm.GROUND) arm.toggleRightClaw();
                 else if(gamepad1.left_trigger  > 0.3 && arm.getLiftPosition() == Arm.GROUND)  arm.toggleLeftClaw();
@@ -82,19 +80,12 @@ public class MainTeleOp extends LinearOpMode {
                 delay = true;
             }
 
-            if(gamepad2.left_bumper || gamepad2.right_bumper){
-                //claw rotator
-                //TODO
-                if (gamepad2.left_bumper && arm.getLiftPosition() != Arm.GROUND) arm.toggleRightClaw();
-                else if(gamepad2.left_bumper && arm.getLiftPosition() == Arm.GROUND)  arm.toggleLeftClaw();
-                if (gamepad2.right_bumper && arm.getLiftPosition() != Arm.GROUND) arm.toggleLeftClaw();
-                else if(gamepad2.right_bumper && arm.getLiftPosition() == Arm.GROUND) arm.toggleRightClaw();
-                delay = true;
-            }
-
             //claw rotator (wrist 1)
             if(gamepad2.left_trigger > 0){
-                arm.toggleClawRotator();
+                arm.setRotatorLevel(0);
+                delay = true;
+            } else if (gamepad2.right_trigger > 0) {
+                arm.setRotatorLevel(0);
                 delay = true;
             }
 
@@ -132,15 +123,15 @@ public class MainTeleOp extends LinearOpMode {
                     arm.setArmExtensionPosition(500);
                     arm.setRotatorLevel(1);
                     arm.setClawFlip(true);
-                } else if (gamepad2.dpad_up){
+                } else if (gamepad2.dpad_up) {
                     arm.setLiftPosition(Arm.LOW);
-                    arm.setArmExtensionPosition(600);
+                    arm.setArmExtensionPosition(800);
                     arm.setRotatorLevel(1);
                     arm.setClawFlip(true);
-                } else if (gamepad2.dpad_right){
+                } else if (gamepad2.dpad_right) {
                     arm.setLiftPosition(Arm.MIDDLE);
-                    arm.setArmExtensionPosition(1200);
-                    arm.setRotatorLevel(5);
+                    arm.setArmExtensionPosition(1550);
+                    arm.setRotatorLevel(0);
                     arm.setClawFlip(true);
                 }
             } else if (gamepad2.y) {

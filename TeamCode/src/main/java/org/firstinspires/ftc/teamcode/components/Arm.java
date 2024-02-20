@@ -28,7 +28,7 @@ public class Arm {
                             AUTON = 370,
                             VERY_LOW = 420,
                             LOW = 500,
-                            MIDDLE = 580,
+                            MIDDLE = 630,
                             HANG = 1100,
                             HIGH = 1380;
 
@@ -185,7 +185,7 @@ public class Arm {
             //the touch sensor is flipped
             if(slideZeroReset.isPressed()) {
                 if (Math.abs(armExtension.getCurrentPosition()) < 50) armExtension.setPower(-0.1);
-                armExtension.setPower(-0.6);
+                else armExtension.setPower(-0.6);
             }
             else armExtension.setPower(0.0);
         } else if(armExtension.isBusy()) {
@@ -232,9 +232,9 @@ public class Arm {
             //ground: 0, low: 1, middle: 5, all the way: 2
             if(rotatorLevel == 0) clawRotator.setPosition(0.4);
             else if (rotatorLevel == 1) clawRotator.setPosition(0.55);
-            else if (rotatorLevel == 5) clawRotator.setPosition(0.5);
             else if (rotatorLevel == 2) clawRotator.setPosition(1);
             else if (rotatorLevel == 3) clawRotator.setPosition(0.95);
+//            else if (rotatorLevel == 5) clawRotator.setPosition(0.5);
         }
 
         if (clawFlip) clawPivot.setPosition(0.29);
