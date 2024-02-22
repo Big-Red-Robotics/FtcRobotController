@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.InitialSide;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.TeamColor;
 
-@Autonomous(name="2+0 AUTONOMOUS", preselectTeleOp = "2023-2024 CENTERSTAGE")
+@Autonomous(name="2+0 DEFAULT", preselectTeleOp = "2023-2024 CENTERSTAGE")
 public class AutonomousDefault extends LinearOpMode {
     //indicator
     int indicator;
@@ -51,7 +51,7 @@ public class AutonomousDefault extends LinearOpMode {
         }
 
         //put claw down (claw flipped up for initialization due to 18-inch restriction)
-        arm.setClawRotatorPosition(0.40);
+        arm.setClawRotator(0);
         arm.setArmExtensionPosition(15);
         if(isRight == isRed) waitSeconds(1.0);
         else waitSeconds(8.5); //TODO
@@ -107,7 +107,7 @@ public class AutonomousDefault extends LinearOpMode {
         if(RobotConfig.teamColor == TeamColor.RED) arm.openRightClaw();
         else arm.openLeftClaw();
         waitSeconds(0.6);
-        arm.setClawRotatorPosition(2);
+        arm.setClawRotator(2);
         waitSeconds(0.5);
 
         //go to backdrop

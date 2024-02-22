@@ -63,7 +63,7 @@ public class Arm {
         armExtension.setPower(0.0);
 
         clawPivot.setPwmRange(new PwmControl.PwmRange(1200, 1800));
-        clawPivot.setPosition(0.95);
+        clawPivot.setPosition(0.945);
     }
 
     public void resetLift(){
@@ -94,11 +94,6 @@ public class Arm {
             lift.setTargetPosition(armPosition);
             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-    }
-
-    public void toggleClawRotator(){
-        if(rotatorLevel == 2) rotatorLevel = 0;
-        else rotatorLevel = 2;
     }
 
     public void setRotatorLevel(int level){
@@ -156,8 +151,13 @@ public class Arm {
     }
 
     //claw rotator
-    public void setClawRotatorPosition(double position){
-        clawRotator.setPosition(position);
+    public void setClawRotator(int level){
+        //ground: 0, low: 1, middle: 5, all the way: 2
+        if(level == 0) clawRotator.setPosition(0.15);
+        else if (level == 1) clawRotator.setPosition(0.3);
+        else if (level == 2) clawRotator.setPosition(1);
+        else if (level == 3) clawRotator.setPosition(0.6);
+        else if (level == 4) clawRotator.setPosition(0.0);
     }
 
     public void setLiftPower(double power) {
@@ -172,7 +172,7 @@ public class Arm {
     public void toPosition(int position, int rotator, boolean pivot, Telemetry t){
         //claw pivot
         if (pivot) clawPivot.setPosition(0.29);
-        else clawPivot.setPosition(0.95);
+        else clawPivot.setPosition(0.945);
 
         //set lift target
         setLiftPosition(position);
@@ -183,16 +183,18 @@ public class Arm {
         if (armExtension.getTargetPosition() == 0){
             armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             //the touch sensor is flipped
-            if(slideZeroReset.isPressed()) {
+            while(slideZeroReset.isPressed()) {
                 if (Math.abs(armExtension.getCurrentPosition()) < 50) armExtension.setPower(-0.1);
                 else armExtension.setPower(-0.6);
             }
-            else armExtension.setPower(0.0);
-        } else if(armExtension.isBusy()) {
+            armExtension.setPower(0.0);
+        }
+        while (armExtension.isBusy()) {
             // when it has a target.
             armExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             armExtension.setPower(0.6);
-        } else armExtension.setPower(0.0);
+        }
+        armExtension.setPower(0.0);
 
         //set lift power
         while (leftLift.isBusy() || rightLift.isBusy()) {
@@ -217,10 +219,7 @@ public class Arm {
         rightLift.setPower(0.5);
 
         //claw rotator
-        if(rotator == 0) clawRotator.setPosition(0.4);
-        else if (rotator == 1) clawRotator.setPosition(0.53);
-        else if (rotator == 2) clawRotator.setPosition(1);
-        else if (rotator == 4) clawRotator.setPosition(0.0);
+        setClawRotator(rotator);
     }
 
     public void update(boolean rotateClaw) {
@@ -228,17 +227,10 @@ public class Arm {
         if(!slideZeroReset.isPressed()) armExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //claw rotator
-        if(rotateClaw){
-            //ground: 0, low: 1, middle: 5, all the way: 2
-            if(rotatorLevel == 0) clawRotator.setPosition(0.4);
-            else if (rotatorLevel == 1) clawRotator.setPosition(0.55);
-            else if (rotatorLevel == 2) clawRotator.setPosition(1);
-            else if (rotatorLevel == 3) clawRotator.setPosition(0.95);
-//            else if (rotatorLevel == 5) clawRotator.setPosition(0.5);
-        }
+        if(rotateClaw) setClawRotator(rotatorLevel);
 
         if (clawFlip) clawPivot.setPosition(0.29);
-        else clawPivot.setPosition(0.95);
+        else clawPivot.setPosition(0.945);
 
         if (armExtension.getTargetPosition() == 0){
             armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

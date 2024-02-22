@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.components.Arm;
 import org.firstinspires.ftc.teamcode.components.Chassis;
 import org.firstinspires.ftc.teamcode.components.Vision;
-import org.firstinspires.ftc.teamcode.components.lib.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.components.lib.drive.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utility.RobotConfig;
 import org.firstinspires.ftc.teamcode.utility.teaminfo.InitialSide;
@@ -50,7 +49,7 @@ public class AutonomousHalf extends LinearOpMode {
         }
 
         //put claw down (claw flipped up for initialization due to 18-inch restriction)
-        arm.setClawRotatorPosition(0.40);
+        arm.setClawRotator(15);
         arm.setArmExtensionPosition(15);
         if (isRight == isRed) waitSeconds(1.0);
 //        else waitSeconds(8.5);
@@ -85,7 +84,7 @@ public class AutonomousHalf extends LinearOpMode {
         if (RobotConfig.teamColor == TeamColor.RED) arm.openRightClaw();
         else arm.openLeftClaw();
         waitSeconds(0.6);
-        arm.setClawRotatorPosition(2);
+        arm.setClawRotator(2);
         waitSeconds(0.5);
 
         chassis.followTrajectorySequence(farsideToEnd);

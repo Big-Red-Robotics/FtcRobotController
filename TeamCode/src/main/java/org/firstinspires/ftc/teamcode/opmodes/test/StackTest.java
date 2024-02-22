@@ -39,7 +39,7 @@ public class StackTest extends LinearOpMode {
                 clawpos += 0.02;
 
             arm.setLiftPosition(liftpos);
-            arm.setClawRotatorPosition(clawpos);
+//            arm.setClawRotatorPosition();
 
             if(gamepad1.a){
                 ElapsedTime timer = new ElapsedTime();
