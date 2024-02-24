@@ -157,7 +157,7 @@ public class Arm {
         else if (level == 1) clawRotator.setPosition(0.3);
         else if (level == 2) clawRotator.setPosition(1);
         else if (level == 3) clawRotator.setPosition(0.6);
-        else if (level == 4) clawRotator.setPosition(0.0);
+        else if (level == 4) clawRotator.setPosition(0.1);
     }
 
     public void setLiftPower(double power) {
@@ -214,6 +214,8 @@ public class Arm {
                 } else if(lift.getCurrentPosition() > LOW && lift.getTargetPosition() == MIDDLE) lift.setPower(0.3);
                 else lift.setPower(0.8);
             }
+
+            if(getLiftTargetPosition() == 0 && getLiftPosition() < 15) break;
         }
         leftLift.setPower(0.5);
         rightLift.setPower(0.5);

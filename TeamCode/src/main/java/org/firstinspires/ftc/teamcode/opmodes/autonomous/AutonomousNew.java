@@ -54,7 +54,7 @@ public class AutonomousNew extends LinearOpMode {
         arm.setClawRotator(0);
         arm.setArmExtensionPosition(15);
         if(isCloseToBackdrop) waitSeconds(1.0);
-        else waitSeconds(5);
+//        else waitSeconds(5);
 
         //update indicator information
         indicator = vision.getIndicator();
@@ -65,6 +65,7 @@ public class AutonomousNew extends LinearOpMode {
         chassis.setPoseEstimate(startPose);
 
         //ALL, startPosition ~ pixel location
+        //CAUTION: DOESN'T WORK THE BEST FOR CLOSE SIDE
         TrajectorySequence startToPixel = chassis.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(prePixel)
                 .lineToLinearHeading(dropPixel)
@@ -81,15 +82,20 @@ public class AutonomousNew extends LinearOpMode {
                         Chassis.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
-        TrajectorySequence pixelToStack = chassis.trajectorySequenceBuilder(intermediate)
+        //FAR FROM BACKDROP, spike mark ~ pixel
+        TrajectorySequence pixelToStack = chassis.trajectorySequenceBuilder(dropPixel)
+                .lineToLinearHeading(intermediate)
+                .turn(Math.toRadians((isRed) ? 90 : -90))
                 .lineToLinearHeading(grabStack)
                 .build();
 
         //FAR FROM BACKDROP, dropped pixel ~ backdrop
         TrajectorySequence farsideToPreBackdrop = chassis.trajectorySequenceBuilder(grabStack)
-                //pre backdrop not really working?
-                .strafeTo(new Vector2d((isRed) ? 20 : -15, 20))
-                .turn(Math.toRadians(180))
+                .lineToLinearHeading(startPose)
+                .forward(3)
+                .turn(Math.toRadians((isRed) ? -90 : 90))
+                .forward(50)
+                .splineTo(new Vector2d((isRed) ? 40 : -40, 40), Math.toRadians(90))
                 .build();
 
         TrajectorySequence farsideToBackdrop = chassis.trajectorySequenceBuilder(new Pose2d((isRed) ? 20 : -15, 20, Math.toRadians(90)))
@@ -109,21 +115,25 @@ public class AutonomousNew extends LinearOpMode {
         if(RobotConfig.teamColor == TeamColor.RED) arm.openRightClaw();
         else arm.openLeftClaw();
         waitSeconds(0.6);
-        arm.setClawRotator(2);
-        waitSeconds(0.5);
 
         //go to backdrop
-        if(isCloseToBackdrop) chassis.followTrajectorySequence(closesideToPreBackdrop);
-        else {
-            //arm lift to an appropriate position and claw opened so that it can actually grab.
-            arm.toPosition(105, 4, false, telemetry);
+        if(isCloseToBackdrop) {
+            arm.setClawRotator(2);
+            waitSeconds(0.5);
+            chassis.followTrajectorySequence(closesideToPreBackdrop);
+        } else {
+            arm.toPosition(115, 4, false, telemetry);
 
+            //arm lift to an appropriate position and claw opened so that it can actually grab.
             chassis.followTrajectorySequence(pixelToStack);
 
             //grab pixel into the appropriate claw
             if(RobotConfig.teamColor == TeamColor.RED) arm.closeRightClaw();
             else arm.closeLeftClaw();
 
+            waitSeconds(0.5);
+
+            arm.setClawRotator(2);
             arm.toPosition(Arm.GROUND, 2, false, telemetry);
 
             chassis.followTrajectorySequence(farsideToPreBackdrop);
@@ -160,16 +170,15 @@ public class AutonomousNew extends LinearOpMode {
         int initialHeading = (isRed) ? 180 : 0;
         startPose = new Pose2d(65 * color, (isCloseToBackdrop) ? 10 : -34, Math.toRadians(initialHeading));
         //final position
-        if(isRed) park = new Pose2d(20, 50, Math.toRadians(90));
-        else park = new Pose2d(-20, 50, Math.toRadians(90));
+//        if(isRed) park = new Pose2d(20, 50, Math.toRadians(90));
+//        else park = new Pose2d(-20, 50, Math.toRadians(90));
         //stack position
-        if(isRed) grabStack = new Pose2d(12, -55, Math.toRadians(-90));
-        //TODO this blue grabstack needs to be fixed.
-        else grabStack = new Pose2d(-14, -53.5, Math.toRadians(-90));
+        if(isRed) grabStack = new Pose2d(38, -53, Math.toRadians(-90));
+        else grabStack = new Pose2d(-45, -53.5, Math.toRadians(-90)); //TODO
 
         if(isCloseToBackdrop){
             //CLOSE TO BACKDROP
-//            park = new Pose2d(62 * color, 47, Math.toRadians(90)); //final position, corner
+            park = new Pose2d(10 * color, 47, Math.toRadians(90)); //final position
             prePixel = new Pose2d(36 * color, 24, Math.toRadians(-90)); //middle position before first pixel
             intermediate = new Pose2d(30 * color, 40, Math.toRadians(90));
             if(indicator == MIDDLE){
@@ -184,22 +193,20 @@ public class AutonomousNew extends LinearOpMode {
             }
         } else {
             //TODO farside
-            park = new Pose2d(10 * color, 47, Math.toRadians(90)); //final position
+            park = new Pose2d(62 * color, 47, Math.toRadians(90)); //final position, corner
             prePixel = new Pose2d(43 * color, -34, Math.toRadians(initialHeading)); //middle position before first pixel
 
             if(indicator == MIDDLE) {
                 dropPixel = new Pose2d(38 * color, -33, Math.toRadians(initialHeading));
-                intermediate = new Pose2d((isRed) ? 48 : -48, -50, Math.toRadians((isRed) ? 180 : 0));
+                intermediate = new Pose2d((isRed) ? 40 : -40, -50, Math.toRadians((isRed) ? 180 : 0));
             } else if((indicator == LEFT) == (RobotConfig.teamColor == TeamColor.BLUE)) {
                 /*left for blue, right for red (closest to the backdrop)*/
                 dropPixel = new Pose2d(38 * color, -35, Math.toRadians(initialHeading - (50*color)));
-                intermediate = new Pose2d((isRed) ? 48 : -48, -46, Math.toRadians((isRed) ? 180 : 0));
+                intermediate = new Pose2d((isRed) ? 40 : -40, -46, Math.toRadians((isRed) ? 180 : 0));
             } else {
                 //right for blue, left for red (furthest from the backdrop)
-                dropPixel = new Pose2d(44 * color, -51, Math.toRadians(initialHeading));
-                if(isRed) intermediate = new Pose2d(40, -33, Math.toRadians(180));
-                else intermediate = new Pose2d(-40, -32, Math.toRadians(0));
-                //TODO: ↑ adjust intermediate location so that the robot doesn't knock off when grabbing from stack
+                dropPixel = new Pose2d(46 * color, -47, Math.toRadians(initialHeading + (50*color)));
+                intermediate = new Pose2d((isRed) ? 40 : -40, -50, Math.toRadians((isRed) ? 180 : 0));
             }
         }
 
