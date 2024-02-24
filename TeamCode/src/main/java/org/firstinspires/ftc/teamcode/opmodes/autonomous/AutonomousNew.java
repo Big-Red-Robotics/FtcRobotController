@@ -122,7 +122,7 @@ public class AutonomousNew extends LinearOpMode {
             waitSeconds(0.5);
             chassis.followTrajectorySequence(closesideToPreBackdrop);
         } else {
-            arm.toPosition(115, 4, false, telemetry);
+            arm.toPosition(130, 4, false, telemetry);
 
             //arm lift to an appropriate position and claw opened so that it can actually grab.
             chassis.followTrajectorySequence(pixelToStack);
@@ -205,7 +205,7 @@ public class AutonomousNew extends LinearOpMode {
                 intermediate = new Pose2d((isRed) ? 40 : -40, -46, Math.toRadians((isRed) ? 180 : 0));
             } else {
                 //right for blue, left for red (furthest from the backdrop)
-                dropPixel = new Pose2d(46 * color, -47, Math.toRadians(initialHeading + (50*color)));
+                dropPixel = new Pose2d(38 * color, -36, Math.toRadians(initialHeading + (50*color)));
                 intermediate = new Pose2d((isRed) ? 40 : -40, -50, Math.toRadians((isRed) ? 180 : 0));
             }
         }
