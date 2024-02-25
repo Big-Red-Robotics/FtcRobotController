@@ -33,6 +33,7 @@ public class AutonomousDefault extends LinearOpMode {
         Vision vision = new Vision(hardwareMap);
         Arm arm = new Arm(hardwareMap);
         Chassis chassis = new Chassis(hardwareMap);
+        double wait = 8.0;
 
         while (!isStarted() && !isStopRequested()) {
             indicator = vision.getIndicator();
@@ -41,10 +42,14 @@ public class AutonomousDefault extends LinearOpMode {
             arm.setArmExtensionPosition(0);
 
             if(gamepad1.right_bumper) arm.resetLift();
+            if(gamepad1.dpad_up) wait += 0.5;
+            if(gamepad1.dpad_down) wait -= 0.5;
+
 
             telemetry.addData("Team color", RobotConfig.teamColor);
             telemetry.addData("Initial side", RobotConfig.initialSide);
             telemetry.addData("Detected indicator", indicator);
+            telemetry.addData("farside wait seconds", wait);
             telemetry.update();
 
             sleep(100);
@@ -54,7 +59,7 @@ public class AutonomousDefault extends LinearOpMode {
         arm.setClawRotator(0);
         arm.setArmExtensionPosition(15);
         if(isRight == isRed) waitSeconds(1.0);
-        else waitSeconds(8.5); //TODO
+        else waitSeconds(wait);
 
         //update indicator information
         indicator = vision.getIndicator();
