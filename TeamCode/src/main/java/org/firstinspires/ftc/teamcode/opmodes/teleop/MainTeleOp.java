@@ -26,6 +26,8 @@ public class MainTeleOp extends LinearOpMode {
         arm.setLiftPosition(Arm.GROUND);
         Drone drone = new Drone(hardwareMap);
         PixelIndicator pixelIndicator = new PixelIndicator(hardwareMap);
+        boolean controlReady = true;
+        ElapsedTime time = new ElapsedTime();
 
         int droneState = 0;
 
@@ -67,11 +69,11 @@ public class MainTeleOp extends LinearOpMode {
             chassis.update();
 
             //claw
-            if (gamepad1.right_bumper) {
+            if (gamepad1.right_bumper && controlReady) {
                 arm.toggleClaw();
                 delay = true;
             }
-            if(gamepad1.left_trigger > 0.3 || gamepad1.right_trigger > 0.3){
+            if((gamepad1.left_trigger > 0.3 || gamepad1.right_trigger > 0.3)  && controlReady){
                 //TODO
                 if (gamepad1.left_trigger  > 0.3 && arm.getLiftPosition() != Arm.GROUND) arm.toggleRightClaw();
                 else if(gamepad1.left_trigger  > 0.3 && arm.getLiftPosition() == Arm.GROUND)  arm.toggleLeftClaw();
@@ -81,16 +83,16 @@ public class MainTeleOp extends LinearOpMode {
             }
 
             //claw rotator (wrist 1)
-            if(gamepad2.left_trigger > 0){
+            if(gamepad2.left_trigger > 0  && controlReady){
                 arm.setRotatorLevel(0);
                 delay = true;
-            } else if (gamepad2.right_trigger > 0) {
+            } else if (gamepad2.right_trigger > 0  && controlReady) {
                 arm.setRotatorLevel(0);
                 delay = true;
             }
 
             //lift
-            if (gamepad2.a) {
+            if (gamepad2.a && controlReady) {
                 droneState = 0;
                 if(arm.getLiftTargetPosition()== Arm.GROUND && arm.getRotatorLevel() == 2)
                 {
@@ -134,7 +136,7 @@ public class MainTeleOp extends LinearOpMode {
                     arm.setRotatorLevel(0);
                     arm.setClawFlip(true);
                 }
-            } else if (gamepad2.y) {
+            } else if (gamepad2.y && controlReady) {
                 arm.hang = true;
                 droneState++;
 
@@ -207,7 +209,11 @@ public class MainTeleOp extends LinearOpMode {
 
             telemetry.update();
 
-            if(delay) sleep(200);
+            if(delay) {
+                time.reset();
+                controlReady = false;
+            }
+            if(time.milliseconds() > 300) controlReady = true;
 
             if(isStopRequested()) drone.home();
         }

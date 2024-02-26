@@ -155,7 +155,7 @@ public class Arm {
         //ground: 0, low: 1, middle: 5, all the way: 2
         if(level == 0) clawRotator.setPosition(0.15);
         else if (level == 1) clawRotator.setPosition(0.35);
-        else if (level == 2) clawRotator.setPosition(1);
+        else if (level == 2) clawRotator.setPosition(0.8);
         else if (level == 3) clawRotator.setPosition(0.6);
         else if (level == 4) clawRotator.setPosition(0.1);
     }
