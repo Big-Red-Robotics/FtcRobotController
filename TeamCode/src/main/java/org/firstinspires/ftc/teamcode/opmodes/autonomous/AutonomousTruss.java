@@ -51,7 +51,7 @@ public class AutonomousTruss extends LinearOpMode {
         }
 
         //put claw down (claw flipped up for initialization due to 18-inch restriction)
-        arm.setClawRotator(0);
+        arm.moveClawRotator(0);
         arm.setArmExtensionPosition(15);
         if(isRight == isRed) waitSeconds(1.0);
         else waitSeconds(5); //TODO
@@ -107,7 +107,7 @@ public class AutonomousTruss extends LinearOpMode {
         if(RobotConfig.teamColor == TeamColor.RED) arm.openRightClaw();
         else arm.openLeftClaw();
         waitSeconds(0.6);
-        arm.setClawRotator(2);
+        arm.moveClawRotator(2);
         waitSeconds(0.5);
 
         //go to backdrop

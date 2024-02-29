@@ -16,8 +16,7 @@ import java.util.List;
 
 public class Arm {
     private final DcMotor leftLift, rightLift;
-    private final Servo clawRotator;
-    private final ServoImplEx clawPivot;
+    private final ServoImplEx clawPivot, clawRotator;
     private final Servo leftClaw, rightClaw;
     private final DcMotor armExtension;
     public final TouchSensor slideZeroReset;
@@ -28,12 +27,23 @@ public class Arm {
                             AUTON = 370,
                             VERY_LOW = 420,
                             LOW = 500,
-                            MIDDLE = 630,
+                            MIDDLE = 600,
                             HANG = 1100,
                             HIGH = 1380;
 
+    //claw pivot
+    public static final double CP_FLIP = 0.945,
+                               CP_HALF = 0.785,
+                               CP_DEFAULT = 0.29;
+
+    //claw rotator
+    public static final double CR_STACK = 0.0,
+                               CR_GROUND = 0.15,
+                               CR_FRONT = 0.5,
+                               CR_FLIP = 1.0;
+
     private int rotatorLevel = 0;
-    private boolean clawFlip = false;
+    private double clawPivotPosition = 0.0;
     public boolean rightClawOpen = false, leftClawOpen = false;
 
     public boolean hang = false;
@@ -42,7 +52,7 @@ public class Arm {
         this.slideZeroReset = hardwareMap.get(TouchSensor.class,"touch");
         this.leftLift = hardwareMap.get(DcMotor.class, RobotConfig.liftL);
         this.rightLift = hardwareMap.get(DcMotor.class, RobotConfig.liftR);
-        this.clawRotator = hardwareMap.get(Servo.class, RobotConfig.clawRotator);
+        this.clawRotator = hardwareMap.get(ServoImplEx.class, RobotConfig.clawRotator);
         this.leftClaw = hardwareMap.get(Servo.class, RobotConfig.leftClaw);
         this.rightClaw = hardwareMap.get(Servo.class, RobotConfig.rightClaw);
         this.clawPivot = hardwareMap.get(ServoImplEx.class, RobotConfig.clawPivot);
@@ -63,7 +73,10 @@ public class Arm {
         armExtension.setPower(0.0);
 
         clawPivot.setPwmRange(new PwmControl.PwmRange(1200, 1800));
-        clawPivot.setPosition(0.945);
+        clawPivot.setPosition(CP_DEFAULT);
+
+        clawRotator.setPwmRange(new PwmControl.PwmRange(1180, 1620));
+        clawPivot.setPosition(CR_GROUND);
     }
 
     public void resetLift(){
@@ -100,8 +113,8 @@ public class Arm {
         rotatorLevel = level;
     }
 
-    public void setClawFlip(boolean flip){
-        this.clawFlip = flip;
+    public void setClawPivotPosition(double flip){
+        this.clawPivotPosition = flip;
     }
 
     //armEx
@@ -151,13 +164,12 @@ public class Arm {
     }
 
     //claw rotator
-    public void setClawRotator(int level){
+    public void moveClawRotator(int level){
         //ground: 0, low: 1, middle: 5, all the way: 2
-        if(level == 0) clawRotator.setPosition(0.15);
-        else if (level == 1) clawRotator.setPosition(0.35);
-        else if (level == 2) clawRotator.setPosition(0.8);
-        else if (level == 3) clawRotator.setPosition(0.6);
-        else if (level == 4) clawRotator.setPosition(0.1);
+        if (level == 4) clawRotator.setPosition(CR_STACK);
+        else if(level == 0) clawRotator.setPosition(CR_GROUND);
+        else if (level == 1) clawRotator.setPosition(CR_FRONT);
+        else if (level == 2) clawRotator.setPosition(CR_FLIP);
     }
 
     public void setLiftPower(double power) {
@@ -171,8 +183,10 @@ public class Arm {
 
     public void toPosition(int position, int rotator, boolean pivot, Telemetry t){
         //claw pivot
-        if (pivot) clawPivot.setPosition(0.29);
-        else clawPivot.setPosition(0.945);
+        if (pivot) clawPivot.setPosition(CP_FLIP);
+        else clawPivot.setPosition(CP_DEFAULT);
+
+//        clawPivot.setPosition(clawPivotPosition);
 
         //set lift target
         setLiftPosition(position);
@@ -221,7 +235,7 @@ public class Arm {
         rightLift.setPower(0.5);
 
         //claw rotator
-        setClawRotator(rotator);
+        moveClawRotator(rotator);
     }
 
     public void update(boolean rotateClaw) {
@@ -229,10 +243,9 @@ public class Arm {
         if(!slideZeroReset.isPressed()) armExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //claw rotator
-        if(rotateClaw) setClawRotator(rotatorLevel);
+        if(rotateClaw) moveClawRotator(rotatorLevel);
 
-        if (clawFlip) clawPivot.setPosition(0.29);
-        else clawPivot.setPosition(0.945);
+        clawPivot.setPosition(clawPivotPosition);
 
         if (armExtension.getTargetPosition() == 0){
             armExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -281,8 +294,6 @@ public class Arm {
     public double getClawPivotPosition() {return clawPivot.getPosition();}
     public double getLeftClawPosition() {return leftClaw.getPosition();}
     public double getRightClawPosition() {return rightClaw.getPosition();}
-
-    public boolean getClawFlip() {return clawFlip;}
 
     public double getArmExPower() {return armExtension.getPower();}
     public int getArmExPosition() {return armExtension.getCurrentPosition();}

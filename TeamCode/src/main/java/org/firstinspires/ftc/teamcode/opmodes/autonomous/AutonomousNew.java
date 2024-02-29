@@ -51,7 +51,7 @@ public class AutonomousNew extends LinearOpMode {
         }
 
         //put claw down (claw flipped up for initialization due to 18-inch restriction)
-        arm.setClawRotator(0);
+        arm.moveClawRotator(0);
         arm.setArmExtensionPosition(15);
         waitSeconds(1.0);
 
@@ -121,7 +121,7 @@ public class AutonomousNew extends LinearOpMode {
         if(RobotConfig.teamColor == TeamColor.RED) arm.openRightClaw();
         else arm.openLeftClaw();
         waitSeconds(0.5);
-        arm.setClawRotator(2);
+        arm.moveClawRotator(2);
 
         //go to backdrop
         if(isCloseToBackdrop)chassis.followTrajectorySequence(closesideToPreBackdrop);
@@ -129,7 +129,7 @@ public class AutonomousNew extends LinearOpMode {
             //arm lift to an appropriate position and claw opened so that it can actually grab.
             chassis.followTrajectorySequence(pixelToStackA);
 
-            arm.setRotatorLevel(4);
+            arm.moveClawRotator(4);
             arm.toPosition(135, 4, false, telemetry);
             waitSeconds(0.5);
 
@@ -141,12 +141,12 @@ public class AutonomousNew extends LinearOpMode {
             waitSeconds(0.5);
 
             chassis.followTrajectorySequence(farsideToPreBackdropA);
-            arm.setClawRotator(2);
+            arm.moveClawRotator(2);
             arm.toPosition(Arm.GROUND, 2, false, telemetry);
             chassis.followTrajectorySequence(farsideToPreBackdropB);
         }
 
-        arm.setClawRotator(1);
+        arm.moveClawRotator(1);
         arm.toPosition(Arm.AUTON, 1,false, telemetry);
         arm.toPosition(Arm.AUTON, 1,true, telemetry);
 

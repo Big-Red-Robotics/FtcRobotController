@@ -49,7 +49,7 @@ public class AutonomousHalf extends LinearOpMode {
         }
 
         //put claw down (claw flipped up for initialization due to 18-inch restriction)
-        arm.setClawRotator(15);
+        arm.moveClawRotator(2);
         arm.setArmExtensionPosition(15);
         if (isRight == isRed) waitSeconds(1.0);
 //        else waitSeconds(8.5);
@@ -84,7 +84,7 @@ public class AutonomousHalf extends LinearOpMode {
         if (RobotConfig.teamColor == TeamColor.RED) arm.openRightClaw();
         else arm.openLeftClaw();
         waitSeconds(0.6);
-        arm.setClawRotator(2);
+        arm.moveClawRotator(2);
         waitSeconds(0.5);
 
         chassis.followTrajectorySequence(farsideToEnd);
