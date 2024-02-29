@@ -27,7 +27,10 @@ public class MainTeleOp extends LinearOpMode {
 
         int droneState = 0;
 
+        arm.setClawPivotPosition(Arm.CP_DEFAULT);
+
         //log data
+        telemetry.addData("claw pivot encoder position", arm.getClawPivotPosition());
         telemetry.addLine("waiting to start!");
         telemetry.update();
         waitForStart();
@@ -71,10 +74,10 @@ public class MainTeleOp extends LinearOpMode {
             }
             if((gamepad1.left_trigger > 0.3 || gamepad1.right_trigger > 0.3)  && controlReady){
                 //TODO
-                if (gamepad1.left_trigger  > 0.3 && arm.getLiftPosition() != Arm.GROUND) arm.toggleRightClaw();
-                else if(gamepad1.left_trigger  > 0.3 && arm.getLiftPosition() == Arm.GROUND)  arm.toggleLeftClaw();
-                if (gamepad1.right_trigger  > 0.3 && arm.getLiftPosition() != Arm.GROUND) arm.toggleLeftClaw();
-                else if(gamepad1.right_trigger  > 0.3&& arm.getLiftPosition() == Arm.GROUND) arm.toggleRightClaw();
+                if (gamepad1.left_trigger  > 0.3 && arm.getLiftTargetPosition() != Arm.GROUND) arm.toggleRightClaw();
+                else if(gamepad1.left_trigger  > 0.3 && arm.getLiftTargetPosition() == Arm.GROUND)  arm.toggleLeftClaw();
+                if (gamepad1.right_trigger  > 0.3 && arm.getLiftTargetPosition() != Arm.GROUND) arm.toggleLeftClaw();
+                else if(gamepad1.right_trigger  > 0.3&& arm.getLiftTargetPosition() == Arm.GROUND) arm.toggleRightClaw();
                 delay = true;
             }
 
@@ -92,8 +95,11 @@ public class MainTeleOp extends LinearOpMode {
                 arm.setClawPivotPosition(Arm.CP_HALF);
                 delay = true;
             } else if (gamepad2.left_bumper) {
-                arm.setClawPivotPosition(Arm.CP_FLIP);
-                arm.setRotatorLevel(0);
+                if(arm.getLiftTargetPosition() == Arm.HIGH) arm.setClawPivotPosition(Arm.CP_FLIP);
+                else {
+                    arm.setClawPivotPosition(Arm.CP_DEFAULT);
+                    arm.setRotatorLevel(0);
+                }
                 delay = true;
             }
 
@@ -107,7 +113,7 @@ public class MainTeleOp extends LinearOpMode {
                     arm.setLiftPosition(Arm.GROUND);
                     arm.setRotatorLevel(0);
                     arm.setArmExtensionPosition(15);
-                    arm.setClawPivotPosition(Arm.CP_FLIP);
+                    arm.setClawPivotPosition(Arm.CP_DEFAULT);
                     telemetry.addLine("I should return un-guarded and open");
                 }else{
                     // default action, lift down, rotator guarded, no flip.
@@ -115,7 +121,7 @@ public class MainTeleOp extends LinearOpMode {
                     arm.setRotatorLevel(2);
                     arm.setLiftPosition(Arm.GROUND);
                     arm.setArmExtensionPosition(0);
-                    arm.setClawPivotPosition(Arm.CP_FLIP);
+                    arm.setClawPivotPosition(Arm.CP_DEFAULT);
                 }
                 delay = true;
             } else if (gamepad2.x) {
@@ -125,22 +131,22 @@ public class MainTeleOp extends LinearOpMode {
                     arm.setLiftPosition(Arm.AUTON);
                     arm.setArmExtensionPosition(400);
                     arm.setRotatorLevel(1);
-                    arm.setClawPivotPosition(Arm.CP_DEFAULT);
+                    arm.setClawPivotPosition(Arm.CP_FLIP);
                 } else if(gamepad2.dpad_left) {
                     arm.setLiftPosition(Arm.VERY_LOW);
                     arm.setArmExtensionPosition(500);
                     arm.setRotatorLevel(1);
-                    arm.setClawPivotPosition(Arm.CP_DEFAULT);
+                    arm.setClawPivotPosition(Arm.CP_FLIP);
                 } else if (gamepad2.dpad_up) {
                     arm.setLiftPosition(Arm.LOW);
                     arm.setArmExtensionPosition(800);
                     arm.setRotatorLevel(1);
-                    arm.setClawPivotPosition(Arm.CP_DEFAULT);
+                    arm.setClawPivotPosition(Arm.CP_FLIP);
                 } else if (gamepad2.dpad_right) {
                     arm.setLiftPosition(Arm.MIDDLE);
                     arm.setArmExtensionPosition(1550);
                     arm.setRotatorLevel(0);
-                    arm.setClawPivotPosition(Arm.CP_DEFAULT);
+                    arm.setClawPivotPosition(Arm.CP_FLIP);
                 }
             } else if (gamepad2.y && controlReady) {
                 arm.hang = true;
@@ -150,7 +156,7 @@ public class MainTeleOp extends LinearOpMode {
                     drone.prepareLaunch();
                     arm.setLiftPosition(Arm.HANG);
                     arm.setArmExtensionPosition(0);
-                    arm.setClawPivotPosition(Arm.CP_FLIP);
+                    arm.setClawPivotPosition(Arm.CP_DEFAULT);
                 } else if(droneState == 2) drone.launch();
                 else {
                     drone.home();
@@ -165,9 +171,9 @@ public class MainTeleOp extends LinearOpMode {
             } else if (gamepad2.b) {
                 arm.hang = false;
                 arm.setLiftPosition(Arm.HIGH);
-                arm.setArmExtensionPosition(0);
-                arm.setRotatorLevel(3);
-                arm.setClawPivotPosition(Arm.CP_FLIP);
+                arm.setArmExtensionPosition(50);
+                arm.setRotatorLevel(2);
+                arm.setClawPivotPosition(Arm.CP_DEFAULT);
             }
 
             if(!gamepad2.x && !gamepad2.a){

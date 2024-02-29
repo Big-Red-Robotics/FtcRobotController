@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -15,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Arm {
-    private final DcMotor leftLift, rightLift;
+    public final DcMotorEx leftLift, rightLift;
     private final ServoImplEx clawPivot, clawRotator;
     private final Servo leftClaw, rightClaw;
     private final DcMotor armExtension;
@@ -32,26 +33,26 @@ public class Arm {
                             HIGH = 1380;
 
     //claw pivot
-    public static final double CP_FLIP = 0.945,
+    public static final double CP_DEFAULT = 0.945,
                                CP_HALF = 0.785,
-                               CP_DEFAULT = 0.29;
+                               CP_FLIP = 0.29;
 
     //claw rotator
     public static final double CR_STACK = 0.0,
-                               CR_GROUND = 0.15,
-                               CR_FRONT = 0.5,
-                               CR_FLIP = 1.0;
+                               CR_GROUND = 0.1,
+                               CR_FRONT = 0.3,
+                               CR_FLIP = 0.9;
 
     private int rotatorLevel = 0;
-    private double clawPivotPosition = 0.0;
+    private double clawPivotPosition;
     public boolean rightClawOpen = false, leftClawOpen = false;
 
     public boolean hang = false;
 
     public Arm(HardwareMap hardwareMap){
         this.slideZeroReset = hardwareMap.get(TouchSensor.class,"touch");
-        this.leftLift = hardwareMap.get(DcMotor.class, RobotConfig.liftL);
-        this.rightLift = hardwareMap.get(DcMotor.class, RobotConfig.liftR);
+        this.leftLift = hardwareMap.get(DcMotorEx.class, RobotConfig.liftL);
+        this.rightLift = hardwareMap.get(DcMotorEx.class, RobotConfig.liftR);
         this.clawRotator = hardwareMap.get(ServoImplEx.class, RobotConfig.clawRotator);
         this.leftClaw = hardwareMap.get(Servo.class, RobotConfig.leftClaw);
         this.rightClaw = hardwareMap.get(Servo.class, RobotConfig.rightClaw);
@@ -73,10 +74,11 @@ public class Arm {
         armExtension.setPower(0.0);
 
         clawPivot.setPwmRange(new PwmControl.PwmRange(1200, 1800));
-        clawPivot.setPosition(CP_DEFAULT);
+        clawPivotPosition = CP_DEFAULT;
+        clawPivot.setPosition(CP_DEFAULT); //somehow this doesn't work
 
         clawRotator.setPwmRange(new PwmControl.PwmRange(1180, 1620));
-        clawPivot.setPosition(CR_GROUND);
+        clawRotator.setPosition(CR_FLIP);
     }
 
     public void resetLift(){
@@ -183,8 +185,8 @@ public class Arm {
 
     public void toPosition(int position, int rotator, boolean pivot, Telemetry t){
         //claw pivot
-        if (pivot) clawPivot.setPosition(CP_FLIP);
-        else clawPivot.setPosition(CP_DEFAULT);
+        if (pivot) clawPivot.setPosition(CP_DEFAULT);
+        else clawPivot.setPosition(CP_FLIP);
 
 //        clawPivot.setPosition(clawPivotPosition);
 
