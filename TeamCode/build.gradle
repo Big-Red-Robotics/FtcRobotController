@@ -31,4 +31,5 @@ dependencies {
     implementation 'org.openftc:apriltag:2.0.0'
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'com.acmerobotics.roadrunner:core:0.5.6'
+    implementation 'com.ftclib.ftclib:core:2.0.1'
 }
